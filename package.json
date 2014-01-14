@@ -1,0 +1,56 @@
+{
+  "name": "angular-scorecard",
+  "version": "0.0.0",
+  "description": "An angular application to make the rendering of scorecards and status reports easier",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ChrisBoesch/angular-scorecard.git"
+  },
+  "keywords": [
+    "angularjs",
+    "graph"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ChrisBoesch/angular-scorecard/issues"
+  },
+  "homepage": "https://github.com/ChrisBoesch/angular-scorecard",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "matchdep": "~0.3.0",
+    "grunt": "~0.4.2",
+    "bower": "~1.2.8",
+    "grunt-contrib-connect": "~0.6.0",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-shell": "~0.6.1",
+    "grunt-karma": "~0.6.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-open": "~0.2.2",
+    "karma-jasmine": "~0.1.5",
+    "karma-junit-reporter": "~0.2.1",
+    "karma-ng-scenario": "~0.1.0",
+    "phantomjs": "~1.9.2-6",
+    "karma-script-launcher": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.1",
+    "karma-chrome-launcher": "~0.1.2",
+    "karma-firefox-launcher": "~0.1.3",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-coffee-preprocessor": "~0.1.2",
+    "karma-coverage": "~0.1.0",
+    "requirejs": "~2.1.10",
+    "karma-requirejs": "~0.2.1",
+    "karma": "~0.10.9",
+    "grunt-shell-spawn": "~0.3.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "express": "~3.4.7",
+    "grunt-express-server": "~0.4.11",
+    "grunt-connect-proxy": "~0.1.7"
+  }
+}
