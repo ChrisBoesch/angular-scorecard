@@ -1,0 +1,65 @@
+<svg viewBox="0 0 720 400"  preserveAspectRatio="xMidYMid">
+	<g ng-attr-transform="translate({{svg.margin.left}},{{svg.margin.top}})">
+    <g class="group" ng-repeat="group in data.series">
+      <line  class="distribution"
+        ng-attr-x1="{{xScale(group.name)}}" 
+        ng-attr-y1="{{yScale(group.min)}}" 
+        ng-attr-x2="{{xScale(group.name)}}" 
+        ng-attr-y2="{{yScale(group.max)}}"
+        style="stroke:black; stroke-width: 2"
+      />
+      <line class="min"
+        ng-attr-x1="{{xScale(group.name) - 5}}" 
+        ng-attr-y1="{{yScale(group.min)}}" 
+        ng-attr-x2="{{xScale(group.name) + 5}}" 
+        ng-attr-y2="{{yScale(group.min)}}"
+        style="stroke:black; stroke-width: 2"
+      />
+      <line class="max"
+        ng-attr-x1="{{xScale(group.name) - 5}}" 
+        ng-attr-y1="{{yScale(group.max)}}" 
+        ng-attr-x2="{{xScale(group.name) + 5}}" 
+        ng-attr-y2="{{yScale(group.max)}}"
+        style="stroke:black; stroke-width: 2"
+      />
+      <rect
+        ng-attr-x="{{xScale(group.name) - 5}}" 
+        ng-attr-y="{{yScale(group.median) - 5}}" 
+        width="10" height="10" style="fill: blue;"
+      />
+    </g>
+    <g class="y-scale">
+      <line x1="0" ng-attr-y1="{{svg.inHeight+5}}" x2="0" y2="0" style="stroke:black; stroke-width:1"/>
+      <g class="tick" ng-repeat="t in yScale.ticks(6)">
+        <line
+          ng-attr-x1="{{svg.inWidth}}" ng-attr-y1="{{yScale(t)}}"
+          x2="-5" ng-attr-y2="{{yScale(t)}}"
+          style="stroke:grey; stroke-width:1"
+        />
+        <text x="-10" ng-attr-y="{{yScale(t)}}" text-anchor="end" style="alignment-baseline: middle">{{t}}</text>
+      </g>
+    </g>
+    <g class="x-scale">
+      <line
+        x1="-5" ng-attr-y1="{{svg.inHeight}}"
+        ng-attr-x2="{{svg.inWidth}}" ng-attr-y2="{{svg.inHeight}}" 
+        style="stroke:black; stroke-width:1"
+      />
+      <g class="tick" ng-repeat="group in data.series">
+        <line
+          ng-attr-x1="{{xScale(group.name)}}" ng-attr-y1="{{svg.inHeight}}"
+          ng-attr-x2="{{xScale(group.name)}}" ng-attr-y2="{{svg.inHeight + 5}}"
+          style="stroke:grey; stroke-width:1"
+        />
+        <text 
+          ng-attr-x="{{xScale(group.name)}}"
+          ng-attr-y="{{svg.inHeight + 10}}"
+          style="alignment-baseline: hanging; text-anchor: middle"
+        >
+          {{group.name}}
+        </text>
+      </g>
+    </g>
+
+  </g>
+</svg>
