@@ -44080,7 +44080,21 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
   angular.module('myApp.config', ['ngRoute']).
 
     constant('TPL_PATH', '/partials').
-    constant('API_BASE', '/api/v1')
+    constant('API_BASE', '/api/v1').
+    config(function($provide){
+      var margin={top: 10, right: 50, bottom: 30, left: 50},
+        // SVG viewBox dimention (need to be hardcoded in the template).
+        // Note: that it scales and only needs to be edited to change proportions.
+        width = 720, height=400;
+
+      $provide.value('SVG', {
+        margin: margin,
+        width: width,
+        height: height,
+        inWidth: width - margin.left - margin.right,
+        inHeight: height - margin.top - margin.bottom
+      });
+    })
 
     ;
   
@@ -44121,26 +44135,14 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 ;(function () {
   'use strict';
 
-  angular.module('myApp.controllers', ['myApp.services', 'angularSpinkit']).
+  angular.module('myApp.controllers', ['myApp.services', 'angularSpinkit', 'myApp.config']).
 
-    controller('HomeCtrl', function ($scope, $window, dataset) {
+    controller('HomeCtrl', function ($scope, $window, dataset, SVG) {
       var d3 = $window.d3,
         xDomain = [],
-        yDomain = [],
-        // TODO: move it to app.config
-        margin={top: 10, right: 50, bottom: 30, left: 50},
-        // SVG viewBox dimention (then need to be hardcoded in the template).
-        // Note: that it scales and only needs to be edited for the proportions.
-        // TODO: move it to app.config
-        width = 720, height=400;
+        yDomain = [];
       
-      $scope.svg = {
-        margin: margin,
-        width: width,
-        height: height,
-        inWidth: width - margin.left - margin.right,
-        inHeight: height - margin.top - margin.bottom
-      };
+      $scope.svg = SVG;
 
       function buildScales(graph) {
         var data = graph.groups;
