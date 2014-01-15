@@ -1,0 +1,35 @@
+{
+  "name": "angular-scorecard",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ChrisBoesch/angular-scorecard",
+  "authors": [
+    "Chris Boesch"
+  ],
+  "description": "An angular application to make the rendering of scorecards and status reports easier",
+  "keywords": [
+    "angular",
+    "chart"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.3",
+    "jquery": "~2.0.3",
+    "d3": "~3.4.1",
+    "angular": "~1.2.7",
+    "angular-route": "~1.2.7",
+    "angular-resource": "~1.2.7",
+    "angular-animate": "~1.2.7",
+    "angular-mocks": "~1.2.7",
+    "angular-spinkit": "~0.0.2"
+  },
+  "resolutions": {
+    "angular": "~1.2.8"
+  }
+}
