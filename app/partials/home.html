@@ -7,7 +7,8 @@
   <!-- Keep all page content within the page-content inset div! -->
   <div class="page-content inset" style="max-height: 400px">
     <h3 class="desc">{{data.desc}}</h3>
-    <svg viewBox="0 0 720 400"  preserveAspectRatio="xMidYMid">
+    <wave-spinner ng-show="loading"></wave-spinner>
+    <svg viewBox="0 0 720 400"  preserveAspectRatio="xMidYMid" ng-hide="loading">
     	<g ng-attr-transform="translate({{svg.margin.left}},{{svg.margin.top}})">
         <g class="group" ng-repeat="group in data.groups">
           <line  class="distribution"
@@ -41,7 +42,7 @@
           <line x1="0" ng-attr-y1="{{svg.inHeight+5}}" x2="0" y2="0" style="stroke:black; stroke-width:1"/>
           <g class="tick" ng-repeat="t in yScale.ticks(6)">
             <line
-              x1="{{svg.inWidth}}" ng-attr-y1="{{yScale(t)}}"
+              ng-attr-x1="{{svg.inWidth}}" ng-attr-y1="{{yScale(t)}}"
               x2="-5" ng-attr-y2="{{yScale(t)}}"
               style="stroke:grey; stroke-width:1"
             />
