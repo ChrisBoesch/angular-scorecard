@@ -39,11 +39,11 @@
         </g>
         <g class="y-scale">
           <line x1="0" ng-attr-y1="{{svg.inHeight+5}}" x2="0" y2="0" style="stroke:black; stroke-width:1"/>
-          <g class="tick" ng-repeat="t in yScale.ticks()">
+          <g class="tick" ng-repeat="t in yScale.ticks(6)">
             <line
-              x1="0" ng-attr-y1="{{yScale(t)}}"
+              x1="{{svg.inWidth}}" ng-attr-y1="{{yScale(t)}}"
               x2="-5" ng-attr-y2="{{yScale(t)}}"
-              style="stroke:black; stroke-width:1"
+              style="stroke:grey; stroke-width:1"
             />
             <text x="-10" ng-attr-y="{{yScale(t)}}" text-anchor="end" style="alignment-baseline: middle">{{t}}</text>
           </g>
@@ -58,7 +58,7 @@
             <line
               ng-attr-x1="{{xScale(group.name)}}" ng-attr-y1="{{svg.inHeight}}"
               ng-attr-x2="{{xScale(group.name)}}" ng-attr-y2="{{svg.inHeight + 5}}"
-              style="stroke:black; stroke-width:1"
+              style="stroke:grey; stroke-width:1"
             />
             <text 
               ng-attr-x="{{xScale(group.name)}}"
