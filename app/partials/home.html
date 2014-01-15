@@ -8,6 +8,6 @@
   <div class="page-content inset" style="max-height: 400px">
     <h3 class="desc">{{data.subtitle}}</h3>
     <wave-spinner ng-show="loading"></wave-spinner>
-    <div class="graph" ng-hide="loading" ng-include="template" ></div>
+    <my-chart chart-data="data"></my-graph>
   </div>
 </div>

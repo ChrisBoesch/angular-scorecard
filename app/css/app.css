@@ -86,6 +86,37 @@ h3.desc {
   text-align: center;
 }
 
+/* Chart style */
+
+line.axis {
+  stroke: black;
+  stroke-width: 1;
+}
+
+.serie line {
+  stroke:black;
+  stroke-width: 2;
+}
+
+.median {
+  fill: blue;
+}
+
+.tick line {
+  stroke: gray;
+  stroke-width:1;
+}
+
+.y-scale .tick text {
+  alignment-baseline: middle;
+  text-anchor: end;
+}
+
+.x-scale .tick text {
+  alignment-baseline: hanging;
+  text-anchor: middle
+}
+
 @media (max-width:767px) {
 
   #wrapper {
