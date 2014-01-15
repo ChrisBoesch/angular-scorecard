@@ -4,7 +4,8 @@
   "description": "An angular application to make the rendering of scorecards and status reports easier",
   "main": "index.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "postinstall": "node ./node_modules/bower/bin/bower install",
   },
   "repository": {
     "type": "git",
