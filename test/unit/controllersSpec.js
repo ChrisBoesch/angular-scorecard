@@ -16,7 +16,11 @@
     }));
 
     it('should set "who"', function() {
-      expect(scope.who).toEqual("World");
+      expect(scope.data.groups[0].min).toBe(10);
+      expect(scope.data.groups[0].max).toBe(99);
+      expect(scope.data.groups[0].median).toBe(57);
+      expect(scope.yScale.ticks(6)).toEqual([0,20,40,60,80,100]);
+      expect(scope.yScale(100)).toBe(0);
     });
 
   });

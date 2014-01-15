@@ -5,6 +5,7 @@ module.exports = function(config){
     files : [
       'bower_components/jquery/jquery.js',
       'bower_components/angular/angular.js',
+      'bower_components/d3/d3.js',
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-resource/angular-resource.js',
       'bower_components/angular-animate/angular-animate.js',
