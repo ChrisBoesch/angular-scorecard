@@ -21,6 +21,7 @@
       expect(scope.data.groups[0].median).toBe(57);
       expect(scope.yScale.ticks(6)).toEqual([0,20,40,60,80,100]);
       expect(scope.yScale(100)).toBe(0);
+      expect(parseInt(scope.xScale('AA'))).toBe(103);
     });
 
   });
