@@ -21,7 +21,7 @@ module.exports = function(grunt) {
       },
       devserver: {
         options: {
-          hostname: 'localhost',
+          hostname: '0.0.0.0',
           port: 8888,
           middleware: function(connect, options) {
             var middlewares = [];
@@ -46,7 +46,7 @@ module.exports = function(grunt) {
         proxies: [
           {
             context: '/api/v1',
-            host: 'localhost',
+            host: '0.0.0.0',
             port: 9090,
             rewrite: {
               '^/api/v1': ''
@@ -165,10 +165,10 @@ module.exports = function(grunt) {
 
     open: {
       devserver: {
-        path: 'http://localhost:8888'
+        path: 'http://0.0.0.0:8888'
       },
       coverage: {
-        path: 'http://localhost:5555'
+        path: 'http://0.0.0.0:5555'
       }
     },
 
