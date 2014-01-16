@@ -7613,6 +7613,10 @@ line.axis {
   stroke-width: 2;
 }
 
+.bar {
+  fill: #6495ED;
+}
+
 .mean {
   fill: #FF69B4;
   stroke: white;

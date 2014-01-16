@@ -44155,6 +44155,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
         'boxPlot': TPL_PATH + '/boxplot.html',
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
+        'bar': TPL_PATH + '/bar.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
 
@@ -44240,6 +44241,37 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             nice();
         },
 
+        'bar': function(chart, width, height) {
+          var d3 = $window.d3,
+            xDomain = [],
+            yDomain = [],
+            data = chart.series;
+          
+          chart.svg=SVG(SVG_MARGIN, width, height);
+
+          // Calculate min, max, median of ranges and set the domains
+          for (var i = 0; i < data.length; i++) {
+            yDomain.push(data[i].data);
+            xDomain.push(data[i].name);
+          }
+          yDomain.sort(d3.ascending);
+          // TODO: Fix  hardcoded Domain low
+          yDomain = [0].concat(yDomain.slice(-1));
+
+          // Set scales
+          chart.xScale = d3.scale.ordinal().
+            domain(xDomain).
+            rangePoints([0, chart.svg.inWidth], 1);
+          chart.yScale = d3.scale.linear().
+            domain(yDomain).
+            range([0, chart.svg.inHeight]).
+            nice();
+          chart.yScaleReversed = d3.scale.linear().
+            domain(yDomain).
+            range([chart.svg.inHeight, 0]).
+            nice(100);
+        },
+
         'combined': function(chart, width, height) {
           chart.svg=SVG(SVG_MARGIN, width, height);
         }
@@ -44261,8 +44293,6 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
               height = scope.svgHeight() || SVG_HEIGHT,
               width = scope.svgWidth() || SVG_WIDTH;
 
-            console.dir(width);
-
             if (!scope.chartData) {
               return;
             }
@@ -44273,6 +44303,8 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             if (factories[gType]) {
               factories[gType](scope.chartData, width, height);
             }
+
+            console.dir(scope.chartData);
 
           });
         }
