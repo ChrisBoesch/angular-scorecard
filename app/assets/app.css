@@ -7630,6 +7630,10 @@ line.axis {
   stroke-width:1;
 }
 
+.scale text {
+  font-size: 18px;
+}
+
 .y-scale .tick text {
   alignment-baseline: middle;
   text-anchor: end;

@@ -42,7 +42,7 @@
 
     <!-- Draw the y axis and the ticks -->
     <!-- TODO: label axis at add units to ticks -->
-    <g class="y-scale">
+    <g class="y-scale scale">
       <line class="axis y-axis" x1="0" ng-attr-y1="{{chartData.svg.inHeight+5}}" x2="0" y2="0"/>
       
       <!-- let d3 calculate the tick values -->
@@ -57,7 +57,7 @@
 
     <!-- Draw x axis, its ticks and rulers -->
     <!-- TODO: label axis at add units to ticks -->
-    <g class="x-scale">
+    <g class="x-scale scale">
       <line class="axis x-axis"
         x1="-5" ng-attr-y1="{{chartData.svg.inHeight}}"
         ng-attr-x2="{{chartData.svg.inWidth}}" ng-attr-y2="{{chartData.svg.inHeight}}" 
