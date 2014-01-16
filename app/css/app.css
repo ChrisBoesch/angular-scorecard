@@ -98,8 +98,16 @@ line.axis {
   stroke-width: 2;
 }
 
+.mean {
+  fill: #FF69B4;
+  stroke: white;
+  stroke-width: 1;
+}
+
 .median {
   fill: blue;
+  stroke: white;
+  stroke-width: 1;
 }
 
 .tick line {

@@ -39,7 +39,7 @@ var DATA = [
   {
     title: 'Distribution of some group of Data',
     subtitle: 'Those data are random and harcoded.',
-    type: 'groupedPlot',
+    type: 'groupedBoxPlot',
     series: [
       {
         name: 'AA',
@@ -59,7 +59,7 @@ var DATA = [
         name: 'CCC',
         series: [
           {'name': 'C1', 'data': [48, 15, 57, 57, 10, 19, 69, 99, 81, 72]},
-          {'name': 'C1', 'data': [33, 85, 34, 93, 21, 30, 15, 11, 14, 14]},
+          {'name': 'C2', 'data': [33, 85, 34, 93, 21, 30, 15, 11, 14, 14]},
         ]
       }
     ]

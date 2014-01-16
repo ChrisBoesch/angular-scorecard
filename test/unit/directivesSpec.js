@@ -12,7 +12,7 @@
       $compile = _$compile_;
       $rootScope = _$rootScope_;
       $httpBackend = _$httpBackend_;
-      svg = SVG;
+      svg = SVG();
     }));
 
     describe('myChart', function(){

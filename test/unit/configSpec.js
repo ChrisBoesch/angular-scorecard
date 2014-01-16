@@ -8,8 +8,8 @@
     beforeEach(module('myApp.config'));
 
     it('should calculate the inner width and height of the graph', inject(function(SVG) {
-      expect(SVG.inWidth).toBe(620);
-      expect(SVG.inHeight).toBe(360);
+      expect(SVG().inWidth).toBe(620);
+      expect(SVG().inHeight).toBe(360);
     }));
 
   });
