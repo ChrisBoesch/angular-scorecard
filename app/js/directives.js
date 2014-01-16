@@ -38,19 +38,29 @@
       };
     }).
 
+    /**
+     * Draw a chart
+     *
+     * usage:
+     *
+     *  <my-chart chart-data="data" [svg-width="100"] [svg-height="100"]/>
+     *  
+     */
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
         'boxPlot': TPL_PATH + '/boxplot.html',
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
+        'combined': TPL_PATH + '/combined.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-        'boxPlot': function buildScales(chart) {
+
+        'boxPlot': function buildScales(chart, width, height) {
           var d3 = $window.d3,
             xDomain = [],
             yDomain = [],
             data = chart.series;
           
-          chart.svg=SVG();
+          chart.svg=SVG(SVG_MARGIN, width, height);
 
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
@@ -75,7 +85,8 @@
             range([chart.svg.inHeight, 0]).
             nice();
         },
-        'groupedBoxPlot': function(chart) {
+
+        'groupedBoxPlot': function(chart, width, height) {
           var d3 = $window.d3,
             x1Domain = [],
             x2Domain = [],
@@ -87,7 +98,7 @@
             right: SVG_MARGIN.right,
             bottom: SVG_MARGIN.bottom + 20,
             left: SVG_MARGIN.left
-          });
+          }, width, height);
 
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
@@ -123,33 +134,42 @@
             domain(yDomain).
             range([chart.svg.inHeight, 0]).
             nice();
+        },
+
+        'combined': function(chart, width, height) {
+          chart.svg=SVG(SVG_MARGIN, width, height);
         }
+
       };
 
       return {
         restrict: 'E',
         scope: {
-          'chartData': '='
+          'chartData': '=',
+          'svgWidth': '&',
+          'svgHeight': '&'
         },
         template: '<div class="graph" ng-include="template"></div>',
         link: function(scope){
 
           scope.$watch('chartData', function(){
-            var gType;
+            var gType,
+              height = scope.svgHeight() || SVG_HEIGHT,
+              width = scope.svgWidth() || SVG_WIDTH;
+
+            console.dir(width);
 
             if (!scope.chartData) {
               return;
             }
 
             gType = scope.chartData.type;
-            if (!templates[gType] || !factories[gType]) {
-              scope.template = templates['default'];
-              return;
+            scope.template = templates[gType] ? templates[gType] : templates['default'];
+            
+            if (factories[gType]) {
+              factories[gType](scope.chartData, width, height);
             }
 
-            factories[gType](scope.chartData);
-            scope.template = templates[gType];
-            console.dir(scope.chartData.svg);
           });
         }
       };

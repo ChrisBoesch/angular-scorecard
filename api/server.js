@@ -18,15 +18,30 @@ var DATA = [
       {name: 'CCC', data: [33, 85, 34, 93, 21, 30, 15, 11, 14, 14]},
     ]
   },
-  // {
-  //   title: 'Proportion of Some Data',
-  //   subtitle: 'Those data are random and harcoded.',
-  //   series: [
-  //     {name: 'AAAAAA', value: 120},
-  //     {name: 'BBBBBB', value: 180},
-  //     {name: 'CCCCCC', value: 90},
-  //   ]
-  // },
+  {
+    title: 'Two Charts',
+    type: 'combined',
+    series: [
+      {
+        type: 'bar',
+        subtitle: 'First chart',
+        series: [
+          {name: 'AAAAAA', data:  180},
+          {name: 'BBBBBBB', data:  110}
+        ]
+      },
+      {
+        type: 'pie',
+        subtitle: 'Second chart',
+        series: [
+          {name: 'AAAAAA', data:  40},
+          {name: 'BBBBBB', data:  110},
+          {name: 'CCCCCCCCCC', data:  30},
+          {name: 'DDDDDDDDDDDD', data:  3}
+        ]
+      }
+    ]
+  },
   // {
   //   title: 'Proportion of Some groupe of Data',
   //   subtitle: 'Those data are random and harcoded.',
