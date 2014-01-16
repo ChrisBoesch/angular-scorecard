@@ -2,7 +2,43 @@
   'use strict';
 
   angular.module('myApp.directives', ['myApp.config']).
-    directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, $window) {
+
+    /**
+     * Directive to set the a `svga element `viewBox` attribute
+     * from values from the scope.
+     *
+     * With:
+     *  
+     *  <svg ng-attr-viewBox="0 0 {{100}} {{100}}"/>
+     *
+     * Angular would produce the correct attribute but it would have no effect. 
+     * This directive edit the viewBox.baseVal proporty directly.
+     *
+     * Usage:
+     *
+     *  <svg my-view-box="someScopeProperty"/>
+     *
+     * where `$scope.someScopeProperty == {width: 100, height: 100}`
+     *
+     * TODO: write test.
+     * 
+     */
+    directive('myViewBox', function(){
+      return {
+        scope: {
+          'dimension': '=myViewBox'
+        },
+        link: function(scope, element) {
+          var svg;
+
+          svg = element.get(0);
+          svg.viewBox.baseVal.width = scope.dimension.width;
+          svg.viewBox.baseVal.height = scope.dimension.height;
+        }
+      };
+    }).
+
+    directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
         'boxPlot': TPL_PATH + '/boxplot.html',
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
