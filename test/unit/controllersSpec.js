@@ -4,24 +4,38 @@
   'use strict';
 
   describe('controllers', function(){
-    var ctrl, scope;
+    var ctrl, scope, getDefer, lastKey;
 
     beforeEach(module('myApp.controllers'));
 
-    beforeEach(inject(function($controller, $rootScope){
+    beforeEach(inject(function($controller, $rootScope, $q){
       scope = $rootScope.$new();
+      getDefer = $q.defer();
+
       ctrl = $controller('HomeCtrl', {
-        $scope: scope
+        $scope: scope,
+        dataset: {
+          get: function(key) {
+            lastKey = key;
+            return getDefer.promise;
+          }
+        },
+        $routeParams: {
+          key: 1,
+          label: 2
+        }
       });
     }));
 
-    it('should set "who"', function() {
-      expect(scope.data.groups[0].min).toBe(10);
-      expect(scope.data.groups[0].max).toBe(99);
-      expect(scope.data.groups[0].median).toBe(57);
-      expect(scope.yScale.ticks(6)).toEqual([0,20,40,60,80,100]);
-      expect(scope.yScale(100)).toBe(0);
-      expect(parseInt(scope.xScale('AA'))).toBe(103);
+    it('should set et scales helpers', function() {
+      expect(lastKey).toBe(1);
+      expect(scope.loading).toBe(true);
+
+      getDefer.resolve({title: 'foo'});
+      scope.$apply();
+
+      expect(scope.data.title).toEqual('foo');
+      expect(scope.loading).toBe(false);
     });
 
   });

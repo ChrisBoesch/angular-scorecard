@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/ChrisBoesch/angular-scorecard",
   "dependencies": {
+    "lodash": "~2.4.1"
   },
   "devDependencies": {
     "matchdep": "~0.3.0",

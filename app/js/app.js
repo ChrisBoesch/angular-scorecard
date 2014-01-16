@@ -14,6 +14,7 @@
 
   config(['$routeProvider', 'TPL_PATH', function($routeProvider, TPL_PATH) {
     $routeProvider.when('/', {templateUrl: TPL_PATH + '/home.html', controller: 'HomeCtrl'});
+    $routeProvider.when('/:label/:key', {templateUrl: TPL_PATH + '/home.html', controller: 'HomeCtrl'});
     $routeProvider.otherwise({redirectTo: '/'});
   }]);
   
