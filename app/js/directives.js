@@ -52,6 +52,7 @@
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
         'bar': TPL_PATH + '/bar.html',
+        'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
 
@@ -167,6 +168,23 @@
             range([chart.svg.inHeight, 0]).
             nice(100);
         },
+
+        'pie': function(chart, width, height) {
+          // TODO: check number of item in serie (<20)
+          var d3 = $window.d3;
+
+          chart.svg=SVG(SVG_MARGIN, width, height);
+
+          chart.pieData = d3.layout.pie().
+            value(function(d){return d.data;})(chart.series);
+          chart.colors = d3.scale.category20();
+          chart.arc = d3.svg.arc()
+            .startAngle(function(d){ return d.startAngle; })
+            .endAngle(function(d){ return d.endAngle; })
+            .innerRadius(0)
+            .outerRadius(chart.svg.inWidth/2);
+        },
+
 
         'combined': function(chart, width, height) {
           chart.svg=SVG(SVG_MARGIN, width, height);
