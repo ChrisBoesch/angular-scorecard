@@ -5,8 +5,6 @@
 
     constant('TPL_PATH', '/partials').
     constant('API_BASE', '/api/v1').
-    // SVG viewBox dimention (need to be hardcoded in the template).
-    // Note: that it scales and only needs to be edited to change proportions.
     constant('SVG_HEIGHT', 400).
     constant('SVG_WIDTH', 720).
     constant('SVG_MARGIN', {top: 10, right: 50, bottom: 30, left: 50}).

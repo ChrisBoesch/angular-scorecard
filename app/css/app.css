@@ -98,6 +98,10 @@ line.axis {
   stroke-width: 2;
 }
 
+.bar {
+  fill: #6495ED;
+}
+
 .mean {
   fill: #FF69B4;
   stroke: white;
@@ -113,6 +117,10 @@ line.axis {
 .tick line {
   stroke: gray;
   stroke-width:1;
+}
+
+.scale text {
+  font-size: 18px;
 }
 
 .y-scale .tick text {

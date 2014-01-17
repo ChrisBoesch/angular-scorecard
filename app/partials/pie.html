@@ -1,0 +1,11 @@
+<h3 class="desc">{{chartData.subtitle}}</h3>
+<svg my-view-box="chartData.svg" preserveAspectRatio="xMidYMid">
+	<g ng-attr-transform="translate({{chartData.svg.margin.left}},{{chartData.svg.margin.top}})">
+		<g ng-attr-transform="translate({{chartData.svg.inWidth / 2}},{{chartData.svg.inHeight / 2}})">
+			<path ng-repeat="a in chartData.pieData"
+				ng-attr-d={{chartData.arc(a)}}
+				ng-attr-style="fill: {{chartData.colors(a.data.name)}};"
+				/>
+		</g>
+	</g>
+</svg>
