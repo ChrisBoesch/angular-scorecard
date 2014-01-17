@@ -154,6 +154,7 @@
           yDomain.sort(d3.ascending);
           // TODO: Fix  hardcoded Domain low
           yDomain = [0].concat(yDomain.slice(-1));
+          yDomain[1] *= 1.1;
 
           // Set scales
           chart.xScale = d3.scale.ordinal().

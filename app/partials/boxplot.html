@@ -2,37 +2,6 @@
 <svg my-view-box="chartData.svg" preserveAspectRatio="xMidYMid">
   <!-- Move chart down to leave space for margins (used labels) -->
 	<g ng-attr-transform="translate({{chartData.svg.margin.left}},{{chartData.svg.margin.top}})">
-    <!-- Draw the representation of the series distribution -->
-    <g class="serie" ng-repeat="serie in chartData.series">
-      <!-- The line between min and max point-->
-      <line  class="distribution"
-        ng-attr-x1="{{chartData.xScale(serie.name)}}" 
-        ng-attr-y1="{{chartData.yScale(serie.min)}}" 
-        ng-attr-x2="{{chartData.xScale(serie.name)}}" 
-        ng-attr-y2="{{chartData.yScale(serie.max)}}"
-      />
-      <!-- the min point -->
-      <line class="min"
-        ng-attr-x1="{{chartData.xScale(serie.name) - 5}}" 
-        ng-attr-y1="{{chartData.yScale(serie.min)}}" 
-        ng-attr-x2="{{chartData.xScale(serie.name) + 5}}" 
-        ng-attr-y2="{{chartData.yScale(serie.min)}}"
-      />
-      <!-- the max point -->
-      <line class="max"
-        ng-attr-x1="{{chartData.xScale(serie.name) - 5}}" 
-        ng-attr-y1="{{chartData.yScale(serie.max)}}" 
-        ng-attr-x2="{{chartData.xScale(serie.name) + 5}}" 
-        ng-attr-y2="{{chartData.yScale(serie.max)}}"
-      />
-      <!-- add a rectangle for the median -->
-      <rect class="median"
-        ng-attr-x="{{chartData.xScale(serie.name) - 5}}" 
-        ng-attr-y="{{chartData.yScale(serie.median) - 5}}" 
-        width="10" height="10"
-      />
-    </g>
-
     <!-- Draw the y axis and the ticks -->
     <!-- TODO: label axis at add units to ticks -->
     <g class="y-scale scale">
@@ -69,6 +38,44 @@
       </g>
     </g>
 
+
+    <!-- Draw the representation of the series distribution -->
+    <g class="serie" ng-repeat="serie in chartData.series">
+      <!-- The line between min and max point-->
+      <line  class="distribution"
+        ng-attr-x1="{{chartData.xScale(serie.name)}}" 
+        ng-attr-y1="{{chartData.yScale(serie.min)}}" 
+        ng-attr-x2="{{chartData.xScale(serie.name)}}" 
+        ng-attr-y2="{{chartData.yScale(serie.max)}}"
+      />
+      <!-- the min point -->
+      <line class="min"
+        ng-attr-x1="{{chartData.xScale(serie.name) - 5}}" 
+        ng-attr-y1="{{chartData.yScale(serie.min)}}" 
+        ng-attr-x2="{{chartData.xScale(serie.name) + 5}}" 
+        ng-attr-y2="{{chartData.yScale(serie.min)}}"
+      />
+      <!-- the max point -->
+      <line class="max"
+        ng-attr-x1="{{chartData.xScale(serie.name) - 5}}" 
+        ng-attr-y1="{{chartData.yScale(serie.max)}}" 
+        ng-attr-x2="{{chartData.xScale(serie.name) + 5}}" 
+        ng-attr-y2="{{chartData.yScale(serie.max)}}"
+      />
+      <!-- add a rectangle for the median -->
+      <rect class="median"
+        ng-attr-x="{{chartData.xScale(serie.name) - 5}}" 
+        ng-attr-y="{{chartData.yScale(serie.median) - 5}}" 
+        width="10" height="10"
+      />
+
+      <text class="median-label"
+        ng-attr-x="{{chartData.xScale(serie.name) + 10}}" 
+        ng-attr-y="{{chartData.yScale(serie.median)}}"
+        >
+        {{serie.median}}
+      </text>
+    </g>
 
   </g>
 </svg>

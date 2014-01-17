@@ -43,6 +43,14 @@
         ng-attr-y="{{chartData.svg.inHeight - chartData.yScale(serie.data)}}" 
         width="40" ng-attr-height="{{chartData.yScale(serie.data)}}"
       />
+      <text class="bar-label"
+        ng-attr-x="{{chartData.xScale(serie.name)}}" 
+        ng-attr-y="{{chartData.svg.inHeight - chartData.yScale(serie.data) - 10}}"
+        >
+        {{serie.data}}
+      </text>
+
+
     </g>
 
     <g class="axis">

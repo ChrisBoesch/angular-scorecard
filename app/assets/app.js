@@ -44258,6 +44258,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
           yDomain.sort(d3.ascending);
           // TODO: Fix  hardcoded Domain low
           yDomain = [0].concat(yDomain.slice(-1));
+          yDomain[1] *= 1.1;
 
           // Set scales
           chart.xScale = d3.scale.ordinal().
@@ -44385,9 +44386,17 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 })();
 ;
 (function () {
-'use strict';
+  'use strict';
 
-  angular.module('myApp.filters', ['myApp.config']);
+  angular.module('myApp.filters', ['myApp.config']).
+
+    filter('round', function($window){
+      return function(v) {
+        return $window.d3.round(v,1);
+      };
+    })
+    
+    ;
 
 })();
 ;(function () {
