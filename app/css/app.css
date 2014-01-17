@@ -4,6 +4,10 @@
   transition: all 0.4s ease 0s;
 }
 
+#page-content-wrapper .container {
+  width: auto;
+}
+
 #sidebar-wrapper {
   margin-left: -250px;
   left: 250px;

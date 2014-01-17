@@ -2,10 +2,33 @@
 <svg my-view-box="chartData.svg" preserveAspectRatio="xMidYMid">
 	<g ng-attr-transform="translate({{chartData.svg.margin.left}},{{chartData.svg.margin.top}})">
 		<g ng-attr-transform="translate({{chartData.svg.inWidth / 2}},{{chartData.svg.inHeight / 2}})">
-			<path ng-repeat="a in chartData.pieData"
-				ng-attr-d={{chartData.arc(a)}}
-				ng-attr-style="fill: {{chartData.colors(a.data.name)}};"
-				/>
+			<g class="arcs" ng-repeat="a in chartData.pieData">
+				<path
+					ng-attr-d={{chartData.arc(a)}}
+					ng-attr-style="fill: {{chartData.colors(a.data.name)}};"
+					/>
+			</g>
+			<g class="labels" ng-repeat="a in chartData.pieData">
+				<line class="tick"
+					x1="0" x2="0"
+					ng-attr-y1="{{-chartData.svg.inWidth/2}}"
+					ng-attr-y2="{{-(chartData.svg.inWidth/2) - 10}}"
+					ng-attr-transform="rotate({{chartData.rotateTicks(a)}})"
+					style="stroke-width: 1; stroke: gray"
+					/>
+				<text class="percentage"
+					ng-attr-transform="translate({{chartData.arc.centroid(a).join(',')}})"
+					style="text-anchor: middle"
+					>
+					{{chartData.percentage(a.data.data)}}
+				</text>
+				<text 
+					ng-attr-transform="translate({{chartData.labelPosition(a).join(',')}})"
+					ng-attr-style="text-anchor: {{chartData.labelAnchor(a)}}; alignment-baseline: middle;"
+					>
+					{{a.data.name}}
+				</text>
+			</g>
 		</g>
 	</g>
 </svg>
