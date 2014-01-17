@@ -66,6 +66,13 @@
         />
         <text x="-10" ng-attr-y="{{chartData.yScale(t)}}">{{t}}</text>
       </g>
+
+      <!-- TODO: calculate position -->
+      <g class="axis-label y-axis-label" ng-if="chartData.axisY && chartData.axisY.name"
+        transform="translate(-50, {{chartData.svg.inHeight/2}})"
+      >
+        <text transform="rotate(-90)">{{chartData.axisY.name}}</text>
+      </g>
     </g>
 
     <!-- Draw x axis, its ticks and rulers -->
@@ -77,9 +84,25 @@
       />
       <line class="sep x-sep" ng-repeat="i in chartData.x3Scale.domain()"
         ng-attr-x1="{{chartData.x3Scale(i)}}" ng-attr-y1="{{0}}"
-        ng-attr-x2="{{chartData.x3Scale(i)}}" ng-attr-y2="{{400}}"
+        ng-attr-x2="{{chartData.x3Scale(i)}}" ng-attr-y2="{{chartData.svg.height - 35}}"
         stroke="gray" stroke-width="1"
       />
+      <g class="legend median-legend"
+        ng-attr-transform="translate({{chartData.svg.inWidth/3 -30}},{{chartData.svg.height - 20}})"
+      >
+        <rect class="median" width="10" height="10"/>
+        <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
+          median
+        </text>
+      </g>
+      <g class="legend mean-legend"
+        ng-attr-transform="translate({{chartData.svg.inWidth/3 * 2 - 30}},{{chartData.svg.height - 20}})"
+      >
+        <rect class="mean" dy="4" width="20" height="5"/>
+        <text dx="30" dy="10" style="text-anchor: start; alignment-baseline: auto">
+          mean
+        </text>
+      </g>
       <g class="gtick" ng-repeat="gserie in chartData.series">
         <g class="tick">
           <line

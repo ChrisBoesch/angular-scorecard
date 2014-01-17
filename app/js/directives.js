@@ -98,10 +98,10 @@
           chart.svg=SVG({
             top: SVG_MARGIN.top,
             right: SVG_MARGIN.right,
-            bottom: SVG_MARGIN.bottom + 20,
+            bottom: SVG_MARGIN.bottom + 40,
             left: SVG_MARGIN.left
           }, width, height);
-
+          console.log(chart.svg);
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
             for (var j = 0; j < data[i].series.length; j++) {
@@ -181,14 +181,23 @@
           chart.svg=SVG(
             {
               top: 10,
-              right: 50,
-              bottom: 10,
-              left: 50
+              right: 10,
+              bottom: 30 + (20 * chart.series.length),
+              left: 10
             },
             width,
             height
           );
 
+          // Make sure the pie fits into the inner svg document,
+          // and sure the legend aligns with the pie
+          if (chart.svg.inHeight > chart.svg.inWidth) {
+            chart.pieRadius = chart.svg.inWidth/2;
+            chart.legendXAnchor = chart.svg.margin.left;
+          } else {
+            chart.pieRadius = chart.svg.inHeight/2;
+            chart.legendXAnchor = (chart.svg.width - chart.pieRadius*2)/2;
+          }
           chart.pieData = d3.layout.pie().
             value(function(d){return d.data;})(chart.series);
           chart.colors = d3.scale.category20();
@@ -196,17 +205,9 @@
             var p = percentage(d);
             return formatter(p);
           };
-          chart.rotateTicks = function(s) {
-            return (s.startAngle + s.endAngle) / 2 * (180/Math.PI);
-          };
-          chart.labelPosition = function(s) {
-            var a = (s.startAngle + s.endAngle - Math.PI)/2,
-              r = chart.svg.inWidth/2;
-            return [Math.cos(a) * (r+10), Math.sin(a) * (r+10)];
-          };
           chart.labelAnchor = function(s) {
             if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
-              return "beginning";
+              return "start";
             } else {
               return "end";
             }
@@ -215,7 +216,7 @@
             .startAngle(function(d){ return d.startAngle; })
             .endAngle(function(d){ return d.endAngle; })
             .innerRadius(0)
-            .outerRadius(chart.svg.inWidth/2);
+            .outerRadius(chart.pieRadius);
         },
 
 

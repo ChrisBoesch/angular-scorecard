@@ -9,26 +9,25 @@
 					/>
 			</g>
 			<g class="labels" ng-repeat="a in chartData.pieData">
-				<line class="tick"
-					x1="0" x2="0"
-					ng-attr-y1="{{-chartData.svg.inWidth/2}}"
-					ng-attr-y2="{{-(chartData.svg.inWidth/2) - 10}}"
-					ng-attr-transform="rotate({{chartData.rotateTicks(a)}})"
-					style="stroke-width: 1; stroke: gray"
-					/>
 				<text class="percentage"
 					ng-attr-transform="translate({{chartData.arc.centroid(a).join(',')}})"
+					dy=".35em"
 					style="text-anchor: middle"
 					>
 					{{chartData.percentage(a.data.data)}}
 				</text>
-				<text 
-					ng-attr-transform="translate({{chartData.labelPosition(a).join(',')}})"
-					ng-attr-style="text-anchor: {{chartData.labelAnchor(a)}}; alignment-baseline: middle;"
-					>
-					{{a.data.name}}
-				</text>
 			</g>
+		</g>
+
+		<g class="legend" ng-repeat="a in chartData.pieData"
+			ng-attr-transform="translate({{chartData.legendXAnchor}}, {{chartData.svg.height - (chartData.pieData.length - $index) * 20 - 15}})"
+		>
+			<rect
+				width="12"
+				height="12"
+				ng-attr-style="fill: {{chartData.colors(a.data.name)}}"
+			/>
+			<text dx="20" dy="12" style="alignment-baseline: auto">{{a.data.name}}</text>
 		</g>
 	</g>
 </svg>

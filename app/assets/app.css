@@ -7642,6 +7642,11 @@ svg text {
   font-size: 18px;
 }
 
+.y-axis-label text {
+  text-anchor: middle;
+  font-weight: 800;
+}
+
 .median-label, .mean-label {
   text-anchor: start;
 }
