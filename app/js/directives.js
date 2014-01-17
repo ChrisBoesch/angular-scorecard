@@ -202,11 +202,11 @@
           chart.labelPosition = function(s) {
             var a = (s.startAngle + s.endAngle - Math.PI)/2,
               r = chart.svg.inWidth/2;
-            return [Math.cos(a) * (r+10), Math.sin(a) * (r+10)];
+            return [Math.cos(a) * (r+10), Math.sin(a) * (r+15)];
           };
           chart.labelAnchor = function(s) {
             if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
-              return "beginning";
+              return "start";
             } else {
               return "end";
             }

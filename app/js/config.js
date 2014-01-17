@@ -7,7 +7,7 @@
     constant('API_BASE', '/api/v1').
     constant('SVG_HEIGHT', 400).
     constant('SVG_WIDTH', 720).
-    constant('SVG_MARGIN', {top: 10, right: 50, bottom: 30, left: 50}).
+    constant('SVG_MARGIN', {top: 10, right: 30, bottom: 30, left: 70}).
     factory('SVG', function(SVG_HEIGHT, SVG_WIDTH, SVG_MARGIN) {
       return function(margin, width, height) {
         margin = margin || SVG_MARGIN;

@@ -18,13 +18,15 @@
 					/>
 				<text class="percentage"
 					ng-attr-transform="translate({{chartData.arc.centroid(a).join(',')}})"
+					dy=".35em"
 					style="text-anchor: middle"
 					>
 					{{chartData.percentage(a.data.data)}}
 				</text>
 				<text 
 					ng-attr-transform="translate({{chartData.labelPosition(a).join(',')}})"
-					ng-attr-style="text-anchor: {{chartData.labelAnchor(a)}}; alignment-baseline: middle;"
+					dy=".35em"
+					ng-attr-style="text-anchor: {{chartData.labelAnchor(a)}}; alignment-baseline: auto;"
 					>
 					{{a.data.name}}
 				</text>

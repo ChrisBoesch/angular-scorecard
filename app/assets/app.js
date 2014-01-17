@@ -44083,7 +44083,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
     constant('API_BASE', '/api/v1').
     constant('SVG_HEIGHT', 400).
     constant('SVG_WIDTH', 720).
-    constant('SVG_MARGIN', {top: 10, right: 50, bottom: 30, left: 50}).
+    constant('SVG_MARGIN', {top: 10, right: 30, bottom: 30, left: 70}).
     factory('SVG', function(SVG_HEIGHT, SVG_WIDTH, SVG_MARGIN) {
       return function(margin, width, height) {
         margin = margin || SVG_MARGIN;
@@ -44306,11 +44306,11 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
           chart.labelPosition = function(s) {
             var a = (s.startAngle + s.endAngle - Math.PI)/2,
               r = chart.svg.inWidth/2;
-            return [Math.cos(a) * (r+10), Math.sin(a) * (r+10)];
+            return [Math.cos(a) * (r+10), Math.sin(a) * (r+15)];
           };
           chart.labelAnchor = function(s) {
             if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
-              return "beginning";
+              return "start";
             } else {
               return "end";
             }

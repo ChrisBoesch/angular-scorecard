@@ -15,6 +15,14 @@
         />
         <text x="-10" ng-attr-y="{{chartData.yScaleReversed(t)}}">{{t}}</text>
       </g>
+      
+      <!-- TODO: calculate position -->
+      <g class="axis-label y-axis-label" ng-if="chartData.axisY && chartData.axisY.name"
+        transform="translate(-50, {{chartData.svg.inHeight/2}})"
+      >
+        <text transform="rotate(-90)">{{chartData.axisY.name}}</text>
+      </g>
+
     </g>
 
     <!-- Draw x axis, its ticks and rulers -->
@@ -59,6 +67,8 @@
         ng-attr-x2="{{chartData.svg.inWidth}}" ng-attr-y2="{{chartData.svg.inHeight}}" 
       />
       <line class="axis y-axis" x1="0" ng-attr-y1="{{chartData.svg.inHeight+5}}" x2="0" y2="0"/>
+
+
     </g>
 
 

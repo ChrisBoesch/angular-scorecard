@@ -10,8 +10,12 @@ var DELAY = process.env.DELAY || 1000;
 var DATA = [
   {
     title: 'Distribution of some Data',
-    subtitle: 'Those data are random and harcoded.',
+    subtitle: 'The description of the graph that can be about two lines long ' +
+                'usually so it is shown as wrapped here.',
     type: 'boxPlot',
+    axisY: {
+      name: 'Score'
+    },
     series: [
       {name: 'AA', data: [48, 15, 57, 57, 10, 19, 69, 99, 81, 72]},
       {name: 'BBB', data: [4, 100, 37, 9, 46, 77, 28, 50, 80, 3]},
@@ -25,6 +29,10 @@ var DATA = [
       {
         type: 'bar',
         subtitle: 'First chart',
+        axisY: {
+          name: 'Number',
+          min: 0,
+        },
         series: [
           {name: 'AAAAAA', data:  180},
           {name: 'BBBBBBB', data:  110}
@@ -43,18 +51,23 @@ var DATA = [
     ]
   },
   // {
-  //   title: 'Proportion of Some groupe of Data',
+  //   title: 'Proportion of Some group of Data',
   //   subtitle: 'Those data are random and harcoded.',
+  //   type: 'groupedBar',
   //   series: [
-  //     {name: 'AAAAAA', data: {'a': 48, 'b': 15, 'c': 57}},
-  //     {name: 'BBBBBB', data: {'a': 4, 'b': 100, 'c': 37}},
-  //     {name: 'CCCCCC', data: {'a': 33, 'b': 85, 'c': 34}},
+  //     {name: 'AAAA', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+  //     {name: 'BBBB', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+  //     {name: 'CCCC', data: {'c1': 98, 'c2': 29, 'c4': 95}},
+  //     {name: 'DDDD', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
   //   ]
   // },
   {
     title: 'Distribution of some group of Data',
     subtitle: 'Those data are random and harcoded.',
     type: 'groupedBoxPlot',
+    axisY: {
+      name: 'score'
+    },
     series: [
       {
         name: 'AA',
