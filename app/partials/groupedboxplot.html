@@ -32,12 +32,24 @@
           ng-attr-y="{{chartData.yScale(serie.mean) - 10}}" 
           width="20" height="5"
         />
+        <text class="mean-label"
+          ng-attr-x="{{chartData.x2Scale(serie.name) + 20}}" 
+          ng-attr-y="{{chartData.yScale(serie.mean)}}" 
+          >
+        {{serie.mean|round}}
+        </text>
         <!-- add a rectangle for the median -->
         <rect class="median"
           ng-attr-x="{{chartData.x2Scale(serie.name) - 5}}" 
           ng-attr-y="{{chartData.yScale(serie.median) - 5}}" 
           width="10" height="10"
         />
+        <text class="median-label"
+          ng-attr-x="{{chartData.x2Scale(serie.name) + 10}}" 
+          ng-attr-y="{{chartData.yScale(serie.median)}}" 
+          >
+        {{serie.median|round}}
+        </text>
       </g>
     </g>
 

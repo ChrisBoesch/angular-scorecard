@@ -154,6 +154,7 @@
           yDomain.sort(d3.ascending);
           // TODO: Fix  hardcoded Domain low
           yDomain = [0].concat(yDomain.slice(-1));
+          yDomain[1] *= 1.1;
 
           // Set scales
           chart.xScale = d3.scale.ordinal().
@@ -171,13 +172,45 @@
 
         'pie': function(chart, width, height) {
           // TODO: check number of item in serie (<20)
-          var d3 = $window.d3;
+          var d3 = $window.d3,
+            percentage = d3.scale.linear().
+              domain([0, d3.sum(chart.series, function(d){ return d.data; })]).
+              range([0,1]),
+            formatter = d3.format(".01%");
 
-          chart.svg=SVG(SVG_MARGIN, width, height);
+          chart.svg=SVG(
+            {
+              top: 10,
+              right: 50,
+              bottom: 10,
+              left: 50
+            },
+            width,
+            height
+          );
 
           chart.pieData = d3.layout.pie().
             value(function(d){return d.data;})(chart.series);
           chart.colors = d3.scale.category20();
+          chart.percentage = function(d){
+            var p = percentage(d);
+            return formatter(p);
+          };
+          chart.rotateTicks = function(s) {
+            return (s.startAngle + s.endAngle) / 2 * (180/Math.PI);
+          };
+          chart.labelPosition = function(s) {
+            var a = (s.startAngle + s.endAngle - Math.PI)/2,
+              r = chart.svg.inWidth/2;
+            return [Math.cos(a) * (r+10), Math.sin(a) * (r+10)];
+          };
+          chart.labelAnchor = function(s) {
+            if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
+              return "beginning";
+            } else {
+              return "end";
+            }
+          };
           chart.arc = d3.svg.arc()
             .startAngle(function(d){ return d.startAngle; })
             .endAngle(function(d){ return d.endAngle; })

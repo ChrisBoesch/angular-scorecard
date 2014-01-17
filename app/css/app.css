@@ -4,6 +4,10 @@
   transition: all 0.4s ease 0s;
 }
 
+#page-content-wrapper .container {
+  width: auto;
+}
+
 #sidebar-wrapper {
   margin-left: -250px;
   left: 250px;
@@ -119,8 +123,21 @@ line.axis {
   stroke-width:1;
 }
 
-.scale text {
+svg text {
   font-size: 18px;
+}
+
+.median-label, .mean-label {
+  text-anchor: start;
+}
+
+.median-label {
+  alignment-baseline: middle;
+}
+
+.bar-label {
+  text-anchor: middle;
+  alignment-baseline: middle;
 }
 
 .y-scale .tick text {
