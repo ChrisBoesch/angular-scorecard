@@ -7642,7 +7642,7 @@ svg text {
   font-size: 18px;
 }
 
-.y-axis-label text {
+.y-scale text.axis-title {
   text-anchor: middle;
   font-weight: 800;
 }
@@ -7660,12 +7660,12 @@ svg text {
   alignment-baseline: middle;
 }
 
-.y-scale .tick text {
+.y-scale text {
   alignment-baseline: middle;
   text-anchor: end;
 }
 
-.x-scale .tick text {
+.x-scale text {
   alignment-baseline: hanging;
   text-anchor: middle
 }

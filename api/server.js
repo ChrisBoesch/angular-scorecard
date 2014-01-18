@@ -50,17 +50,20 @@ var DATA = [
       }
     ]
   },
-  // {
-  //   title: 'Proportion of Some group of Data',
-  //   subtitle: 'Those data are random and harcoded.',
-  //   type: 'groupedBar',
-  //   series: [
-  //     {name: 'AAAA', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-  //     {name: 'BBBB', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-  //     {name: 'CCCC', data: {'c1': 98, 'c2': 29, 'c4': 95}},
-  //     {name: 'DDDD', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-  //   ]
-  // },
+  {
+    title: 'Proportion of Some group of Data',
+    subtitle: 'Those data are random and harcoded.',
+    type: 'groupedBar',
+    axisY: {
+      name: 'Percentage (%)'
+    },
+    series: [
+      {name: 'AAAA', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+      {name: 'BBBB', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+      {name: 'CCCC', data: {'c1': 98, 'c2': 29, 'c4': 95}},
+      {name: 'DDDD', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+    ]
+  },
   {
     title: 'Distribution of some group of Data',
     subtitle: 'Those data are random and harcoded.',
