@@ -16,7 +16,7 @@
      *
      * Usage:
      *
-     *  <svg my-view-box="someScopeProperty"/>
+     *  <svg viewBox="0 0 10 10" my-view-box="someScopeProperty"/>
      *
      * where `$scope.someScopeProperty == {width: 100, height: 100}`
      *
@@ -52,6 +52,7 @@
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
         'bar': TPL_PATH + '/bar.html',
+        'groupedBar': TPL_PATH + '/groupedbar.html',
         'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
@@ -101,7 +102,7 @@
             bottom: SVG_MARGIN.bottom + 40,
             left: SVG_MARGIN.left
           }, width, height);
-          console.log(chart.svg);
+          
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
             for (var j = 0; j < data[i].series.length; j++) {
@@ -167,7 +168,58 @@
           chart.yScaleReversed = d3.scale.linear().
             domain(yDomain).
             range([chart.svg.inHeight, 0]).
-            nice(100);
+            nice();
+        },
+
+        'groupedBar': function(chart, width, height) {
+          var d3 = $window.d3,
+            xNestedDomain = [],
+            xNestedDomainPseudoSet = {},
+            xDomain = [],
+            yDomain = [],
+            entries,
+            data = chart.series;
+          
+          chart.svg=SVG({
+            top: 30,
+            right: 30,
+            bottom: 60,
+            left: 70
+          }, width, height);
+
+          // Calculate min, max, median of ranges and set the domains
+          for (var i = 0; i < data.length; i++) {
+            xDomain.push(data[i].name);
+            entries = d3.entries(data[i].data);
+            for (var j = 0; j < entries.length; j++) {
+              yDomain.push(entries[j].value);
+              xNestedDomainPseudoSet[entries[j].key] = 1;
+            }
+          }
+          yDomain.sort(d3.ascending);
+          // TODO: Fix  hardcoded Domain low
+          yDomain = [0].concat(yDomain.slice(-1));
+          xNestedDomain = d3.keys(xNestedDomainPseudoSet);
+
+          // Set scales
+          chart.xScale = d3.scale.ordinal().
+            domain(xDomain).
+            rangeBands([0, chart.svg.inWidth], 0, 0);
+          chart.xNestedScale = d3.scale.ordinal().
+            domain(xNestedDomain).
+            rangeBands([0, chart.svg.inWidth/data.length], 0, 0.5);
+          chart.colors = d3.scale.category20();
+          chart.legendScale = d3.scale.ordinal().
+            domain(xNestedDomain).
+            rangeBands([0, chart.svg.inWidth], 0.5, 0.5);
+          chart.yScale = d3.scale.linear().
+            domain(yDomain).
+            range([0, chart.svg.inHeight]).
+            nice();
+          chart.yScaleReversed = d3.scale.linear().
+            domain(yDomain).
+            range([chart.svg.inHeight, 0]).
+            nice();
         },
 
         'pie': function(chart, width, height) {

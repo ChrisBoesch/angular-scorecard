@@ -9,7 +9,7 @@ var DELAY = process.env.DELAY || 1000;
 // Random data to serve
 var DATA = [
   {
-    title: 'Distribution of some Data',
+    title: 'Title1 Example',
     subtitle: 'The description of the graph that can be about two lines long ' +
                 'usually so it is shown as wrapped here.',
     type: 'boxPlot',
@@ -23,12 +23,12 @@ var DATA = [
     ]
   },
   {
-    title: 'Two Charts',
+    title: 'Title 2 This is how the other screen should look with a title like this one',
     type: 'combined',
     series: [
       {
         type: 'bar',
-        subtitle: 'First chart',
+        subtitle: 'The Bar Chart Header',
         axisY: {
           name: 'Number',
           min: 0,
@@ -40,7 +40,7 @@ var DATA = [
       },
       {
         type: 'pie',
-        subtitle: 'Second chart',
+        subtitle: 'The Pie Chart Header',
         series: [
           {name: 'AAAAAA', data:  40},
           {name: 'BBBBBB', data:  110},
@@ -50,20 +50,23 @@ var DATA = [
       }
     ]
   },
-  // {
-  //   title: 'Proportion of Some group of Data',
-  //   subtitle: 'Those data are random and harcoded.',
-  //   type: 'groupedBar',
-  //   series: [
-  //     {name: 'AAAA', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-  //     {name: 'BBBB', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-  //     {name: 'CCCC', data: {'c1': 98, 'c2': 29, 'c4': 95}},
-  //     {name: 'DDDD', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-  //   ]
-  // },
   {
-    title: 'Distribution of some group of Data',
-    subtitle: 'Those data are random and harcoded.',
+    title: 'Title 3 For these type of views there is this bolded text at the top and usually about three lines of text which I am simulating by typing a lot of words.',
+    subtitle: 'Here We Have the Title of the Slide',
+    type: 'groupedBar',
+    axisY: {
+      name: 'Percentage (%)'
+    },
+    series: [
+      {name: 'AAAA', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+      {name: 'BBBB', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+      {name: 'CCCC', data: {'c1': 98, 'c2': 29, 'c4': 95}},
+      {name: 'DDDD', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+    ]
+  },
+  {
+    title: 'This is Title 4',
+    subtitle: 'This description could also be one or two lines long. Notice the two level categories in the X axis',
     type: 'groupedBoxPlot',
     axisY: {
       name: 'score'

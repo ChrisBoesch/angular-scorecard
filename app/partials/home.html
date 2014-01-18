@@ -1,12 +1,16 @@
-<div id="page-content-wrapper">
-  <div class="content-header">
-    <h1>
-      #{{label}} {{data.title}}
-    </h1>
+<div id="page-content-wrapper" class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>
+        #{{label}}. {{data.title}}
+      </h2>
+    </div>
   </div>
   <!-- Keep all page content within the page-content inset div! -->
-  <div class="page-content inset" style="max-height: 400px">
-    <wave-spinner ng-show="loading"></wave-spinner>
-    <my-chart chart-data="data"></my-graph>
+  <div class="page-content inset row" style="max-height: 450px">
+    <div class="col-md-12">
+      <wave-spinner ng-show="loading"></wave-spinner>
+      <my-chart chart-data="data"></my-chart>
+    </div>
   </div>
 </div>
