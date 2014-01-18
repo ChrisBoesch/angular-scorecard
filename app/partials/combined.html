@@ -1,8 +1,6 @@
-<div class="container">
-	<div class="row">
-		
-		<div class="col-md-{{12 / chartData.series.length}}" ng-repeat="c in chartData.series">
-			<my-chart chart-data="c" svg-width="chartData.svg.width / chartData.series.length"></my-graph>
-		</div>
+
+<div class="row">
+	<div class="col-md-{{12 / chartData.series.length}}" ng-repeat="c in chartData.series">
+		<my-chart chart-data="c" svg-width="chartData.svg.width / chartData.series.length"></my-graph>
 	</div>
 </div>
