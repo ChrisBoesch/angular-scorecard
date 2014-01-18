@@ -44120,7 +44120,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
      *
      * Usage:
      *
-     *  <svg my-view-box="someScopeProperty"/>
+     *  <svg viewBox="0 0 10 10" my-view-box="someScopeProperty"/>
      *
      * where `$scope.someScopeProperty == {width: 100, height: 100}`
      *
