@@ -17,7 +17,7 @@
       </g>
       <!-- TODO: calculate position -->
       <g ng-if="chartData.axisY && chartData.axisY.name"
-        transform="translate(-50, {{chartData.svg.inHeight/2}})"
+        ng-attr-transform="translate(-50, {{chartData.svg.inHeight/2}})"
       >
         <text class="axis-title" transform="rotate(-90)">{{chartData.axisY.name}}</text>
       </g>
