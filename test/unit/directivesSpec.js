@@ -4,15 +4,16 @@
   'use strict';
 
   describe('directives', function(){
-    var $compile, $rootScope, $httpBackend, svg;
+    var $compile, $rootScope, $httpBackend, svg, d3;
 
     beforeEach(module('myApp.directives'));
 
-    beforeEach(inject(function(_$compile_, _$rootScope_, _$httpBackend_, SVG){
+    beforeEach(inject(function(_$compile_, _$rootScope_, _$httpBackend_, SVG, $window){
       $compile = _$compile_;
       $rootScope = _$rootScope_;
       $httpBackend = _$httpBackend_;
-      svg = SVG();
+      d3 = $window.d3;
+      $rootScope.svg = svg = SVG();
     }));
 
     describe('scViewBox', function(){
@@ -41,7 +42,79 @@
         expect(element.find('text').text()).toBe('bar');
 
       });
+
+    });
+
+    describe('scRAxis', function() {
       
+      beforeEach(inject(function(SVG) {
+        $rootScope.svg = SVG({top:10, right:10, bottom:10, left:10}, 120, 120);
+        $rootScope.yScale = d3.scale.linear().domain([0,100]).range([100, 0]);
+        $rootScope.title = "Something";
+      }));
+
+      it('should set the axis line', function() {
+        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var axis = element.find('line.axis');
+        expect(axis.length).toBe(1);
+        expect(axis.attr('x1')).toBe('0');
+        expect(axis.attr('x2')).toBe('0');
+        expect(axis.attr('y1')).toBe('-5');
+        expect(axis.attr('y2')).toBe('105');
+        
+      });
+
+      it('should set the axis ticks', function() {
+        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var ticks = element.find('g.tick');
+        expect(ticks.length).toBe(6);
+        expect(ticks.get(0).getAttribute('transform')).toBe('translate(0,100)');
+        expect(ticks.get(1).getAttribute('transform')).toBe('translate(0,80)');
+        expect(ticks.get(2).getAttribute('transform')).toBe('translate(0,60)');
+        expect(ticks.get(3).getAttribute('transform')).toBe('translate(0,40)');
+        expect(ticks.get(4).getAttribute('transform')).toBe('translate(0,20)');
+        expect(ticks.get(5).getAttribute('transform')).toBe('translate(0,0)');
+        expect(ticks.find('line').attr('x1')).toBe('-5');
+        expect(ticks.find('line').attr('x2')).toBe('0');
+        expect(ticks.find('line').attr('y1')).toBe('0');
+        expect(ticks.find('line').attr('y2')).toBe('0');
+      });
+
+      it('should set the axis rulers', function() {
+        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var rulers = element.find('line.ruler');
+        expect(rulers.length).toBe(6);
+        expect(rulers.get(0).getAttribute('transform')).toBe('translate(0,100)');
+        expect(rulers.get(1).getAttribute('transform')).toBe('translate(0,80)');
+        expect(rulers.get(2).getAttribute('transform')).toBe('translate(0,60)');
+        expect(rulers.get(3).getAttribute('transform')).toBe('translate(0,40)');
+        expect(rulers.get(4).getAttribute('transform')).toBe('translate(0,20)');
+        expect(rulers.get(5).getAttribute('transform')).toBe('translate(0,0)');
+        expect(rulers.attr('x1')).toBe('0');
+        expect(rulers.attr('x2')).toBe('100');
+        expect(rulers.attr('y1')).toBe('0');
+        expect(rulers.attr('y2')).toBe('0');
+      });
+
+      it('should set the axis title', function() {
+        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg" title="title"></g>')($rootScope);
+
+        $rootScope.$apply();
+
+        var title = element.find('g.title');
+        var text = title.find('text');
+
+        expect(title.get(0).getAttribute('transform')).toBe('translate(-10,50)');
+        expect(text.get(0).getAttribute('transform')).toBe('rotate(-90)');
+        expect(text.text()).toBe('Something');
+        
+      });
     });
 
     describe('myChart', function(){

@@ -2,24 +2,7 @@
 <svg sc-view-box="chartData.svg">
   <!-- Draw the y axis and the ticks -->
   <!-- TODO: label axis at add units to ticks -->
-  <g class="y-scale scale">
-    <line class="axis y-axis" x1="0" ng-attr-y1="{{chartData.svg.inHeight+5}}" x2="0" y2="0"/>
-    
-    <!-- let d3 calculate the tick values -->
-    <g class="tick" ng-repeat="t in chartData.yScale.ticks(6)">
-      <line
-        ng-attr-x1="{{chartData.svg.inWidth}}" ng-attr-y1="{{chartData.yScale(t)}}"
-        x2="-5" ng-attr-y2="{{chartData.yScale(t)}}"
-      />
-      <text x="-10" ng-attr-y="{{chartData.yScale(t)}}">{{t}}</text>
-    </g>
-    <!-- TODO: calculate position -->
-    <g ng-if="chartData.axisY && chartData.axisY.name"
-      ng-attr-transform="translate(-50, {{chartData.svg.inHeight/2}})"
-    >
-      <text class="axis-title" transform="rotate(-90)">{{chartData.axisY.name}}</text>
-    </g>
-  </g>
+  <g sc-r-axis="chartData.yScale" sc-layout="chartData.svg" title="chartData.axisY.name"></g>
 
   <!-- Draw x axis, its ticks and rulers -->
   <!-- TODO: label axis at add units to ticks -->

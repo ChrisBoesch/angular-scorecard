@@ -44116,15 +44116,13 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
      *  <svg ng-attr-viewBox="0 0 {{100}} {{100}}"/>
      *
      * Angular would produce the correct attribute but it would have no effect. 
-     * This directive edit the viewBox.baseVal proporty directly.
+     * This directive edit the viewBox.baseVal property directly.
      *
      * Usage:
      *
-     *  <svg sc-view-box="someScopeProperty"/>
+     *  <svg sc-view-box="layout"/>
      *
-     * where `$scope.someScopeProperty == {width: 100, height: 100, margin:{top:10, left:20}}`
-     *
-     * TODO: write test.
+     * where `$scope.layout == {width: 100, height: 100, margin:{top:10, left:20}}`
      * 
      */
     directive('scViewBox', function(SVG){
@@ -44137,19 +44135,47 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
           element.get(0).setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
           scope.$watch('viewBox', function(){
-            var settings = scope.viewBox || SVG();
+            var vb = scope.viewBox || SVG();
 
             element.get(0).setAttribute(
               'viewBox',
-              [
-                -settings.margin.left,
-                -settings.margin.top,
-                settings.width,
-                settings.height
-              ].join(' ')
+              [-vb.margin.left, -vb.margin.top, vb.width, vb.height].join(' ')
             );
 
           });
+        }
+      };
+    }).
+
+    /**
+     * Build a axis on the right of a chart.
+     *
+     * Draw the axis, the axis label, the ticks and the thicks labels.
+     * 
+     */
+    directive('scRAxis', function($window) {
+      return {
+        template: '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>\n'+
+          '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
+          '<g class="tick" ng-repeat="tick in scale.ticks(6)" ng-attr-transform="translate(0,{{scale(tick)}})">\n'+
+          ' <line x1="-5" x2="0" y1="0" y2="0"/>\n'+
+          ' <text dx="-6">{{tick}}</text>\n'+
+          '</g>\n'+
+          '<g class="title" ng-attr-transform="translate({{-layout.margin.left}},{{layout.inHeight/2}})">\n'+
+          ' <text transform="rotate(-90)" ng-attr-textLength="{{layout.inHeight}}" lengthAdjust="spacingAndGlyphs">{{title()}}</text>\n'+
+          '</g>',
+        scope: {
+          scale: '=scRAxis',
+          layout: '=scLayout',
+          title: '&?'
+        },
+        link: function(scope, el) {
+          var svgEl = $window.d3.select(el.get(0));
+          svgEl.classed('axis', true);
+          svgEl.classed('y-axis', true);
+          console.dir(scope.scale);
+          console.dir(scope.layout);
+          console.dir(scope.title);
         }
       };
     }).
@@ -44179,7 +44205,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             yDomain = [],
             data = chart.series;
           
-          chart.svg=SVG(SVG_MARGIN, width, height);
+          chart.svg=SVG({top: 10, right: 30, bottom: 30, left: 50}, width, height);
 
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
@@ -44454,8 +44480,9 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
   angular.module('myApp.filters', ['myApp.config']).
 
     filter('round', function($window){
-      return function(v) {
-        return $window.d3.round(v,1);
+      return function(v, p) {
+        p = p || 0;
+        return $window.d3.round(v,p);
       };
     })
     
@@ -44488,6 +44515,12 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
         $scope.data = resp;
         $scope.loading = false;
       });
+    }).
+
+    controller('PlayCtrl', function($scope, SVG,$window){
+      $scope.svg = SVG({top:20, right:10, bottom:10, left:50}, 160, 130);
+      $scope.yScale = $window.d3.scale.linear().domain([0,100]).range([100, 0]);
+      $scope.title="Percentage (%)";
     })
 
   ;
