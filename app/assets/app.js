@@ -44120,24 +44120,36 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
      *
      * Usage:
      *
-     *  <svg viewBox="0 0 10 10" my-view-box="someScopeProperty"/>
+     *  <svg sc-view-box="someScopeProperty"/>
      *
-     * where `$scope.someScopeProperty == {width: 100, height: 100}`
+     * where `$scope.someScopeProperty == {width: 100, height: 100, margin:{top:10, left:20}}`
      *
      * TODO: write test.
      * 
      */
-    directive('myViewBox', function(){
+    directive('scViewBox', function(SVG){
       return {
         scope: {
-          'dimension': '=myViewBox'
+          'viewBox': '=?scViewBox'
         },
         link: function(scope, element) {
-          var svg;
+          
+          element.get(0).setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-          svg = element.get(0);
-          svg.viewBox.baseVal.width = scope.dimension.width;
-          svg.viewBox.baseVal.height = scope.dimension.height;
+          scope.$watch('viewBox', function(){
+            var settings = scope.viewBox || SVG();
+
+            element.get(0).setAttribute(
+              'viewBox',
+              [
+                -settings.margin.left,
+                -settings.margin.top,
+                settings.width,
+                settings.height
+              ].join(' ')
+            );
+
+          });
         }
       };
     }).
@@ -44407,8 +44419,6 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             if (factories[gType]) {
               factories[gType](scope.chartData, width, height);
             }
-
-            console.dir(scope.chartData);
 
           });
         }

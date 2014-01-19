@@ -1,33 +1,31 @@
 <h3 class="desc">{{chartData.subtitle}}</h3>
-<svg viewBox="0 0 10 10" my-view-box="chartData.svg" preserveAspectRatio="xMidYMid">
-	<g ng-attr-transform="translate({{chartData.svg.margin.left}},{{chartData.svg.margin.top}})">
-		<g ng-attr-transform="translate({{chartData.svg.inWidth / 2}},{{chartData.svg.inHeight / 2}})">
-			<g class="arcs" ng-repeat="a in chartData.pieData">
-				<path
-					ng-attr-d={{chartData.arc(a)}}
-					ng-attr-style="fill: {{chartData.colors(a.data.name)}};"
-					/>
-			</g>
-			<g class="labels" ng-repeat="a in chartData.pieData">
-				<text class="percentage"
-					ng-attr-transform="translate({{chartData.arc.centroid(a).join(',')}})"
-					dy=".35em"
-					style="text-anchor: middle"
-					>
-					{{chartData.percentage(a.data.data)}}
-				</text>
-			</g>
+<svg sc-view-box="chartData.svg">
+	<g ng-attr-transform="translate({{chartData.svg.inWidth / 2}},{{chartData.svg.inHeight / 2}})">
+		<g class="arcs" ng-repeat="a in chartData.pieData">
+			<path
+				ng-attr-d={{chartData.arc(a)}}
+				ng-attr-style="fill: {{chartData.colors(a.data.name)}};"
+				/>
 		</g>
+		<g class="labels" ng-repeat="a in chartData.pieData">
+			<text class="percentage"
+				ng-attr-transform="translate({{chartData.arc.centroid(a).join(',')}})"
+				dy=".35em"
+				style="text-anchor: middle"
+				>
+				{{chartData.percentage(a.data.data)}}
+			</text>
+		</g>
+	</g>
 
-		<g class="legend" ng-repeat="a in chartData.pieData"
-			ng-attr-transform="translate({{chartData.legendXAnchor}}, {{chartData.svg.height - (chartData.pieData.length - $index) * 20 - 15}})"
-		>
-			<rect
-				width="12"
-				height="12"
-				ng-attr-style="fill: {{chartData.colors(a.data.name)}}"
-			/>
-			<text dx="20" dy="12" style="alignment-baseline: auto">{{a.data.name}}</text>
-		</g>
+	<g class="legend" ng-repeat="a in chartData.pieData"
+		ng-attr-transform="translate({{chartData.legendXAnchor}}, {{chartData.svg.height - (chartData.pieData.length - $index) * 20 - 15}})"
+	>
+		<rect
+			width="12"
+			height="12"
+			ng-attr-style="fill: {{chartData.colors(a.data.name)}}"
+		/>
+		<text dx="20" dy="12" style="alignment-baseline: auto">{{a.data.name}}</text>
 	</g>
 </svg>
