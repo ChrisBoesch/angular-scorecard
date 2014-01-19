@@ -7632,21 +7632,21 @@ svg text {
 }
 
 .median-label {
-  alignment-baseline: middle;
+  dominant-baseline: middle;
 }
 
 .bar-label {
   text-anchor: middle;
-  alignment-baseline: middle;
+  dominant-baseline: middle;
 }
 
 .y-scale text {
-  alignment-baseline: middle;
+  dominant-baseline: middle;
   text-anchor: end;
 }
 
 .x-scale text {
-  alignment-baseline: hanging;
+  dominant-baseline: hanging;
   text-anchor: middle
 }
 
