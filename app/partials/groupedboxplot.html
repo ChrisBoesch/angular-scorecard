@@ -1,5 +1,9 @@
 <h3 class="desc">{{chartData.subtitle}}</h3>
 <svg sc-view-box="chartData.svg">
+  
+  <!-- Draw the y axis and the ticks -->
+  <g sc-r-axis="chartData.yScale" sc-layout="chartData.svg" title="chartData.axisY.name"></g>
+
   <!-- Draw the representation of the series distribution -->
   <g class="grouped-serie" ng-repeat="gserie in chartData.series">
     <g class="serie" ng-repeat="serie in gserie.series">
@@ -50,9 +54,6 @@
       </text>
     </g>
   </g>
-
-  <!-- Draw the y axis and the ticks -->
-  <g sc-r-axis="chartData.yScale" sc-layout="chartData.svg" title="chartData.axisY.name"></g>
 
   <!-- Draw x axis, its ticks and rulers -->
   <!-- TODO: label axis at add units to ticks -->

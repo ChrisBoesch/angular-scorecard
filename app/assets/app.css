@@ -7587,12 +7587,18 @@ h3.desc {
 
 /*** Chart style ***/
 
-/* r-axis style */
+/* axis style */
 
-.y-axis line, .y-axis .tick line {
+.axis line, .axis .tick line {
   stroke: black;
   stroke-width: 1;
 }
+
+.axis .tick line {
+  stroke: #bbb;
+}
+
+/* r-axis style */
 
 .y-axis .tick text {
   dominant-baseline: middle;
@@ -7605,8 +7611,16 @@ h3.desc {
 }
 
 .y-axis .ruler {
-  stroke: gray;
+  stroke: #bbb;
   stroke-width:1;
+}
+
+
+/* b-axis style */
+
+.x-axis .tick text {
+  dominant-baseline: hanging;
+  text-anchor: middle;
 }
 
 

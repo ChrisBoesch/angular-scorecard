@@ -117,6 +117,50 @@
       });
     });
 
+    describe('scBAxis', function() {
+      
+      beforeEach(inject(function(SVG) {
+        $rootScope.svg = SVG({top:10, right:10, bottom:10, left:10}, 120, 120);
+        $rootScope.xScale = d3.scale.ordinal().domain(['A','B','C']).rangePoints([0, 100], 0.5);
+      }));
+
+      it('should set the axis line', function() {
+        var element = $compile('<g sc-b-axis="xScale" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var axis = element.find('line.axis');
+        expect(axis.length).toBe(1);
+        expect(axis.attr('x1')).toBe('-5');
+        expect(axis.attr('x2')).toBe('100');
+        expect(axis.attr('y1')).toBe('0');
+        expect(axis.attr('y2')).toBe('0');
+        
+      });
+
+      it('should set the axis ticks', function() {
+        var element = $compile('<g sc-b-axis="xScale" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var ticks = element.find('g.tick');
+        expect(ticks.length).toBe(3);
+        expect(ticks.get(0).getAttribute('transform')).toBe('translate(10, 100)');
+        expect(ticks.get(1).getAttribute('transform')).toBe('translate(50, 100)');
+        expect(ticks.get(2).getAttribute('transform')).toBe('translate(90, 100)');
+        expect(ticks.find('line').attr('x1')).toBe('0');
+        expect(ticks.find('line').attr('x2')).toBe('0');
+        expect(ticks.find('line').attr('y1')).toBe('0');
+        expect(ticks.find('line').attr('y2')).toBe('5');
+
+        var labels = element.find('g.tick text');
+        expect(labels.length).toBe(3);
+        labels.each(function(i) {
+          // expect A,B,C sequence.
+          expect($(this).text()).toBe(String.fromCharCode(65+i));
+        });
+      });
+
+    });
+
     describe('myChart', function(){
       
       it('should a svg', function() {

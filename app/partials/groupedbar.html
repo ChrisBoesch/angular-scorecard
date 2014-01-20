@@ -1,9 +1,9 @@
 <h3 class="desc">{{chartData.subtitle}}</h3>
 <svg sc-view-box="chartData.svg">
-  <!-- Draw the y axis and the ticks -->
+  <!-- Draw the y axis, ticks and rulers -->
   <g sc-r-axis="chartData.yScaleReversed" sc-layout="chartData.svg" title="chartData.axisY.name"></g>
 
-  <!-- Draw x axis -->
+  <!-- Draw the x axis, ticks and the legend-->
   <g class="x-scale scale" ng-repeat="serie in chartData.series">
     <line class="tick"
       ng-attr-x1="{{chartData.xScale(serie.name) + (chartData.xScale.rangeBand()/2)}}"

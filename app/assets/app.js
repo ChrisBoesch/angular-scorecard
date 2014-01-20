@@ -44151,34 +44151,67 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
      * Build a axis on the right of a chart.
      *
      * Draw the axis, the axis label, the ticks and the thicks labels.
+     *
+     * ex:
+     * 
+     *  <g sc-r-axis="yScale" sc-layout="svg" title="chartName"></g>
+     *
+     * Where yScale would be a quantity d3 quantitative scale.
      * 
      */
     directive('scRAxis', function($window) {
       return {
-        template: '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>\n'+
-          '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
+        template: '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
           '<g class="tick" ng-repeat="tick in scale.ticks(6)" ng-attr-transform="translate(0,{{scale(tick)}})">\n'+
           ' <line x1="-5" x2="0" y1="0" y2="0"/>\n'+
           ' <text dx="-6">{{tick}}</text>\n'+
           '</g>\n'+
           '<g class="title" ng-attr-transform="translate({{-layout.margin.left}},{{layout.inHeight/2}})">\n'+
           ' <text transform="rotate(-90)" ng-attr-textLength="{{layout.inHeight}}" lengthAdjust="spacingAndGlyphs">{{title()}}</text>\n'+
-          '</g>',
+          '</g>'+
+          '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>\n',
         scope: {
           scale: '=scRAxis',
           layout: '=scLayout',
           title: '&?'
         },
-        link: function(scope, el) {
+        link: function(_, el) {
           var svgEl = $window.d3.select(el.get(0));
           svgEl.classed('axis', true);
           svgEl.classed('y-axis', true);
-          console.dir(scope.scale);
-          console.dir(scope.layout);
-          console.dir(scope.title);
         }
       };
     }).
+
+    /**
+     * Build the bottom axis
+     *
+     * ex:
+     * 
+     *  <g sc-b-axis="xScale" sc-layout="svg"></g>
+     *
+     * Where xScale would be a quantity d3 ordinal scale.
+     * 
+     */
+    directive('scBAxis', function($window) {
+      return {
+        template: ' <g class="tick" ng-repeat="name in scale.domain()" transform="translate({{scale(name)}}, {{layout.inHeight}})">'+
+          '  <line x1="0" x2="0" y1="0" y2="5"/>\n'+
+          '  <text dy=".5em">{{name}}</text>\n'+
+          ' </g>'+
+          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+        scope: {
+          scale: '=scBAxis',
+          layout: '=scLayout'
+        },
+        link: function(s, el){
+          var svgEl = $window.d3.select(el.get(0));
+          svgEl.classed('axis', true);
+          svgEl.classed('x-axis', true);
+        }
+      };
+    }).
+    
 
     /**
      * Draw a chart
@@ -44518,9 +44551,8 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
     }).
 
     controller('PlayCtrl', function($scope, SVG,$window){
-      $scope.svg = SVG({top:20, right:10, bottom:10, left:50}, 160, 130);
-      $scope.yScale = $window.d3.scale.linear().domain([0,100]).range([100, 0]);
-      $scope.title="Percentage (%)";
+      $scope.svg = SVG({top:10, right:10, bottom:30, left:10}, 120, 140);
+      $scope.xScales = $window.d3.scale.ordinal().domain(['A','B','C']).rangePoints([0, $scope.svg.inWidth], 0.5);
     })
 
   ;
