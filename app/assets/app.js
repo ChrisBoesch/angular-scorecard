@@ -44422,6 +44422,9 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
           chart.xScale = d3.scale.ordinal().
             domain(xDomain).
             rangeBands([0, chart.svg.inWidth], 0, 0);
+          chart.xAxisScale = d3.scale.ordinal().
+            domain(xDomain).
+            rangePoints([0, chart.svg.inWidth], 1);
           chart.xNestedScale = d3.scale.ordinal().
             domain(xNestedDomain).
             rangeBands([0, chart.svg.inWidth/data.length], 0, 0.5);
