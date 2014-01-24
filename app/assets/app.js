@@ -44211,6 +44211,53 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
         }
       };
     }).
+
+    directive('scBNestedAxis', function($window){
+      return {
+        template: '<g class="axis-0" ng-repeat="name in scale.domain()" ng-attr-transform="translate({{scale(name)}},{{layout.inHeight}})">\n'+
+          '  <g class="tick" ng-attr-transform="translate({{scale.rangeBand()/2}},0)">\n'+
+          '    <line x1="0" x2="0" y1="0" y2="5"/>\n'+
+          '    <text x="0" y="0" dy=".5em">{{name}}</text>\n'+
+          '  </g>\n'+
+          '  <line class="sep" x1="0" y1="0" x2="0" y2="1.8em"/>\n'+
+          '</g>'+
+          '<g class="axis-1" ng-repeat="leaf in tree" ng-attr-transform="translate({{treeScale($index)}},{{layout.inHeight}})">'+
+          '  <line class="sep" x1="0" y1="1.8em" x2="0" y2="3.3em"/>\n'+
+          '  <text class="tick" ng-attr-x="{{treeScale.rangeBand($index)/2}}" y="0" dy="1.8em">{{leaf.root}}</text>\n'+
+          '</g>'+
+          '<line class="sep" x1="0" y1="0" x2="0" y2="3.3em" ng-attr-transform="translate({{layout.inWidth}},{{layout.inHeight}})"/>\n'+
+          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+        scope: {
+          scale: '=scBNestedAxis',
+          tree: '=scTree',
+          layout: '=scLayout'
+        },
+        link: function(s, el){
+          var svgEl = $window.d3.select(el.get(0));
+          svgEl.classed('axis', true);
+          svgEl.classed('x-axis', true);
+          svgEl.classed('nested-axis', true);
+
+          s.treeScale = function(index) {
+            var c = 0;
+            
+            if (index === 0) {
+              return 0;
+            }
+
+            for (var i = 1; i <= index; i++) {
+              c += s.tree[index - i].children.length;
+            }
+            
+            return s.scale.rangeBand() * c;
+          };
+
+          s.treeScale.rangeBand = function(index) {
+            return s.scale.rangeBand() * s.tree[index].children.length;
+          };
+        }
+      };
+    }).
     
 
     /**
@@ -44266,8 +44313,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 
         'groupedBoxPlot': function(chart, width, height) {
           var d3 = $window.d3,
-            x1Domain = [],
-            x2Domain = [],
+            leaf,
             yDomain = [],
             data = chart.series;
           
@@ -44277,9 +44323,14 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             bottom: SVG_MARGIN.bottom + 40,
             left: SVG_MARGIN.left
           }, width, height);
+
+          chart.xScale = d3.scale.ordinal();
+          chart.yScale = d3.scale.linear();
+          chart.xTree = [];
           
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
+            leaf = {'root': data[i].name, 'children': []};
             for (var j = 0; j < data[i].series.length; j++) {
               data[i].series[j].data.sort(d3.ascending);
               data[i].series[j].min = data[i].series[j].data[0];
@@ -44289,27 +44340,18 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 
               yDomain.push(data[i].series[j].min);
               yDomain.push(data[i].series[j].max);
-              x2Domain.push(data[i].series[j].name);
+              chart.xScale(data[i].series[j].name);
+              leaf.children.push(data[i].series[j].name);
             }
-            
-            x1Domain.push(data[i].name);
+            chart.xTree.push(leaf);
           }
 
           yDomain.sort(d3.ascending);
           yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
 
           // Set scales
-          chart.x1Scale = d3.scale.ordinal().
-            domain(x1Domain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.x2Scale = d3.scale.ordinal().
-            domain(x2Domain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.x3Scale = d3.scale.ordinal().
-            domain(d3.range(x1Domain.length + 1)).
-            rangePoints([0, chart.svg.inWidth], 0);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
+          chart.xScale = chart.xScale.rangeBands([0, chart.svg.inWidth], 0, 0);
+          chart.yScale = chart.yScale.domain(yDomain).
             range([chart.svg.inHeight, 0]).
             nice();
         },

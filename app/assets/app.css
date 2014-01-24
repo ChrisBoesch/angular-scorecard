@@ -7618,7 +7618,7 @@ h3.desc {
 
 /* b-axis style */
 
-.x-axis .tick text {
+.x-axis .tick text, .x-axis text.tick {
   dominant-baseline: hanging;
   text-anchor: middle;
 }

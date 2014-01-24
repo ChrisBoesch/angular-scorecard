@@ -161,6 +161,70 @@
 
     });
 
+    describe('scBNestedAxis', function() {
+      beforeEach(inject(function(SVG) {
+        $rootScope.svg = SVG({top:10, right:10, bottom:40, left:10}, 120, 150);
+        $rootScope.xScale = d3.scale.ordinal().domain(['A','B','C','D']).rangeBands([0, 100], 0, 0);
+        $rootScope.xTree = [
+          {'root': 'AB', 'children': ['A','B']},
+          {'root': 'CD', 'children': ['C','D']}
+        ];
+      }));
+
+      it('should set the axis line', function() {
+        var element = $compile('<g sc-b-nested-axis="xScale" sc-tree="xTree" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var axis = element.find('line.axis');
+        expect(axis.length).toBe(1);
+        expect(axis.attr('x1')).toBe('-5');
+        expect(axis.attr('x2')).toBe('100');
+        expect(axis.attr('y1')).toBe('0');
+        expect(axis.attr('y2')).toBe('0');
+      });
+
+      it('should set the axis ticks', function() {
+        var element = $compile('<g sc-b-nested-axis="xScale" sc-tree="xTree" sc-layout="svg"></g>')($rootScope);
+
+        $rootScope.$apply();
+        var firstAxis = element.find('.axis-0');
+        expect(firstAxis.length).toBe(4);
+        expect(firstAxis.get(0).getAttribute('transform')).toBe('translate(0,100)');
+        expect(firstAxis.get(1).getAttribute('transform')).toBe('translate(25,100)');
+        expect(firstAxis.get(2).getAttribute('transform')).toBe('translate(50,100)');
+        expect(firstAxis.get(3).getAttribute('transform')).toBe('translate(75,100)');
+        
+        var ticks = firstAxis.find('g.tick');
+        
+        expect(ticks.length).toBe(4);
+        expect(ticks.find('text').length).toBe(4);
+        expect(ticks.find('line').length).toBe(4);
+        ticks.each(function(i){
+          var label = $(this).find('text');
+          var line = $(this).find('line');
+
+          expect($(this).get(0).getAttribute('transform')).toBe('translate(12.5,0)');
+          expect(label.text()).toBe(String.fromCharCode(65+i));
+          expect(label.get(0).getAttribute('x')).toBe("0");
+          expect(label.get(0).getAttribute('y')).toBe("0");
+          expect(label.get(0).getAttribute('dy')).toBe(".5em");
+
+          expect(line.get(0).getAttribute('x1')).toBe("0");
+          expect(line.get(0).getAttribute('x2')).toBe("0");
+          expect(line.get(0).getAttribute('y1')).toBe("0");
+          expect(line.get(0).getAttribute('y2')).toBe("5");
+          
+        });
+
+        var secondAxis = element.find('.axis-1');
+        expect(secondAxis.length).toBe(2);
+        expect(secondAxis.find('text').text()).toBe('ABCD');
+        expect(secondAxis.find('text').first().text()).toBe('AB');
+      });
+
+
+    });
+
     describe('myChart', function(){
       
       it('should a svg', function() {
