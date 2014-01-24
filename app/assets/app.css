@@ -7585,7 +7585,46 @@ h3.desc {
   text-align: center;
 }
 
-/* Chart style */
+/*** Chart style ***/
+
+/* axis style */
+
+.axis line, .axis .tick line {
+  stroke: black;
+  stroke-width: 1;
+}
+
+.axis .tick line {
+  stroke: #bbb;
+}
+
+/* r-axis style */
+
+.y-axis .tick text {
+  dominant-baseline: middle;
+  text-anchor: end;
+}
+
+.y-axis .title text {
+  text-anchor: middle;
+  font-weight: 800;
+}
+
+.y-axis .ruler {
+  stroke: #bbb;
+  stroke-width:1;
+}
+
+
+/* b-axis style */
+
+.x-axis .tick text, .x-axis text.tick {
+  dominant-baseline: hanging;
+  text-anchor: middle;
+}
+
+
+/** **/
 
 line.axis {
   stroke: black;
@@ -7622,31 +7661,26 @@ svg text {
   font-size: 18px;
 }
 
-.y-scale text.axis-title {
-  text-anchor: middle;
-  font-weight: 800;
-}
-
 .median-label, .mean-label {
   text-anchor: start;
 }
 
 .median-label {
-  alignment-baseline: middle;
+  dominant-baseline: middle;
 }
 
 .bar-label {
   text-anchor: middle;
-  alignment-baseline: middle;
+  dominant-baseline: middle;
 }
 
 .y-scale text {
-  alignment-baseline: middle;
+  dominant-baseline: middle;
   text-anchor: end;
 }
 
 .x-scale text {
-  alignment-baseline: hanging;
+  dominant-baseline: hanging;
   text-anchor: middle
 }
 

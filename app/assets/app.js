@@ -44116,31 +44116,149 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
      *  <svg ng-attr-viewBox="0 0 {{100}} {{100}}"/>
      *
      * Angular would produce the correct attribute but it would have no effect. 
-     * This directive edit the viewBox.baseVal proporty directly.
+     * This directive edit the viewBox.baseVal property directly.
      *
      * Usage:
      *
-     *  <svg viewBox="0 0 10 10" my-view-box="someScopeProperty"/>
+     *  <svg sc-view-box="layout"/>
      *
-     * where `$scope.someScopeProperty == {width: 100, height: 100}`
-     *
-     * TODO: write test.
+     * where `$scope.layout == {width: 100, height: 100, margin:{top:10, left:20}}`
      * 
      */
-    directive('myViewBox', function(){
+    directive('scViewBox', function(SVG){
       return {
         scope: {
-          'dimension': '=myViewBox'
+          'viewBox': '=?scViewBox'
         },
         link: function(scope, element) {
-          var svg;
+          
+          element.get(0).setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-          svg = element.get(0);
-          svg.viewBox.baseVal.width = scope.dimension.width;
-          svg.viewBox.baseVal.height = scope.dimension.height;
+          scope.$watch('viewBox', function(){
+            var vb = scope.viewBox || SVG();
+
+            element.get(0).setAttribute(
+              'viewBox',
+              [-vb.margin.left, -vb.margin.top, vb.width, vb.height].join(' ')
+            );
+
+          });
         }
       };
     }).
+
+    /**
+     * Build a axis on the right of a chart.
+     *
+     * Draw the axis, the axis label, the ticks and the thicks labels.
+     *
+     * ex:
+     * 
+     *  <g sc-r-axis="yScale" sc-layout="svg" title="chartName"></g>
+     *
+     * Where yScale would be a quantity d3 quantitative scale.
+     * 
+     */
+    directive('scRAxis', function($window) {
+      return {
+        template: '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
+          '<g class="tick" ng-repeat="tick in scale.ticks(6)" ng-attr-transform="translate(0,{{scale(tick)}})">\n'+
+          ' <line x1="-5" x2="0" y1="0" y2="0"/>\n'+
+          ' <text dx="-6">{{tick}}</text>\n'+
+          '</g>\n'+
+          '<g class="title" ng-attr-transform="translate({{-layout.margin.left}},{{layout.inHeight/2}})">\n'+
+          ' <text transform="rotate(-90)" ng-attr-textLength="{{layout.inHeight}}" lengthAdjust="spacingAndGlyphs">{{title()}}</text>\n'+
+          '</g>'+
+          '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>\n',
+        scope: {
+          scale: '=scRAxis',
+          layout: '=scLayout',
+          title: '&?'
+        },
+        link: function(_, el) {
+          var svgEl = $window.d3.select(el.get(0));
+          svgEl.classed('axis', true);
+          svgEl.classed('y-axis', true);
+        }
+      };
+    }).
+
+    /**
+     * Build the bottom axis
+     *
+     * ex:
+     * 
+     *  <g sc-b-axis="xScale" sc-layout="svg"></g>
+     *
+     * Where xScale would be a quantity d3 ordinal scale.
+     * 
+     */
+    directive('scBAxis', function($window) {
+      return {
+        template: ' <g class="tick" ng-repeat="name in scale.domain()" transform="translate({{scale(name)}}, {{layout.inHeight}})">'+
+          '  <line x1="0" x2="0" y1="0" y2="5"/>\n'+
+          '  <text dy=".5em">{{name}}</text>\n'+
+          ' </g>'+
+          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+        scope: {
+          scale: '=scBAxis',
+          layout: '=scLayout'
+        },
+        link: function(s, el){
+          var svgEl = $window.d3.select(el.get(0));
+          svgEl.classed('axis', true);
+          svgEl.classed('x-axis', true);
+        }
+      };
+    }).
+
+    directive('scBNestedAxis', function($window){
+      return {
+        template: '<g class="axis-0" ng-repeat="name in scale.domain()" ng-attr-transform="translate({{scale(name)}},{{layout.inHeight}})">\n'+
+          '  <g class="tick" ng-attr-transform="translate({{scale.rangeBand()/2}},0)">\n'+
+          '    <line x1="0" x2="0" y1="0" y2="5"/>\n'+
+          '    <text x="0" y="0" dy=".5em">{{name}}</text>\n'+
+          '  </g>\n'+
+          '  <line class="sep" x1="0" y1="0" x2="0" y2="1.8em"/>\n'+
+          '</g>'+
+          '<g class="axis-1" ng-repeat="leaf in tree" ng-attr-transform="translate({{treeScale($index)}},{{layout.inHeight}})">'+
+          '  <line class="sep" x1="0" y1="1.8em" x2="0" y2="3.3em"/>\n'+
+          '  <text class="tick" ng-attr-x="{{treeScale.rangeBand($index)/2}}" y="0" dy="1.8em">{{leaf.root}}</text>\n'+
+          '</g>'+
+          '<line class="sep" x1="0" y1="0" x2="0" y2="3.3em" ng-attr-transform="translate({{layout.inWidth}},{{layout.inHeight}})"/>\n'+
+          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+        scope: {
+          scale: '=scBNestedAxis',
+          tree: '=scTree',
+          layout: '=scLayout'
+        },
+        link: function(s, el){
+          var svgEl = $window.d3.select(el.get(0));
+          svgEl.classed('axis', true);
+          svgEl.classed('x-axis', true);
+          svgEl.classed('nested-axis', true);
+
+          s.treeScale = function(index) {
+            var c = 0;
+            
+            if (index === 0) {
+              return 0;
+            }
+
+            for (var i = 1; i <= index; i++) {
+              c += s.tree[index - i].children.length;
+            }
+            
+            return s.scale.rangeBand() * c;
+          };
+
+          s.treeScale.rangeBand = function(index) {
+            return s.scale.rangeBand() * s.tree[index].children.length;
+          };
+        }
+      };
+    }).
+    
 
     /**
      * Draw a chart
@@ -44167,7 +44285,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             yDomain = [],
             data = chart.series;
           
-          chart.svg=SVG(SVG_MARGIN, width, height);
+          chart.svg=SVG({top: 10, right: 30, bottom: 30, left: 50}, width, height);
 
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
@@ -44195,8 +44313,7 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 
         'groupedBoxPlot': function(chart, width, height) {
           var d3 = $window.d3,
-            x1Domain = [],
-            x2Domain = [],
+            leaf,
             yDomain = [],
             data = chart.series;
           
@@ -44206,9 +44323,14 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
             bottom: SVG_MARGIN.bottom + 40,
             left: SVG_MARGIN.left
           }, width, height);
+
+          chart.xScale = d3.scale.ordinal();
+          chart.yScale = d3.scale.linear();
+          chart.xTree = [];
           
           // Calculate min, max, median of ranges and set the domains
           for (var i = 0; i < data.length; i++) {
+            leaf = {'root': data[i].name, 'children': []};
             for (var j = 0; j < data[i].series.length; j++) {
               data[i].series[j].data.sort(d3.ascending);
               data[i].series[j].min = data[i].series[j].data[0];
@@ -44218,27 +44340,18 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 
               yDomain.push(data[i].series[j].min);
               yDomain.push(data[i].series[j].max);
-              x2Domain.push(data[i].series[j].name);
+              chart.xScale(data[i].series[j].name);
+              leaf.children.push(data[i].series[j].name);
             }
-            
-            x1Domain.push(data[i].name);
+            chart.xTree.push(leaf);
           }
 
           yDomain.sort(d3.ascending);
           yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
 
           // Set scales
-          chart.x1Scale = d3.scale.ordinal().
-            domain(x1Domain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.x2Scale = d3.scale.ordinal().
-            domain(x2Domain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.x3Scale = d3.scale.ordinal().
-            domain(d3.range(x1Domain.length + 1)).
-            rangePoints([0, chart.svg.inWidth], 0);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
+          chart.xScale = chart.xScale.rangeBands([0, chart.svg.inWidth], 0, 0);
+          chart.yScale = chart.yScale.domain(yDomain).
             range([chart.svg.inHeight, 0]).
             nice();
         },
@@ -44309,6 +44422,9 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
           chart.xScale = d3.scale.ordinal().
             domain(xDomain).
             rangeBands([0, chart.svg.inWidth], 0, 0);
+          chart.xAxisScale = d3.scale.ordinal().
+            domain(xDomain).
+            rangePoints([0, chart.svg.inWidth], 1);
           chart.xNestedScale = d3.scale.ordinal().
             domain(xNestedDomain).
             rangeBands([0, chart.svg.inWidth/data.length], 0, 0.5);
@@ -44408,8 +44524,6 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
               factories[gType](scope.chartData, width, height);
             }
 
-            console.dir(scope.chartData);
-
           });
         }
       };
@@ -44444,8 +44558,9 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
   angular.module('myApp.filters', ['myApp.config']).
 
     filter('round', function($window){
-      return function(v) {
-        return $window.d3.round(v,1);
+      return function(v, p) {
+        p = p || 0;
+        return $window.d3.round(v,p);
       };
     })
     
@@ -44478,6 +44593,11 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
         $scope.data = resp;
         $scope.loading = false;
       });
+    }).
+
+    controller('PlayCtrl', function($scope, SVG,$window){
+      $scope.svg = SVG({top:10, right:10, bottom:30, left:10}, 120, 140);
+      $scope.xScales = $window.d3.scale.ordinal().domain(['A','B','C']).rangePoints([0, $scope.svg.inWidth], 0.5);
     })
 
   ;
