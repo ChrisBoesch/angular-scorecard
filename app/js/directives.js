@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('myApp.directives', ['myApp.config']).
+  angular.module('myApp.directives', ['myApp.config', 'templates-main']).
 
     /**
      * Directive to set the a `svga element `viewBox` attribute

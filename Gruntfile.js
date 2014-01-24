@@ -106,6 +106,16 @@ module.exports = function(grunt) {
       ]
     },
 
+    html2js: {
+      options: {
+        base: 'app'
+      },
+      main: {
+        src: ['app/partials/**/*.html'],
+        dest: 'app/js/templates.js'
+      },
+    },
+
     concat: {
       styles: {
         dest: './app/assets/app.css',
@@ -131,6 +141,7 @@ module.exports = function(grunt) {
           'bower_components/bootstrap/dist/js/bootstrap.js',
           'bower_components/angular-spinkit/build/angular-spinkit.js',
           'app/js/config.js',
+          'app/js/templates.js',
           'app/js/directives.js',
           'app/js/services.js',
           'app/js/filters.js',
@@ -222,7 +233,7 @@ module.exports = function(grunt) {
   grunt.registerTask('coverage', ['karma:unit_coverage', 'open:coverage', 'connect:coverage']);
 
   //installation-related
-  grunt.registerTask('update', ['shell:npm_install', 'concat', 'copy']);
+  grunt.registerTask('update', ['shell:npm_install', 'html2js', 'concat', 'copy']);
 
   //defaults
   grunt.registerTask('default', ['dev']);

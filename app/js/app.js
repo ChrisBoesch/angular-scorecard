@@ -9,7 +9,8 @@
     'myApp.filters',
     'myApp.services',
     'myApp.directives',
-    'myApp.controllers'
+    'myApp.controllers',
+    'templates-main',
   ]).
 
   config(['$routeProvider', 'TPL_PATH', function($routeProvider, TPL_PATH) {
