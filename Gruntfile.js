@@ -170,7 +170,8 @@ module.exports = function(grunt) {
         tasks: ['concat']
       },
       templates: {
-        files: ['app/partials/**/*.html']
+        files: ['app/partials/**/*.html'],
+        tasks: ['html2js', 'concat']
       }
     },
 
@@ -240,7 +241,7 @@ module.exports = function(grunt) {
 
   //development
   grunt.registerTask('dev', ['update', 'express:api', 'configureProxies:devserver',
-    'connect:devserver', 'watch:assets', 'watch:templates']);
+    'connect:devserver', 'watch']);
 
   //server daemon
   grunt.registerTask('serve', ['connect:webserver']);
