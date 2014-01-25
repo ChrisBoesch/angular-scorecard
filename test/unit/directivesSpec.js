@@ -420,6 +420,102 @@
 
     });
 
+  
+    describe('scBar', function(){
+      beforeEach(function() {
+
+        $rootScope.data = {
+          title: 'Some bars',
+          type: 'bar',
+          subtitle: 'Random data',
+          axisY: {
+            name: 'Number',
+            min: 0,
+          },
+          series: [
+            {name: 'AA', data:  50},
+            {name: 'BBB', data:  100}
+          ]
+        };
+
+      });
+
+      it('should set svg layout', function() {
+        var element;
+        element = $compile('<sc-bar sc-data="data" sc-width="200" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+        var svg = element.find('svg');
+        expect(svg.length).toBe(1);
+        expect(svg.get(0).getAttribute('viewBox')).toEqual('-70 -10 200 180');
+      });
+
+      it('should set xScale', function() {
+        var element;
+        element = $compile('<sc-bar sc-data="data" sc-width="200" sc-height="140"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.xScale.domain()).toEqual(['AA', 'BBB']);
+        expect($rootScope.$$childHead.xScale('AA')).toBe(25);
+        expect($rootScope.$$childHead.xScale('BBB')).toBe(75);
+      });
+
+      it('should set yScale', function() {
+        // TODO: removed harcoded min domain value
+        // to let the data set them.
+        
+        var element;
+        element = $compile('<sc-bar sc-data="data" sc-width="200" sc-height="160"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.yScale.domain()).toEqual([0, 120]);
+        expect($rootScope.$$childHead.yScale(50)).toEqual(50);
+        expect($rootScope.$$childHead.yScale(100)).toEqual(100);
+      });
+
+      it('should set yAxisScale', function() {
+        // TODO: removed harcoded min domain value
+        // to let the data set them.
+        
+        var element;
+        element = $compile('<sc-bar sc-data="data" sc-width="200" sc-height="160"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.yAxisScale.domain()).toEqual([0, 120]);
+        expect($rootScope.$$childHead.yAxisScale(50)).toEqual(70);
+        expect($rootScope.$$childHead.yAxisScale(100)).toEqual(20);
+      });
+
+      it('should draw each serie', function() {
+        
+        var element;
+        element = $compile('<sc-bar sc-data="data" sc-width="200" sc-height="160"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect(element.find('.serie').length).toBe(2);
+        element.find('.serie').each(function(i){
+          var x = 25 * (i+1) + 25 * i;
+          var y = 120 - $rootScope.data.series[i].data;
+          expect(this.getAttribute('transform')).toBe('translate('+ x +',' + y + ')');
+        });
+
+        expect(element.find('.serie rect').length).toBe(2);
+        element.find('.serie rect').each(function(i){
+          expect(this.getAttribute('height')).toBe(''+ $rootScope.data.series[i].data);
+        });
+
+        expect(element.find('.serie text').length).toBe(2);
+        element.find('.serie').each(function(i){
+          expect($(this).text().trim()).toBe(''+ $rootScope.data.series[i].data);
+        });
+      });
+
+    });
+
 
   });
 

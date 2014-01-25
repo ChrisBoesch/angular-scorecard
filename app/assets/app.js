@@ -44251,30 +44251,24 @@ angular.module('angularSpinkit').run(['$templateCache', function($templateCache)
 
 angular.module("partials/bar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/bar.html",
-    "<h3 class=\"desc\">{{chartData.subtitle}}</h3>\n" +
-    "<svg sc-view-box=\"chartData.svg\">\n" +
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg sc-view-box=\"layout\">\n" +
     "\n" +
     "  <!-- Draw the y axis, its ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"chartData.yScaleReversed\" sc-layout=\"chartData.svg\" title=\"chartData.axisY.name\"></g>\n" +
+    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
     "\n" +
-    "  <!-- Draw the representation of the series distribution -->\n" +
-    "  <g class=\"serie\" ng-repeat=\"serie in chartData.series\">\n" +
-    "    <!-- add a rectangle for the median -->\n" +
-    "    <rect class=\"bar\"\n" +
-    "      ng-attr-x=\"{{chartData.xScale(serie.name) - 20}}\" \n" +
-    "      ng-attr-y=\"{{chartData.svg.inHeight - chartData.yScale(serie.data)}}\" \n" +
-    "      width=\"40\" ng-attr-height=\"{{chartData.yScale(serie.data)}}\"\n" +
-    "    />\n" +
-    "    <text class=\"bar-label\"\n" +
-    "      ng-attr-x=\"{{chartData.xScale(serie.name)}}\" \n" +
-    "      ng-attr-y=\"{{chartData.svg.inHeight - chartData.yScale(serie.data) - 10}}\"\n" +
-    "      >\n" +
+    "  <!-- Draw bars and labels-->\n" +
+    "  <g class=\"serie\" ng-repeat=\"serie in data.series\" \n" +
+    "    ng-attr-transform=\"translate({{xScale(serie.name)}},{{layout.inHeight - yScale(serie.data)}})\"\n" +
+    "  >\n" +
+    "    <rect class=\"bar\" x=\"-20\" width=\"40\" ng-attr-height=\"{{yScale(serie.data)}}\"/>\n" +
+    "    <text class=\"bar-label\" dy=\"-10\">\n" +
     "      {{serie.data}}\n" +
     "    </text>\n" +
     "  </g>\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"chartData.xScale\" sc-layout=\"chartData.svg\"></g>\n" +
+    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
     "\n" +
     "</svg>\n" +
     "");
@@ -44473,6 +44467,10 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "      \n" +
     "      <div class=\"chart\" ng-switch-when=\"groupedBoxPlot\">\n" +
     "        <sc-grouped-box-plot sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"bar\">\n" +
+    "        <sc-bar sc-data=\"data\"/>\n" +
     "      </div>\n" +
     "      \n" +
     "    </div>\n" +
@@ -44816,6 +44814,61 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
             // Set scales
             scope.xScale = scope.xScale.rangeBands([0, scope.layout.inWidth], 0, 0);
             scope.yScale = scope.yScale.domain(yDomain).
+              range([scope.layout.inHeight, 0]).
+              nice();
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
+     * Draw a bar chart
+     * 
+     */
+    directive('scBar', function(TPL_PATH, SVG_MARGIN, SVG, $window){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/bar.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange;
+
+          scope.layout=SVG(SVG_MARGIN, scope.width(), scope.height());
+
+          onDataChange = function(){
+            var yDomain = [];
+
+            if (!scope.data || scope.data.type !== 'bar') {
+              return;
+            }
+
+            scope.xScale = d3.scale.ordinal();
+            scope.yScale = d3.scale.linear();
+            scope.yAxisScale = d3.scale.linear();
+
+            for (var i = 0; i < scope.data.series.length; i++) {
+              scope.xScale(scope.data.series[i].name);
+              yDomain.push(scope.data.series[i].data);
+            }
+
+            yDomain.sort(d3.ascending);
+            // TODO: Fix  hardcoded Domain
+            yDomain = [0].concat(yDomain.slice(-1));
+            yDomain[1] *= 1.1;
+            scope.yScale = scope.yScale.domain(yDomain);
+            scope.yAxisScale = scope.yAxisScale.domain(yDomain);
+
+            // Set scales
+            scope.xScale = scope.xScale.rangePoints([0, scope.layout.inWidth], 1);
+            scope.yScale = scope.yScale.range([0, scope.layout.inHeight]).nice();
+            scope.yAxisScale = scope.yAxisScale.
               range([scope.layout.inHeight, 0]).
               nice();
           };

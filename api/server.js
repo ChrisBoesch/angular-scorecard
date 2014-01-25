@@ -50,8 +50,23 @@ var DATA = [
       }
     ]
   },
+
   {
-    title: 'Title 3 For these type of views there is this bolded text at the top and usually about three lines of text which I am simulating by typing a lot of words.',
+    title: 'Title 3 This is how the other screen should look with a title like this one',
+    type: 'bar',
+    subtitle: 'The Bar Chart Header',
+    axisY: {
+      name: 'Number',
+      min: 0,
+    },
+    series: [
+      {name: 'AAAAAA', data:  180},
+      {name: 'BBBBBBB', data:  110}
+    ]
+  },
+
+  {
+    title: 'Title 4 For these type of views there is this bolded text at the top and usually about three lines of text which I am simulating by typing a lot of words.',
     subtitle: 'Here We Have the Title of the Slide',
     type: 'groupedBar',
     axisY: {
@@ -65,7 +80,7 @@ var DATA = [
     ]
   },
   {
-    title: 'This is Title 4',
+    title: 'This is Title 5',
     subtitle: 'This description could also be one or two lines long. Notice the two level categories in the X axis',
     type: 'groupedBoxPlot',
     axisY: {

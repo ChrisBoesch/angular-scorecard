@@ -303,6 +303,61 @@
     }).
 
     /**
+     * Draw a bar chart
+     * 
+     */
+    directive('scBar', function(TPL_PATH, SVG_MARGIN, SVG, $window){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/bar.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange;
+
+          scope.layout=SVG(SVG_MARGIN, scope.width(), scope.height());
+
+          onDataChange = function(){
+            var yDomain = [];
+
+            if (!scope.data || scope.data.type !== 'bar') {
+              return;
+            }
+
+            scope.xScale = d3.scale.ordinal();
+            scope.yScale = d3.scale.linear();
+            scope.yAxisScale = d3.scale.linear();
+
+            for (var i = 0; i < scope.data.series.length; i++) {
+              scope.xScale(scope.data.series[i].name);
+              yDomain.push(scope.data.series[i].data);
+            }
+
+            yDomain.sort(d3.ascending);
+            // TODO: Fix  hardcoded Domain
+            yDomain = [0].concat(yDomain.slice(-1));
+            yDomain[1] *= 1.1;
+            scope.yScale = scope.yScale.domain(yDomain);
+            scope.yAxisScale = scope.yAxisScale.domain(yDomain);
+
+            // Set scales
+            scope.xScale = scope.xScale.rangePoints([0, scope.layout.inWidth], 1);
+            scope.yScale = scope.yScale.range([0, scope.layout.inHeight]).nice();
+            scope.yAxisScale = scope.yAxisScale.
+              range([scope.layout.inHeight, 0]).
+              nice();
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
      * Draw a chart
      *
      * usage:
