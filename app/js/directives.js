@@ -155,6 +155,72 @@
       };
     }).
     
+    /**
+     * scBoxPlot directive
+     *
+     * (not strictly speaking a boxplot, the box is missing)
+     *
+     * usage:
+     *
+     *  <sc-box-plot sc-data="data"/>
+     */
+    directive('scBoxPlot', function(TPL_PATH, SVG, $window) {
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/boxplot.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var onDataChange;
+
+          scope.layout = SVG(
+            {top: 10, right: 30, bottom: 30, left: 50},
+            scope.width(),
+            scope.height()
+          );
+
+          onDataChange = function() {
+            var d3 = $window.d3,
+              xDomain = [],
+              yDomain = [];
+
+            if (!scope.data || scope.data.type !== 'boxPlot') {
+              return;
+            }
+
+            // Calculate min, max, median of ranges and set the domains
+            for (var i = 0; i < scope.data.series.length; i++) {
+              scope.data.series[i].data.sort(d3.ascending);
+              scope.data.series[i].min = scope.data.series[i].data[0];
+              scope.data.series[i].max = scope.data.series[i].data.slice(-1)[0];
+              scope.data.series[i].median = d3.median(scope.data.series[i].data);
+              
+              yDomain.push(scope.data.series[i].min);
+              yDomain.push(scope.data.series[i].max);
+              xDomain.push(scope.data.series[i].name);
+            }
+
+            yDomain.sort(d3.ascending);
+            yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
+
+            // Set scales
+            scope.xScale = d3.scale.ordinal().
+              domain(xDomain).
+              rangePoints([0, scope.layout.inWidth], 1);
+
+            scope.yScale = d3.scale.linear().
+              domain(yDomain).
+              range([scope.layout.inHeight, 0]).
+              nice();
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
 
     /**
      * Draw a chart
@@ -166,7 +232,6 @@
      */
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
-        'boxPlot': TPL_PATH + '/boxplot.html',
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
         'bar': TPL_PATH + '/bar.html',
@@ -174,38 +239,6 @@
         'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'boxPlot': function buildScales(chart, width, height) {
-          var d3 = $window.d3,
-            xDomain = [],
-            yDomain = [],
-            data = chart.series;
-          
-          chart.svg=SVG({top: 10, right: 30, bottom: 30, left: 50}, width, height);
-
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            data[i].data.sort(d3.ascending);
-            data[i].min = data[i].data[0];
-            data[i].max = data[i].data.slice(-1)[0];
-            data[i].median = d3.median(data[i].data);
-            
-            yDomain.push(data[i].min);
-            yDomain.push(data[i].max);
-            xDomain.push(data[i].name);
-          }
-          yDomain.sort(d3.ascending);
-          yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
-
-          // Set scales
-          chart.xScale = d3.scale.ordinal().
-            domain(xDomain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'groupedBoxPlot': function(chart, width, height) {
           var d3 = $window.d3,

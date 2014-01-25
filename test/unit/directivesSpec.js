@@ -225,15 +225,8 @@
 
     });
 
-    describe('myChart', function(){
-      
-      it('should a svg', function() {
-        var element;
-
-        element = $compile("<my-chart chart-data=\"data\"><my-chart/>")($rootScope);
-
-        $rootScope.$digest();
-        expect(element.html()).toContain('<!-- ngInclude: template -->');
+    describe('scBoxPlot', function() {
+      beforeEach(function() {
 
         $rootScope.data = {
           title: 'Distribution of some Data',
@@ -246,16 +239,43 @@
           ]
         };
 
-        $httpBackend.expectGET('/partials/boxplot.html').respond('{{chartData.title}}');
-        $rootScope.$digest();
+      });
 
-        expect($rootScope.$$childHead.chartData.title).toEqual('Distribution of some Data');
+      it('should set svg layout', function() {
+        var element;
+        element = $compile('<sc-box-plot sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+
+        $rootScope.$apply();
+        var svg = element.find('svg');
+        expect(svg.length).toBe(1);
+        expect(svg.get(0).getAttribute('viewBox')).toEqual('-50 -10 180 140');
+      });
+
+      it('should calculate min, max, medium on each serie', function() {
+        var element;
+        element = $compile('<sc-box-plot sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+
+        $rootScope.$apply();
+
         expect($rootScope.data.series[0].min).toBe(1);
         expect($rootScope.data.series[0].max).toBe(10);
         expect($rootScope.data.series[0].median).toBe(3);
-        expect($rootScope.data.yScale.ticks()).toEqual([1,2,3,4,5,6,7,8,9,10]);
-        expect($rootScope.data.yScale.invert(0)).toBe(10);
-        expect($rootScope.data.yScale.invert(svg.inHeight)).toBe(1);
+        expect($rootScope.$$childHead.yScale.ticks()).toEqual([1,2,3,4,5,6,7,8,9,10]);
+        expect($rootScope.$$childHead.yScale.invert(0)).toBe(10);
+        expect($rootScope.$$childHead.yScale.invert(100)).toBe(1);
+
+        expect(element.find('line.distribution').length).toBe(3);
+        expect(element.find('line.min').length).toBe(3);
+        expect(element.find('line.max').length).toBe(3);
+        expect(element.find('rect.median').length).toBe(3);
+        expect(element.find('text.median-label').length).toBe(3);
+
+        // check that the middle serie is in the middle of the chart.
+        expect(element.find('g.serie').get(1).getAttribute('transform')).
+          toBe('translate(50,0)');
+
+        // TODO: could check for more attribute.
+
       });
 
     });

@@ -10,7 +10,7 @@
   <div class="page-content inset row" style="max-height: 450px">
     <div class="col-md-12">
       <wave-spinner ng-show="loading"></wave-spinner>
-      <my-chart chart-data="data"></my-chart>
+      <sc-box-plot ng-if="data.type == 'boxPlot'" sc-data="data"/>
     </div>
   </div>
 </div>

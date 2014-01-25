@@ -44137,49 +44137,43 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
 
 angular.module("partials/boxplot.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/boxplot.html",
-    "<h3 class=\"desc\">{{chartData.subtitle}}</h3>\n" +
-    "<svg sc-view-box=\"chartData.svg\">\n" +
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg class=\"box-plot\" sc-view-box=\"layout\" ng-show=\"data\">\n" +
     "  <!-- Draw the y axis, the ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"chartData.yScale\" sc-layout=\"chartData.svg\" title=\"chartData.axisY.name\"></g>\n" +
+    "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
     "\n" +
     "  <!-- Draw x axis and its ticks -->\n" +
-    "  <g sc-b-axis=\"chartData.xScale\" sc-layout=\"chartData.svg\"></g>\n" +
+    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
     "\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
-    "  <g class=\"serie\" ng-repeat=\"serie in chartData.series\">\n" +
+    "  <g class=\"serie\"\n" +
+    "    ng-repeat=\"serie in data.series\"\n" +
+    "    ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
+    "  >\n" +
     "    <!-- The line between min and max point-->\n" +
     "    <line  class=\"distribution\"\n" +
-    "      ng-attr-x1=\"{{chartData.xScale(serie.name)}}\" \n" +
-    "      ng-attr-y1=\"{{chartData.yScale(serie.min)}}\" \n" +
-    "      ng-attr-x2=\"{{chartData.xScale(serie.name)}}\" \n" +
-    "      ng-attr-y2=\"{{chartData.yScale(serie.max)}}\"\n" +
+    "      ng-attr-y1=\"{{yScale(serie.min)}}\" \n" +
+    "      ng-attr-y2=\"{{yScale(serie.max)}}\"\n" +
     "    />\n" +
     "    <!-- the min point -->\n" +
     "    <line class=\"min\"\n" +
-    "      ng-attr-x1=\"{{chartData.xScale(serie.name) - 5}}\" \n" +
-    "      ng-attr-y1=\"{{chartData.yScale(serie.min)}}\" \n" +
-    "      ng-attr-x2=\"{{chartData.xScale(serie.name) + 5}}\" \n" +
-    "      ng-attr-y2=\"{{chartData.yScale(serie.min)}}\"\n" +
+    "      x1=\"-5\" x2=\"5\"\n" +
+    "      ng-attr-y1=\"{{yScale(serie.min)}}\" \n" +
+    "      ng-attr-y2=\"{{yScale(serie.min)}}\"\n" +
     "    />\n" +
     "    <!-- the max point -->\n" +
     "    <line class=\"max\"\n" +
-    "      ng-attr-x1=\"{{chartData.xScale(serie.name) - 5}}\" \n" +
-    "      ng-attr-y1=\"{{chartData.yScale(serie.max)}}\" \n" +
-    "      ng-attr-x2=\"{{chartData.xScale(serie.name) + 5}}\" \n" +
-    "      ng-attr-y2=\"{{chartData.yScale(serie.max)}}\"\n" +
+    "      x1=\"-5\" x2=\"5\"\n" +
+    "      ng-attr-y1=\"{{yScale(serie.max)}}\" \n" +
+    "      ng-attr-y2=\"{{yScale(serie.max)}}\"\n" +
     "    />\n" +
     "    <!-- add a rectangle for the median -->\n" +
     "    <rect class=\"median\"\n" +
-    "      ng-attr-x=\"{{chartData.xScale(serie.name) - 5}}\" \n" +
-    "      ng-attr-y=\"{{chartData.yScale(serie.median) - 5}}\" \n" +
-    "      width=\"10\" height=\"10\"\n" +
+    "      width=\"10\" height=\"10\" x=\"-5\"\n" +
+    "      ng-attr-y=\"{{yScale(serie.median) - 5}}\"\n" +
     "    />\n" +
-    "\n" +
-    "    <text class=\"median-label\"\n" +
-    "      ng-attr-x=\"{{chartData.xScale(serie.name) + 10}}\" \n" +
-    "      ng-attr-y=\"{{chartData.yScale(serie.median)}}\"\n" +
-    "      >\n" +
+    "    <text class=\"median-label\" x=\"10\" ng-attr-y=\"{{yScale(serie.median)}}\">\n" +
     "      {{serie.median}}\n" +
     "    </text>\n" +
     "  </g>\n" +
@@ -44326,7 +44320,7 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "  <div class=\"page-content inset row\" style=\"max-height: 450px\">\n" +
     "    <div class=\"col-md-12\">\n" +
     "      <wave-spinner ng-show=\"loading\"></wave-spinner>\n" +
-    "      <my-chart chart-data=\"data\"></my-chart>\n" +
+    "      <sc-box-plot ng-if=\"data.type == 'boxPlot'\" sc-data=\"data\"/>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
@@ -44530,6 +44524,72 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
       };
     }).
     
+    /**
+     * scBoxPlot directive
+     *
+     * (not strictly speaking a boxplot, the box is missing)
+     *
+     * usage:
+     *
+     *  <sc-box-plot sc-data="data"/>
+     */
+    directive('scBoxPlot', function(TPL_PATH, SVG, $window) {
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/boxplot.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var onDataChange;
+
+          scope.layout = SVG(
+            {top: 10, right: 30, bottom: 30, left: 50},
+            scope.width(),
+            scope.height()
+          );
+
+          onDataChange = function() {
+            var d3 = $window.d3,
+              xDomain = [],
+              yDomain = [];
+
+            if (!scope.data || scope.data.type !== 'boxPlot') {
+              return;
+            }
+
+            // Calculate min, max, median of ranges and set the domains
+            for (var i = 0; i < scope.data.series.length; i++) {
+              scope.data.series[i].data.sort(d3.ascending);
+              scope.data.series[i].min = scope.data.series[i].data[0];
+              scope.data.series[i].max = scope.data.series[i].data.slice(-1)[0];
+              scope.data.series[i].median = d3.median(scope.data.series[i].data);
+              
+              yDomain.push(scope.data.series[i].min);
+              yDomain.push(scope.data.series[i].max);
+              xDomain.push(scope.data.series[i].name);
+            }
+
+            yDomain.sort(d3.ascending);
+            yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
+
+            // Set scales
+            scope.xScale = d3.scale.ordinal().
+              domain(xDomain).
+              rangePoints([0, scope.layout.inWidth], 1);
+
+            scope.yScale = d3.scale.linear().
+              domain(yDomain).
+              range([scope.layout.inHeight, 0]).
+              nice();
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
 
     /**
      * Draw a chart
@@ -44541,7 +44601,6 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
      */
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
-        'boxPlot': TPL_PATH + '/boxplot.html',
         'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
         'bar': TPL_PATH + '/bar.html',
@@ -44549,38 +44608,6 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
         'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'boxPlot': function buildScales(chart, width, height) {
-          var d3 = $window.d3,
-            xDomain = [],
-            yDomain = [],
-            data = chart.series;
-          
-          chart.svg=SVG({top: 10, right: 30, bottom: 30, left: 50}, width, height);
-
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            data[i].data.sort(d3.ascending);
-            data[i].min = data[i].data[0];
-            data[i].max = data[i].data.slice(-1)[0];
-            data[i].median = d3.median(data[i].data);
-            
-            yDomain.push(data[i].min);
-            yDomain.push(data[i].max);
-            xDomain.push(data[i].name);
-          }
-          yDomain.sort(d3.ascending);
-          yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
-
-          // Set scales
-          chart.xScale = d3.scale.ordinal().
-            domain(xDomain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'groupedBoxPlot': function(chart, width, height) {
           var d3 = $window.d3,
