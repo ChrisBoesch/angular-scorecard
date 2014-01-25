@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  angular.module('myApp.directives', ['myApp.config', 'templates-main']).
+  angular.module('myApp.directives', ['myApp.config', 'myApp.filters', 'templates-main']).
 
     /**
      * Directive to set the a `svga element `viewBox` attribute
@@ -223,6 +223,86 @@
     }).
 
     /**
+     * scGroupedBoxPlot
+     *
+     * Like box plot except the data series are part of groups. The x axis
+     * has two level. One level names the serie; the other one names the group
+     * of the serie.
+     *
+     * usage:
+     *
+     *  <sc-grouped-box-plot sc-data="data"/>
+     */
+    directive('scGroupedBoxPlot', function(TPL_PATH, SVG, $window) {
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/groupedboxplot.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange,
+            leaf,
+            root,
+            yDomain = [];
+
+          scope.layout=SVG(
+            {top: 10, right: 30, bottom: 70, left: 50},
+            scope.width(),
+            scope.height()
+          );
+
+          onDataChange = function() {
+            
+            if (!scope.data || scope.data.type !== 'groupedBoxPlot') {
+              return;
+            }
+
+            scope.xScale = d3.scale.ordinal();
+            scope.yScale = d3.scale.linear();
+            scope.legendScale = d3.scale.ordinal().
+              domain(['median','mean']).
+              rangeBands([0, scope.layout.inWidth], 0.5, 0.5);
+            scope.xTree = [];
+            
+            // Calculate min, max, median of ranges and set the domains
+            for (var i = 0; i < scope.data.series.length; i++) {
+              root = scope.data.series[i];
+              leaf = {'root': root.name, 'children': []};
+              for (var j = 0; j < root.series.length; j++) {
+                root.series[j].data.sort(d3.ascending);
+                root.series[j].min = root.series[j].data[0];
+                root.series[j].max = root.series[j].data.slice(-1)[0];
+                root.series[j].median = d3.median(root.series[j].data);
+                root.series[j].mean = d3.mean(root.series[j].data);
+
+                yDomain.push(root.series[j].min);
+                yDomain.push(root.series[j].max);
+                scope.xScale(root.series[j].name);
+                leaf.children.push(root.series[j].name);
+              }
+              scope.xTree.push(leaf);
+            }
+
+            yDomain.sort(d3.ascending);
+            yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
+
+            // Set scales
+            scope.xScale = scope.xScale.rangeBands([0, scope.layout.inWidth], 0, 0);
+            scope.yScale = scope.yScale.domain(yDomain).
+              range([scope.layout.inHeight, 0]).
+              nice();
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
      * Draw a chart
      *
      * usage:
@@ -232,58 +312,12 @@
      */
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
-        'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
         'bar': TPL_PATH + '/bar.html',
         'groupedBar': TPL_PATH + '/groupedbar.html',
         'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'groupedBoxPlot': function(chart, width, height) {
-          var d3 = $window.d3,
-            leaf,
-            yDomain = [],
-            data = chart.series;
-          
-          chart.svg=SVG({
-            top: SVG_MARGIN.top,
-            right: SVG_MARGIN.right,
-            bottom: SVG_MARGIN.bottom + 40,
-            left: SVG_MARGIN.left
-          }, width, height);
-
-          chart.xScale = d3.scale.ordinal();
-          chart.yScale = d3.scale.linear();
-          chart.xTree = [];
-          
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            leaf = {'root': data[i].name, 'children': []};
-            for (var j = 0; j < data[i].series.length; j++) {
-              data[i].series[j].data.sort(d3.ascending);
-              data[i].series[j].min = data[i].series[j].data[0];
-              data[i].series[j].max = data[i].series[j].data.slice(-1)[0];
-              data[i].series[j].median = d3.median(data[i].series[j].data);
-              data[i].series[j].mean = d3.mean(data[i].series[j].data);
-
-              yDomain.push(data[i].series[j].min);
-              yDomain.push(data[i].series[j].max);
-              chart.xScale(data[i].series[j].name);
-              leaf.children.push(data[i].series[j].name);
-            }
-            chart.xTree.push(leaf);
-          }
-
-          yDomain.sort(d3.ascending);
-          yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
-
-          // Set scales
-          chart.xScale = chart.xScale.rangeBands([0, chart.svg.inWidth], 0, 0);
-          chart.yScale = chart.yScale.domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'bar': function(chart, width, height) {
           var d3 = $window.d3,

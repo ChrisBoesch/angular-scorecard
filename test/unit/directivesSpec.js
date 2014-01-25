@@ -251,7 +251,7 @@
         expect(svg.get(0).getAttribute('viewBox')).toEqual('-50 -10 180 140');
       });
 
-      it('should calculate min, max, medium on each serie', function() {
+      it('should calculate min, max, median on each serie', function() {
         var element;
         element = $compile('<sc-box-plot sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
 
@@ -276,6 +276,146 @@
 
         // TODO: could check for more attribute.
 
+      });
+
+    });
+
+    describe('scGroupedBoxPlot', function(){
+
+      beforeEach(function() {
+
+        $rootScope.data = {
+          title: 'Distribution of some Data',
+          subtitle: 'Those data are random and harcoded.',
+          type: 'groupedBoxPlot',
+          series: [
+            {
+              name: 'AA',
+              series: [
+                {'name': 'A1', 'data': [1,2,3]},
+                {'name': 'A2', 'data': [6,1,4]},
+              ]
+            },
+            {
+              name: 'BBB',
+              series: [
+                {'name': 'B1', 'data': [0,2,10]},
+                {'name': 'B2', 'data': [3,2,1]},
+              ]
+            },
+          ]
+        };
+
+      });
+
+      it('should set svg layout', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="200" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+        var svg = element.find('svg');
+        expect(svg.length).toBe(1);
+        expect(svg.get(0).getAttribute('viewBox')).toEqual('-50 -10 200 180');
+      });
+
+      it('should calculate min, max, median, mean on each serie', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.data.series[0].series[0].min).toBe(1);
+        expect($rootScope.data.series[0].series[0].max).toBe(3);
+        expect($rootScope.data.series[0].series[0].median).toBe(2);
+        expect($rootScope.data.series[0].series[0].mean).toBe(2);
+      });
+
+      it('should set xScale', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.xScale.domain()).toEqual(['A1', 'A2', 'B1', 'B2']);
+        expect($rootScope.$$childHead.xScale.rangeBand()).toEqual(25);
+        expect($rootScope.$$childHead.xScale('A1')).toEqual(0);
+        expect($rootScope.$$childHead.xScale('A2')).toEqual(25);
+        expect($rootScope.$$childHead.xScale('B1')).toEqual(50);
+        expect($rootScope.$$childHead.xScale('B2')).toEqual(75);
+      });
+
+      it('should set legendScale', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.legendScale.domain()).toEqual(['median', 'mean']);
+        expect($rootScope.$$childHead.legendScale.rangeBand()).toEqual(20);
+        expect($rootScope.$$childHead.legendScale('median')).toEqual(20);
+        expect($rootScope.$$childHead.legendScale('mean')).toEqual(60);
+      });
+
+      it('should set yScale', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.yScale.domain()).toEqual([0,10]);
+        // reversed scale... gives the distance from 0.0 with is the 
+        // top left corner of the chart.
+        expect($rootScope.$$childHead.yScale(5)).toEqual(50);
+        expect($rootScope.$$childHead.yScale(1)).toEqual(90);
+        expect($rootScope.$$childHead.yScale(9)).toEqual(10);
+      });
+
+
+      it('should set xTree', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect($rootScope.$$childHead.xTree).toEqual([
+          {root: 'AA', children:['A1', 'A2']},
+          {root: 'BBB', children:['B1', 'B2']},
+        ]);
+      });
+
+      it('should draw each serie', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect(element.find('.grouped-serie').length).toBe(2);
+        expect(element.find('.serie').length).toBe(4);
+
+        element.find('.serie').each(function(i){
+          var x = 25 * i + 12.5;
+          expect(this.getAttribute('transform')).toBe('translate('+ x + ',0)');
+        });
+
+        expect(element.find('.serie line.distribution').length).toBe(4);
+        expect(element.find('.serie line.min').length).toBe(4);
+        expect(element.find('.serie line.max').length).toBe(4);
+        expect(element.find('.serie rect.median').length).toBe(4);
+        expect(element.find('.serie rect.mean').length).toBe(4);
+        expect(element.find('.serie text.median-label').length).toBe(4);
+      });
+
+      it('should draw the legend', function() {
+        var element;
+        element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+
+        $rootScope.$apply();
+
+        expect(element.find('.legend g').length).toBe(2);
+        element.find('.legend g').each(function(i) {
+          var x = 20 * (i+1) + 20 * i;
+          expect(this.getAttribute('transform')).toBe('translate('+ x + ',160)');
+        });
       });
 
     });

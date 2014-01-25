@@ -8,9 +8,18 @@
   </div>
   <!-- Keep all page content within the page-content inset div! -->
   <div class="page-content inset row" style="max-height: 450px">
-    <div class="col-md-12">
+    <div class="col-md-12" ng-switch on="data.type">
+      
       <wave-spinner ng-show="loading"></wave-spinner>
-      <sc-box-plot ng-if="data.type == 'boxPlot'" sc-data="data"/>
+      
+      <div class="chart" ng-switch-when="boxPlot">
+        <sc-box-plot sc-data="data"/>
+      </div>
+      
+      <div class="chart" ng-switch-when="groupedBoxPlot">
+        <sc-grouped-box-plot sc-data="data"/>
+      </div>
+      
     </div>
   </div>
 </div>

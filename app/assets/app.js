@@ -8828,7 +8828,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 
 })( window );
 ;/**
- * @license AngularJS v1.2.9-build.2127+sha.2a35863
+ * @license AngularJS v1.2.11-build.2182+sha.88a14b4
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -8897,7 +8897,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.9-build.2127+sha.2a35863/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.11-build.2182+sha.88a14b4/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -10663,11 +10663,11 @@ function setupModuleLoader(window) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.2.9-build.2127+sha.2a35863',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.2.11-build.2182+sha.88a14b4',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 2,
-  dot: 9,
-  codeName: 'enchanted-articulacy'
+  dot: 11,
+  codeName: 'cryptocurrency-hyperdeflation'
 };
 
 
@@ -12109,11 +12109,9 @@ function annotate(fn) {
  * @param {(Object|function())} provider If the provider is:
  *
  *   - `Object`: then it should have a `$get` method. The `$get` method will be invoked using
- *               {@link AUTO.$injector#invoke $injector.invoke()} when an instance needs to be
- *               created.
- *   - `Constructor`: a new instance of the provider will be created using
- *               {@link AUTO.$injector#instantiate $injector.instantiate()}, then treated as
- *               `object`.
+ *     {@link AUTO.$injector#invoke $injector.invoke()} when an instance needs to be created.
+ *   - `Constructor`: a new instance of the provider will be created using                     
+ *     {@link AUTO.$injector#instantiate $injector.instantiate()}, then treated as `object`.
  *
  * @returns {Object} registered provider instance
 
@@ -12229,7 +12227,7 @@ function annotate(fn) {
  * constructor function that will be used to instantiate the service instance.
  *
  * You should use {@link AUTO.$provide#methods_service $provide.service(class)} if you define your service
- * as a type/class. This is common when using {@link http://coffeescript.org CoffeeScript}.
+ * as a type/class.
  *
  * @param {string} name The name of the instance.
  * @param {Function} constructor A class (constructor function) that will be instantiated.
@@ -12237,20 +12235,25 @@ function annotate(fn) {
  *
  * @example
  * Here is an example of registering a service using
- * {@link AUTO.$provide#methods_service $provide.service(class)} that is defined as a CoffeeScript class.
+ * {@link AUTO.$provide#methods_service $provide.service(class)}.
  * <pre>
- *   class Ping
- *     constructor: (@$http) ->
- *     send: () =>
- *       @$http.get('/ping')
- *
- *   $provide.service('ping', ['$http', Ping])
+ *   $provide.service('ping', ['$http', function($http) {
+ *     var Ping = function() {
+ *       this.$http = $http;
+ *     };
+ *   
+ *     Ping.prototype.send = function() {
+ *       return this.$http.get('/ping');
+ *     }; 
+ *   
+ *     return Ping;
+ *   }]);
  * </pre>
  * You would then inject and use this service like this:
  * <pre>
- *   someModule.controller 'Ctrl', ['ping', (ping) ->
- *     ping.send()
- *   ]
+ *   someModule.controller('Ctrl', ['ping', function(ping) {
+ *     ping.send();
+ *   }]);
  * </pre>
  */
 
@@ -15775,9 +15778,9 @@ function $HttpProvider() {
       common: {
         'Accept': 'application/json, text/plain, */*'
       },
-      post:   CONTENT_TYPE_APPLICATION_JSON,
-      put:    CONTENT_TYPE_APPLICATION_JSON,
-      patch:  CONTENT_TYPE_APPLICATION_JSON
+      post:   copy(CONTENT_TYPE_APPLICATION_JSON),
+      put:    copy(CONTENT_TYPE_APPLICATION_JSON),
+      patch:  copy(CONTENT_TYPE_APPLICATION_JSON)
     },
 
     xsrfCookieName: 'XSRF-TOKEN',
@@ -15887,31 +15890,14 @@ function $HttpProvider() {
      * XMLHttpRequest will transparently follow it, meaning that the error callback will not be
      * called for such responses.
      *
-     * # Calling $http from outside AngularJS
-     * The `$http` service will not actually send the request until the next `$digest()` is
-     * executed. Normally this is not an issue, since almost all the time your call to `$http` will
-     * be from within a `$apply()` block.
-     * If you are calling `$http` from outside Angular, then you should wrap it in a call to
-     * `$apply` to cause a $digest to occur and also to handle errors in the block correctly.
-     *
-     * ```
-     * $scope.$apply(function() {
-     *   $http(...);
-     * });
-     * ```
-     *
      * # Writing Unit Tests that use $http
-     * When unit testing you are mostly responsible for scheduling the `$digest` cycle. If you do
-     * not trigger a `$digest` before calling `$httpBackend.flush()` then the request will not have
-     * been made and `$httpBackend.expect(...)` expectations will fail.  The solution is to run the
-     * code that calls the `$http()` method inside a $apply block as explained in the previous
-     * section.
+     * When unit testing (using {@link api/ngMock ngMock}), it is necessary to call
+     * {@link api/ngMock.$httpBackend#methods_flush $httpBackend.flush()} to flush each pending
+     * request using trained responses.
      *
      * ```
      * $httpBackend.expectGET(...);
-     * $scope.$apply(function() {
-     *   $http.get(...);
-     * });
+     * $http.get(...);
      * $httpBackend.flush();
      * ```
      *
@@ -15988,7 +15974,7 @@ function $HttpProvider() {
      * to `push` or `unshift` a new transformation function into the transformation chain. You can
      * also decide to completely override any default transformations by assigning your
      * transformation functions to these properties directly without the array wrapper.  These defaults
-     * are again available on the $http factory at run-time, which may be useful if you have run-time 
+     * are again available on the $http factory at run-time, which may be useful if you have run-time
      * services you wish to be involved in your transformations.
      *
      * Similarly, to locally override the request/response transforms, augment the
@@ -17146,7 +17132,7 @@ function $IntervalProvider() {
       * In tests you can use {@link ngMock.$interval#methods_flush `$interval.flush(millis)`} to
       * move forward by `millis` milliseconds and trigger any functions scheduled to run in that
       * time.
-      * 
+      *
       * <div class="alert alert-warning">
       * **Note**: Intervals created by this service must be explicitly destroyed when you are finished
       * with them.  In particular they are not automatically destroyed when a controller's scope or a
@@ -17259,8 +17245,8 @@ function $IntervalProvider() {
           promise = deferred.promise,
           iteration = 0,
           skipApply = (isDefined(invokeApply) && !invokeApply);
-      
-      count = isDefined(count) ? count : 0,
+
+      count = isDefined(count) ? count : 0;
 
       promise.then(null, null, fn);
 
@@ -18960,7 +18946,7 @@ Parser.prototype = {
     var getter = getterFn(field, this.options, this.text);
 
     return extend(function(scope, locals, self) {
-      return getter(self || object(scope, locals), locals);
+      return getter(self || object(scope, locals));
     }, {
       assign: function(scope, value, locals) {
         return setter(object(scope, locals), field, value, parser.text, parser.options);
@@ -19536,9 +19522,9 @@ function $ParseProvider() {
  * asynchronous programming what `try`, `catch` and `throw` keywords are to synchronous programming.
  *
  * <pre>
- *   // for the purpose of this example let's assume that variables `$q` and `scope` are
- *   // available in the current lexical scope (they could have been injected or passed in).
- *
+ *   // for the purpose of this example let's assume that variables `$q`, `scope` and `okToGreet`
+ *   // are available in the current lexical scope (they could have been injected or passed in).
+ * 
  *   function asyncGreet(name) {
  *     var deferred = $q.defer();
  *
@@ -21471,7 +21457,7 @@ function $SceDelegateProvider() {
      *
      * @description
      * Returns an object that is trusted by angular for use in specified strict
-     * contextual escaping contexts (such as ng-html-bind-unsafe, ng-include, any src
+     * contextual escaping contexts (such as ng-bind-html, ng-include, any src
      * attribute interpolation, any dom event binding attribute interpolation
      * such as for onclick,  etc.) that uses the provided value.
      * See {@link ng.$sce $sce} for enabling strict contextual escaping.
@@ -21698,8 +21684,8 @@ function $SceDelegateProvider() {
  * It's important to remember that SCE only applies to interpolation expressions.
  *
  * If your expressions are constant literals, they're automatically trusted and you don't need to
- * call `$sce.trustAs` on them.  (e.g.
- * `<div ng-html-bind-unsafe="'<b>implicitly trusted</b>'"></div>`) just works.
+ * call `$sce.trustAs` on them (remember to include the `ngSanitize` module) (e.g.
+ * `<div ng-bind-html="'<b>implicitly trusted</b>'"></div>`) just works.
  *
  * Additionally, `a[href]` and `img[src]` automatically sanitize their URLs and do not pass them
  * through {@link ng.$sce#methods_getTrusted $sce.getTrusted}.  SCE doesn't play a role here.
@@ -21759,7 +21745,7 @@ function $SceDelegateProvider() {
  *      matched against the **entire** *normalized / absolute URL* of the resource being tested
  *      (even when the RegExp did not have the `^` and `$` codes.)  In addition, any flags
  *      present on the RegExp (such as multiline, global, ignoreCase) are ignored.
- *    - If you are generating your Javascript from some other templating engine (not
+ *    - If you are generating your JavaScript from some other templating engine (not
  *      recommended, e.g. in issue [#4006](https://github.com/angular/angular.js/issues/4006)),
  *      remember to escape your regular expression (and be aware that you might need more than
  *      one level of escaping depending on your templating engine and the way you interpolated
@@ -21776,7 +21762,7 @@ function $SceDelegateProvider() {
  * ## Show me an example using SCE.
  *
  * @example
-<example module="mySceApp">
+<example module="mySceApp" deps="angular-sanitize.js">
 <file name="index.html">
   <div ng-controller="myAppController as myCtrl">
     <i ng-bind-html="myCtrl.explicitlyTrustedHtml" id="explicitlyTrustedHtml"></i><br><br>
@@ -22001,8 +21987,8 @@ function $SceProvider() {
      *
      * @description
      * Delegates to {@link ng.$sceDelegate#methods_trustAs `$sceDelegate.trustAs`}.  As such,
-     * returns an objectthat is trusted by angular for use in specified strict contextual
-     * escaping contexts (such as ng-html-bind-unsafe, ng-include, any src attribute
+     * returns an object that is trusted by angular for use in specified strict contextual
+     * escaping contexts (such as ng-bind-html, ng-include, any src attribute
      * interpolation, any dom event binding attribute interpolation such as for onclick,  etc.)
      * that uses the provided value.  See * {@link ng.$sce $sce} for enabling strict contextual
      * escaping.
@@ -23680,11 +23666,14 @@ var htmlAnchorDirective = valueFn({
       element.append(document.createComment('IE fix'));
     }
 
-    if (!attr.href && !attr.name) {
+    if (!attr.href && !attr.xlinkHref && !attr.name) {
       return function(scope, element) {
+        // SVGAElement does not use the href attribute, but rather the 'xlinkHref' attribute.
+        var href = toString.call(element.prop('href')) === '[object SVGAnimatedString]' ?
+                   'xlink:href' : 'href';
         element.on('click', function(event){
           // if we have no href url, then don't navigate anywhere.
-          if (!element.attr('href')) {
+          if (!element.attr(href)) {
             event.preventDefault();
           }
         });
@@ -24451,7 +24440,7 @@ var ngFormDirective = formDirectiveFactory(true);
 */
 
 var URL_REGEXP = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
-var EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
+var EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
 var NUMBER_REGEXP = /^\s*(\-|\+)?(\d+|(\d*(\.\d*)))\s*$/;
 
 var inputType = {
@@ -24751,6 +24740,8 @@ var inputType = {
    * @param {string=} name Property name of the form under which the control is published.
    * @param {string=} ngChange Angular expression to be executed when input changes due to user
    *    interaction with the input element.
+   * @param {string} ngValue Angular expression which sets the value to which the expression should
+   *    be set when selected.
    *
    * @example
       <doc:example>
@@ -24758,21 +24749,26 @@ var inputType = {
          <script>
            function Ctrl($scope) {
              $scope.color = 'blue';
+             $scope.specialValue = {
+               "id": "12345",
+               "value": "green"
+             };
            }
          </script>
          <form name="myForm" ng-controller="Ctrl">
            <input type="radio" ng-model="color" value="red">  Red <br/>
-           <input type="radio" ng-model="color" value="green"> Green <br/>
+           <input type="radio" ng-model="color" ng-value="specialValue"> Green <br/>
            <input type="radio" ng-model="color" value="blue"> Blue <br/>
-           <tt>color = {{color}}</tt><br/>
+           <tt>color = {{color | json}}</tt><br/>
           </form>
+          Note that `ng-value="specialValue"` sets radio item's value to be the value of `$scope.specialValue`.
         </doc:source>
         <doc:scenario>
           it('should change state', function() {
-            expect(binding('color')).toEqual('blue');
+            expect(binding('color')).toEqual('"blue"');
 
             input('color').select('red');
-            expect(binding('color')).toEqual('red');
+            expect(binding('color')).toEqual('"red"');
           });
         </doc:scenario>
       </doc:example>
@@ -25630,7 +25626,10 @@ var ngModelDirective = function() {
  * @name ng.directive:ngChange
  *
  * @description
- * Evaluate given expression when user changes the input.
+ * Evaluate the given expression when the user changes the input.
+ * The expression is evaluated immediately, unlike the JavaScript onchange event
+ * which only triggers at the end of a change (usually, when the user leaves the
+ * form element or presses the return key).
  * The expression is not evaluated when the value change is coming from the model.
  *
  * Note, this directive requires `ngModel` to be present.
@@ -26623,6 +26622,7 @@ var ngControllerDirective = [function() {
  * an element is clicked.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngClick {@link guide/expression Expression} to evaluate upon
  * click. (Event object is available as `$event`)
  *
@@ -26679,6 +26679,7 @@ forEach(
  * The `ngDblclick` directive allows you to specify custom behavior on a dblclick event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngDblclick {@link guide/expression Expression} to evaluate upon
  * a dblclick. (The Event object is available as `$event`)
  *
@@ -26702,6 +26703,7 @@ forEach(
  * The ngMousedown directive allows you to specify custom behavior on mousedown event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngMousedown {@link guide/expression Expression} to evaluate upon
  * mousedown. (Event object is available as `$event`)
  *
@@ -26725,6 +26727,7 @@ forEach(
  * Specify custom behavior on mouseup event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngMouseup {@link guide/expression Expression} to evaluate upon
  * mouseup. (Event object is available as `$event`)
  *
@@ -26747,6 +26750,7 @@ forEach(
  * Specify custom behavior on mouseover event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngMouseover {@link guide/expression Expression} to evaluate upon
  * mouseover. (Event object is available as `$event`)
  *
@@ -26770,6 +26774,7 @@ forEach(
  * Specify custom behavior on mouseenter event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngMouseenter {@link guide/expression Expression} to evaluate upon
  * mouseenter. (Event object is available as `$event`)
  *
@@ -26793,6 +26798,7 @@ forEach(
  * Specify custom behavior on mouseleave event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngMouseleave {@link guide/expression Expression} to evaluate upon
  * mouseleave. (Event object is available as `$event`)
  *
@@ -26816,6 +26822,7 @@ forEach(
  * Specify custom behavior on mousemove event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngMousemove {@link guide/expression Expression} to evaluate upon
  * mousemove. (Event object is available as `$event`)
  *
@@ -26839,6 +26846,7 @@ forEach(
  * Specify custom behavior on keydown event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngKeydown {@link guide/expression Expression} to evaluate upon
  * keydown. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
  *
@@ -26860,6 +26868,7 @@ forEach(
  * Specify custom behavior on keyup event.
  *
  * @element ANY
+ * @priority 0
  * @param {expression} ngKeyup {@link guide/expression Expression} to evaluate upon
  * keyup. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
  *
@@ -26906,6 +26915,7 @@ forEach(
  * attribute**.
  *
  * @element form
+ * @priority 0
  * @param {expression} ngSubmit {@link guide/expression Expression} to eval. (Event object is available as `$event`)
  *
  * @example
@@ -26955,6 +26965,7 @@ forEach(
  * Specify custom behavior on focus event.
  *
  * @element window, input, select, textarea, a
+ * @priority 0
  * @param {expression} ngFocus {@link guide/expression Expression} to evaluate upon
  * focus. (Event object is available as `$event`)
  *
@@ -26970,6 +26981,7 @@ forEach(
  * Specify custom behavior on blur event.
  *
  * @element window, input, select, textarea, a
+ * @priority 0
  * @param {expression} ngBlur {@link guide/expression Expression} to evaluate upon
  * blur. (Event object is available as `$event`)
  *
@@ -26985,6 +26997,7 @@ forEach(
  * Specify custom behavior on copy event.
  *
  * @element window, input, select, textarea, a
+ * @priority 0
  * @param {expression} ngCopy {@link guide/expression Expression} to evaluate upon
  * copy. (Event object is available as `$event`)
  *
@@ -27005,6 +27018,7 @@ forEach(
  * Specify custom behavior on cut event.
  *
  * @element window, input, select, textarea, a
+ * @priority 0
  * @param {expression} ngCut {@link guide/expression Expression} to evaluate upon
  * cut. (Event object is available as `$event`)
  *
@@ -27025,6 +27039,7 @@ forEach(
  * Specify custom behavior on paste event.
  *
  * @element window, input, select, textarea, a
+ * @priority 0
  * @param {expression} ngPaste {@link guide/expression Expression} to evaluate upon
  * paste. (Event object is available as `$event`)
  *
@@ -27407,6 +27422,13 @@ var ngIncludeFillContentDirective = ['$compile',
  * {@link api/ng.directive:ngRepeat `ngRepeat`}, as seen in the demo below. Besides this case, you
  * should use {@link guide/controller controllers} rather than `ngInit`
  * to initialize values on a scope.
+ * </div>
+ * <div class="alert alert-warning">
+ * **Note**: If you have assignment in `ngInit` along with {@link api/ng.$filter `$filter`}, make
+ * sure you have parenthesis for correct precedence:
+ * <pre class="prettyprint">
+ *   <div ng-init="test1 = (data | orderBy:'name')"></div>
+ * </pre>
  * </div>
  *
  * @priority 450
@@ -28143,6 +28165,11 @@ var ngRepeatDirective = ['$parse', '$animate', function($parse, $animate) {
  *
  * Just remember to include the important flag so the CSS override will function.
  *
+ * <div class="alert alert-warning">
+ * **Note:** Here is a list of values that ngShow will consider as a falsy value (case insensitive):<br />
+ * "f" / "0" / "false" / "no" / "n" / "[]"
+ * </div>
+ * 
  * ## A note about animations with ngShow
  *
  * Animations in ngShow/ngHide work with the show and hide events that are triggered when the directive expression
@@ -28291,6 +28318,11 @@ var ngShowDirective = ['$animate', function($animate) {
  * </pre>
  *
  * Just remember to include the important flag so the CSS override will function.
+ * 
+ * <div class="alert alert-warning">
+ * **Note:** Here is a list of values that ngHide will consider as a falsy value (case insensitive):<br />
+ * "f" / "0" / "false" / "no" / "n" / "[]"
+ * </div>
  *
  * ## A note about animations with ngHide
  *
@@ -28762,14 +28794,21 @@ var ngOptionsMinErr = minErr('ngOptions');
  * represented by the selected option will be bound to the model identified by the `ngModel`
  * directive.
  *
+ * <div class="alert alert-warning">
+ * **Note:** `ngModel` compares by reference, not value. This is important when binding to an
+ * array of objects. See an example {@link http://jsfiddle.net/qWzTb/ in this jsfiddle}.
+ * </div>
+ *
  * Optionally, a single hard-coded `<option>` element, with the value set to an empty string, can
  * be nested into the `<select>` element. This element will then represent the `null` or "not selected"
  * option. See example below for demonstration.
  *
- * Note: `ngOptions` provides iterator facility for `<option>` element which should be used instead
+ * <div class="alert alert-warning">
+ * **Note:** `ngOptions` provides iterator facility for `<option>` element which should be used instead
  * of {@link ng.directive:ngRepeat ngRepeat} when you want the
  * `select` model to be bound to a non-string value. This is because an option element can only
  * be bound to string values at present.
+ * </div>
  *
  * @param {string} ngModel Assignable angular expression to data-bind to.
  * @param {string=} name Property name of the form under which the control is published.
@@ -29173,7 +29212,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
 
           // We now build up the list of options we need (we merge later)
           for (index = 0; length = keys.length, index < length; index++) {
-            
+
             key = index;
             if (keyName) {
               key = keys[index];
@@ -38655,7 +38694,7 @@ var styleDirective = valueFn({
     this.d3 = d3;
   }
 }();;/**
- * @license AngularJS v1.2.9-build.2127+sha.2a35863
+ * @license AngularJS v1.2.11-build.2182+sha.88a14b4
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -38846,7 +38885,7 @@ function $RouteProvider(){
 
     path = path
       .replace(/([().])/g, '\\$1')
-      .replace(/(\/)?:(\w+)([\?|\*])?/g, function(_, slash, key, option){
+      .replace(/(\/)?:(\w+)([\?\*])?/g, function(_, slash, key, option){
         var optional = option === '?' ? option : null;
         var star = option === '*' ? option : null;
         keys.push({ name: key, optional: !!optional });
@@ -39031,7 +39070,7 @@ function $RouteProvider(){
      * @eventType broadcast on root scope
      * @description
      * Broadcasted before a route change. At this  point the route services starts
-     * resolving all of the dependencies needed for the route change to occurs.
+     * resolving all of the dependencies needed for the route change to occur.
      * Typically this involves fetching the view template as well as any dependencies
      * defined in `resolve` route property. Once  all of the dependencies are resolved
      * `$routeChangeSuccess` is fired.
@@ -39575,7 +39614,7 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 })(window, window.angular);
 ;/**
- * @license AngularJS v1.2.9-build.2127+sha.2a35863
+ * @license AngularJS v1.2.11-build.2182+sha.88a14b4
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -40169,7 +40208,7 @@ angular.module('ngResource', ['ng']).
 
 })(window, window.angular);
 ;/**
- * @license AngularJS v1.2.9-build.2127+sha.2a35863
+ * @license AngularJS v1.2.11-build.2182+sha.88a14b4
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -40424,6 +40463,26 @@ angular.module('ngAnimate', ['ng'])
    * Please visit the {@link ngAnimate `ngAnimate`} module overview page learn more about how to use animations in your application.
    *
    */
+  .factory('$$animateReflow', ['$window', '$timeout', function($window, $timeout) {
+    var requestAnimationFrame = $window.requestAnimationFrame       ||
+                                $window.webkitRequestAnimationFrame ||
+                                function(fn) {
+                                  return $timeout(fn, 10, false);
+                                };
+
+    var cancelAnimationFrame = $window.cancelAnimationFrame       ||
+                               $window.webkitCancelAnimationFrame ||
+                               function(timer) {
+                                 return $timeout.cancel(timer);
+                               };
+    return function(fn) {
+      var id = requestAnimationFrame(fn);
+      return function() {
+        cancelAnimationFrame(id);
+      };
+    };
+  }])
+
   .config(['$provide', '$animateProvider', function($provide, $animateProvider) {
     var noop = angular.noop;
     var forEach = angular.forEach;
@@ -40470,6 +40529,10 @@ angular.module('ngAnimate', ['ng'])
               : function(className) {
                 return classNameFilter.test(className);
               };
+
+      function async(fn) {
+        return $timeout(fn, 0, false);
+      }
 
       function lookup(name) {
         if (name) {
@@ -40762,6 +40825,8 @@ angular.module('ngAnimate', ['ng'])
         //best to catch this early on to prevent any animation operations from occurring
         if(!node || !isAnimatableClassName(classes)) {
           fireDOMOperation();
+          fireBeforeCallbackAsync();
+          fireAfterCallbackAsync();
           closeAnimation();
           return;
         }
@@ -40781,6 +40846,8 @@ angular.module('ngAnimate', ['ng'])
         //NOTE: IE8 + IE9 should close properly (run closeAnimation()) in case a NO animation is not found.
         if (animationsDisabled(element, parentElement) || matches.length === 0) {
           fireDOMOperation();
+          fireBeforeCallbackAsync();
+          fireAfterCallbackAsync();
           closeAnimation();
           return;
         }
@@ -40819,14 +40886,17 @@ angular.module('ngAnimate', ['ng'])
         //animation do it's thing and close this one early
         if(animations.length === 0) {
           fireDOMOperation();
+          fireBeforeCallbackAsync();
+          fireAfterCallbackAsync();
           fireDoneCallbackAsync();
           return;
         }
 
+        var ONE_SPACE = ' ';
         //this value will be searched for class-based CSS className lookup. Therefore,
         //we prefix and suffix the current className value with spaces to avoid substring
         //lookups of className tokens
-        var futureClassName = ' ' + currentClassName + ' ';
+        var futureClassName = ONE_SPACE + currentClassName + ONE_SPACE;
         if(ngAnimateState.running) {
           //if an animation is currently running on the element then lets take the steps
           //to cancel that animation and fire any required callbacks
@@ -40834,12 +40904,23 @@ angular.module('ngAnimate', ['ng'])
           cleanup(element);
           cancelAnimations(ngAnimateState.animations);
 
+          //in the event that the CSS is class is quickly added and removed back
+          //then we don't want to wait until after the reflow to add/remove the CSS
+          //class since both class animations may run into a race condition.
+          //The code below will check to see if that is occurring and will
+          //immediately remove the former class before the reflow so that the
+          //animation can snap back to the original animation smoothly
+          var isFullyClassBasedAnimation = isClassBased && !ngAnimateState.structural;
+          var isRevertingClassAnimation = isFullyClassBasedAnimation &&
+                                          ngAnimateState.className == className &&
+                                          animationEvent != ngAnimateState.event;
+
           //if the class is removed during the reflow then it will revert the styles temporarily
           //back to the base class CSS styling causing a jump-like effect to occur. This check
           //here ensures that the domOperation is only performed after the reflow has commenced
-          if(ngAnimateState.beforeComplete) {
+          if(ngAnimateState.beforeComplete || isRevertingClassAnimation) {
             (ngAnimateState.done || noop)(true);
-          } else if(isClassBased && !ngAnimateState.structural) {
+          } else if(isFullyClassBasedAnimation) {
             //class-based animations will compare element className values after cancelling the
             //previous animation to see if the element properties already contain the final CSS
             //class and if so then the animation will be skipped. Since the domOperation will
@@ -40847,8 +40928,8 @@ angular.module('ngAnimate', ['ng'])
             //will be invalid. Therefore the same string manipulation that would occur within the
             //DOM operation will be performed below so that the class comparison is valid...
             futureClassName = ngAnimateState.event == 'removeClass' ?
-              futureClassName.replace(ngAnimateState.className, '') :
-              futureClassName + ngAnimateState.className + ' ';
+              futureClassName.replace(ONE_SPACE + ngAnimateState.className + ONE_SPACE, ONE_SPACE) :
+              futureClassName + ngAnimateState.className + ONE_SPACE;
           }
         }
 
@@ -40856,10 +40937,12 @@ angular.module('ngAnimate', ['ng'])
         //(on addClass) or doesn't contain (on removeClass) the className being animated.
         //The reason why this is being called after the previous animations are cancelled
         //is so that the CSS classes present on the element can be properly examined.
-        var classNameToken = ' ' + className + ' ';
+        var classNameToken = ONE_SPACE + className + ONE_SPACE;
         if((animationEvent == 'addClass'    && futureClassName.indexOf(classNameToken) >= 0) ||
            (animationEvent == 'removeClass' && futureClassName.indexOf(classNameToken) == -1)) {
           fireDOMOperation();
+          fireBeforeCallbackAsync();
+          fireAfterCallbackAsync();
           fireDoneCallbackAsync();
           return;
         }
@@ -40900,6 +40983,10 @@ angular.module('ngAnimate', ['ng'])
         }
 
         function invokeRegisteredAnimationFns(animations, phase, allAnimationFnsComplete) {
+          phase == 'after' ?
+            fireAfterCallbackAsync() :
+            fireBeforeCallbackAsync();
+
           var endFnName = phase + 'End';
           forEach(animations, function(animation, index) {
             var animationPhaseCompleted = function() {
@@ -40936,8 +41023,30 @@ angular.module('ngAnimate', ['ng'])
           }
         }
 
+        function fireDOMCallback(animationPhase) {
+          element.triggerHandler('$animate:' + animationPhase, {
+            event : animationEvent,
+            className : className
+          });
+        }
+
+        function fireBeforeCallbackAsync() {
+          async(function() {
+            fireDOMCallback('before');
+          });
+        }
+
+        function fireAfterCallbackAsync() {
+          async(function() {
+            fireDOMCallback('after');
+          });
+        }
+
         function fireDoneCallbackAsync() {
-          doneCallback && $timeout(doneCallback, 0, false);
+          async(function() {
+            fireDOMCallback('close');
+            doneCallback && doneCallback();
+          });
         }
 
         //it is less complicated to use a flag than managing and cancelling
@@ -40961,9 +41070,9 @@ angular.module('ngAnimate', ['ng'])
               if(isClassBased) {
                 cleanup(element);
               } else {
-                data.closeAnimationTimeout = $timeout(function() {
+                data.closeAnimationTimeout = async(function() {
                   cleanup(element);
-                }, 0, false);
+                });
                 element.data(NG_ANIMATE_STATE, data);
               }
             }
@@ -40987,10 +41096,10 @@ angular.module('ngAnimate', ['ng'])
       function cancelAnimations(animations) {
         var isCancelledFlag = true;
         forEach(animations, function(animation) {
-          if(!animations.beforeComplete) {
+          if(!animation.beforeComplete) {
             (animation.beforeEnd || noop)(isCancelledFlag);
           }
-          if(!animations.afterComplete) {
+          if(!animation.afterComplete) {
             (animation.afterEnd || noop)(isCancelledFlag);
           }
         });
@@ -41036,7 +41145,8 @@ angular.module('ngAnimate', ['ng'])
       }
     }]);
 
-    $animateProvider.register('', ['$window', '$sniffer', '$timeout', function($window, $sniffer, $timeout) {
+    $animateProvider.register('', ['$window', '$sniffer', '$timeout', '$$animateReflow',
+                           function($window,   $sniffer,   $timeout,   $$animateReflow) {
       // Detect proper transitionend/animationend event names.
       var CSS_PREFIX = '', TRANSITION_PROP, TRANSITIONEND_EVENT, ANIMATION_PROP, ANIMATIONEND_EVENT;
 
@@ -41081,11 +41191,13 @@ angular.module('ngAnimate', ['ng'])
       var parentCounter = 0;
       var animationReflowQueue = [];
       var animationElementQueue = [];
-      var animationTimer;
+      var cancelAnimationReflow;
       var closingAnimationTime = 0;
       var timeOut = false;
       function afterReflow(element, callback) {
-        $timeout.cancel(animationTimer);
+        if(cancelAnimationReflow) {
+          cancelAnimationReflow();
+        }
 
         animationReflowQueue.push(callback);
 
@@ -41094,15 +41206,19 @@ angular.module('ngAnimate', ['ng'])
         animationElementQueue.push(element);
 
         var elementData = element.data(NG_ANIMATE_CSS_DATA_KEY);
-        closingAnimationTime = Math.max(closingAnimationTime,
-          (elementData.maxDelay + elementData.maxDuration) * CLOSING_TIME_BUFFER * ONE_SECOND);
+
+        var stagger = elementData.stagger;
+        var staggerTime = elementData.itemIndex * (Math.max(stagger.animationDelay, stagger.transitionDelay) || 0);
+
+        var animationTime = (elementData.maxDelay + elementData.maxDuration) * CLOSING_TIME_BUFFER;
+        closingAnimationTime = Math.max(closingAnimationTime, (staggerTime + animationTime) * ONE_SECOND);
 
         //by placing a counter we can avoid an accidental
         //race condition which may close an animation when
         //a follow-up animation is midway in its animation
         elementData.animationCount = animationCounter;
 
-        animationTimer = $timeout(function() {
+        cancelAnimationReflow = $$animateReflow(function() {
           forEach(animationReflowQueue, function(fn) {
             fn();
           });
@@ -41123,11 +41239,11 @@ angular.module('ngAnimate', ['ng'])
 
           animationReflowQueue = [];
           animationElementQueue = [];
-          animationTimer = null;
+          cancelAnimationReflow = null;
           lookupCache = {};
           closingAnimationTime = 0;
           animationCounter++;
-        }, 10, false);
+        });
       }
 
       function closeAllAnimations(elements, count) {
@@ -41218,13 +41334,13 @@ angular.module('ngAnimate', ['ng'])
         return parentID + '-' + extractElementNode(element).className;
       }
 
-      function animateSetup(element, className) {
+      function animateSetup(element, className, calculationDecorator) {
         var cacheKey = getCacheKey(element);
         var eventCacheKey = cacheKey + ' ' + className;
         var stagger = {};
-        var ii = lookupCache[eventCacheKey] ? ++lookupCache[eventCacheKey].total : 0;
+        var itemIndex = lookupCache[eventCacheKey] ? ++lookupCache[eventCacheKey].total : 0;
 
-        if(ii > 0) {
+        if(itemIndex > 0) {
           var staggerClassName = className + '-stagger';
           var staggerCacheKey = cacheKey + ' ' + staggerClassName;
           var applyClasses = !lookupCache[staggerCacheKey];
@@ -41236,9 +41352,16 @@ angular.module('ngAnimate', ['ng'])
           applyClasses && element.removeClass(staggerClassName);
         }
 
+        /* the animation itself may need to add/remove special CSS classes
+         * before calculating the anmation styles */
+        calculationDecorator = calculationDecorator ||
+                               function(fn) { return fn(); };
+
         element.addClass(className);
 
-        var timings = getElementAnimationDetails(element, eventCacheKey);
+        var timings = calculationDecorator(function() {
+          return getElementAnimationDetails(element, eventCacheKey);
+        });
 
         /* there is no point in performing a reflow if the animation
            timeout is empty (this would cause a flicker bug normally
@@ -41270,7 +41393,7 @@ angular.module('ngAnimate', ['ng'])
           classes : className + ' ' + activeClassName,
           timings : timings,
           stagger : stagger,
-          ii : ii
+          itemIndex : itemIndex
         });
 
         return true;
@@ -41315,7 +41438,7 @@ angular.module('ngAnimate', ['ng'])
         var maxDelayTime = Math.max(timings.transitionDelay, timings.animationDelay) * ONE_SECOND;
         var startTime = Date.now();
         var css3AnimationEvents = ANIMATIONEND_EVENT + ' ' + TRANSITIONEND_EVENT;
-        var ii = elementData.ii;
+        var itemIndex = elementData.itemIndex;
 
         var style = '', appliedStyles = [];
         if(timings.transitionDuration > 0) {
@@ -41328,17 +41451,17 @@ angular.module('ngAnimate', ['ng'])
           }
         }
 
-        if(ii > 0) {
+        if(itemIndex > 0) {
           if(stagger.transitionDelay > 0 && stagger.transitionDuration === 0) {
             var delayStyle = timings.transitionDelayStyle;
             style += CSS_PREFIX + 'transition-delay: ' +
-                     prepareStaggerDelay(delayStyle, stagger.transitionDelay, ii) + '; ';
+                     prepareStaggerDelay(delayStyle, stagger.transitionDelay, itemIndex) + '; ';
             appliedStyles.push(CSS_PREFIX + 'transition-delay');
           }
 
           if(stagger.animationDelay > 0 && stagger.animationDuration === 0) {
             style += CSS_PREFIX + 'animation-delay: ' +
-                     prepareStaggerDelay(timings.animationDelayStyle, stagger.animationDelay, ii) + '; ';
+                     prepareStaggerDelay(timings.animationDelayStyle, stagger.animationDelay, itemIndex) + '; ';
             appliedStyles.push(CSS_PREFIX + 'animation-delay');
           }
         }
@@ -41403,8 +41526,8 @@ angular.module('ngAnimate', ['ng'])
         return style;
       }
 
-      function animateBefore(element, className) {
-        if(animateSetup(element, className)) {
+      function animateBefore(element, className, calculationDecorator) {
+        if(animateSetup(element, className, calculationDecorator)) {
           return function(cancelled) {
             cancelled && animateClose(element, className);
           };
@@ -41499,7 +41622,18 @@ angular.module('ngAnimate', ['ng'])
         },
 
         beforeAddClass : function(element, className, animationCompleted) {
-          var cancellationMethod = animateBefore(element, suffixClasses(className, '-add'));
+          var cancellationMethod = animateBefore(element, suffixClasses(className, '-add'), function(fn) {
+
+            /* when a CSS class is added to an element then the transition style that
+             * is applied is the transition defined on the element when the CSS class
+             * is added at the time of the animation. This is how CSS3 functions
+             * outside of ngAnimate. */
+            element.addClass(className);
+            var timings = fn();
+            element.removeClass(className);
+            return timings;
+          });
+
           if(cancellationMethod) {
             afterReflow(element, function() {
               unblockTransitions(element);
@@ -41516,7 +41650,18 @@ angular.module('ngAnimate', ['ng'])
         },
 
         beforeRemoveClass : function(element, className, animationCompleted) {
-          var cancellationMethod = animateBefore(element, suffixClasses(className, '-remove'));
+          var cancellationMethod = animateBefore(element, suffixClasses(className, '-remove'), function(fn) {
+            /* when classes are removed from an element then the transition style
+             * that is applied is the transition defined on the element without the
+             * CSS class being there. This is how CSS3 functions outside of ngAnimate.
+             * http://plnkr.co/edit/j8OzgTNxHTb4n3zLyjGW?p=preview */
+            var klass = element.attr('class');
+            element.removeClass(className);
+            var timings = fn();
+            element.attr('class', klass);
+            return timings;
+          });
+
           if(cancellationMethod) {
             afterReflow(element, function() {
               unblockTransitions(element);
@@ -44138,7 +44283,7 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
 angular.module("partials/boxplot.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/boxplot.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
-    "<svg class=\"box-plot\" sc-view-box=\"layout\" ng-show=\"data\">\n" +
+    "<svg class=\"box-plot\" sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, the ticks and rulers -->\n" +
     "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
     "\n" +
@@ -44239,54 +44384,54 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
 
 angular.module("partials/groupedboxplot.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/groupedboxplot.html",
-    "<h3 class=\"desc\">{{chartData.subtitle}}</h3>\n" +
-    "<svg sc-view-box=\"chartData.svg\">\n" +
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg sc-view-box=\"layout\">\n" +
     "  \n" +
     "  <!-- Draw the y axis and the ticks -->\n" +
-    "  <g sc-r-axis=\"chartData.yScale\" sc-layout=\"chartData.svg\" title=\"chartData.axisY.name\"></g>\n" +
+    "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
-    "  <g class=\"grouped-serie\" ng-repeat=\"gserie in chartData.series\">\n" +
-    "    <g class=\"serie\" ng-repeat=\"serie in gserie.series\" ng-attr-transform=\"translate({{chartData.xScale(serie.name) + chartData.xScale.rangeBand()/2}}, 0)\">\n" +
+    "  <g class=\"grouped-serie\" ng-repeat=\"gserie in data.series\">\n" +
+    "    <g class=\"serie\" ng-repeat=\"serie in gserie.series\" ng-attr-transform=\"translate({{xScale(serie.name) + xScale.rangeBand()/2}},0)\">\n" +
     "      <line  class=\"distribution\"\n" +
     "        x1=\"0\" x2=\"0\"\n" +
-    "        ng-attr-y1=\"{{chartData.yScale(serie.min)}}\" \n" +
-    "        ng-attr-y2=\"{{chartData.yScale(serie.max)}}\"\n" +
+    "        ng-attr-y1=\"{{yScale(serie.min)}}\" \n" +
+    "        ng-attr-y2=\"{{yScale(serie.max)}}\"\n" +
     "      />\n" +
     "      <line class=\"min\"\n" +
     "        x1=\"-5\" x2=\"5\"\n" +
-    "        ng-attr-y1=\"{{chartData.yScale(serie.min)}}\" \n" +
-    "        ng-attr-y2=\"{{chartData.yScale(serie.min)}}\"\n" +
+    "        ng-attr-y1=\"{{yScale(serie.min)}}\" \n" +
+    "        ng-attr-y2=\"{{yScale(serie.min)}}\"\n" +
     "      />\n" +
     "      <line class=\"max\"\n" +
     "        x1=\"-5\" x2=\"5\"\n" +
-    "        ng-attr-y1=\"{{chartData.yScale(serie.max)}}\" \n" +
-    "        ng-attr-y2=\"{{chartData.yScale(serie.max)}}\"\n" +
+    "        ng-attr-y1=\"{{yScale(serie.max)}}\" \n" +
+    "        ng-attr-y2=\"{{yScale(serie.max)}}\"\n" +
     "      />\n" +
     "      <rect class=\"mean\"\n" +
     "        x=\"-10\"\n" +
-    "        ng-attr-y=\"{{chartData.yScale(serie.mean) - 10}}\" \n" +
+    "        ng-attr-y=\"{{yScale(serie.mean) - 10}}\" \n" +
     "        width=\"20\" height=\"5\"\n" +
     "      />\n" +
-    "      <text class=\"mean-label\" x=\"20\" ng-attr-y=\"{{chartData.yScale(serie.mean)}}\">\n" +
+    "      <text class=\"mean-label\" x=\"20\" ng-attr-y=\"{{yScale(serie.mean)}}\">\n" +
     "        {{serie.mean|round:1}}\n" +
     "      </text>\n" +
     "      <rect class=\"median\"\n" +
-    "        x=\"-5\" ng-attr-y=\"{{chartData.yScale(serie.median) - 5}}\" \n" +
+    "        x=\"-5\" ng-attr-y=\"{{yScale(serie.median) - 5}}\" \n" +
     "        width=\"10\" height=\"10\"\n" +
     "      />\n" +
-    "      <text class=\"median-label\" x=\"10\" ng-attr-y=\"{{chartData.yScale(serie.median)}}\" >\n" +
+    "      <text class=\"median-label\" x=\"10\" ng-attr-y=\"{{yScale(serie.median)}}\" >\n" +
     "        {{serie.median|round:1}}\n" +
     "      </text>\n" +
     "    </g>\n" +
     "  </g>\n" +
     "\n" +
     "    <!-- Draw x axis, its ticks and rulers -->\n" +
-    "  <g sc-b-nested-axis=\"chartData.xScale\" sc-tree=\"chartData.xTree\" sc-layout=\"chartData.svg\"></g>\n" +
+    "  <g sc-b-nested-axis=\"xScale\" sc-tree=\"xTree\" sc-layout=\"layout\"></g>\n" +
     "\n" +
     "  <g class=\"legend\">\n" +
     "    <g class=\"median-legend\"\n" +
-    "      ng-attr-transform=\"translate({{chartData.svg.inWidth/3 -30}},{{chartData.svg.height - 20}})\"\n" +
+    "      ng-attr-transform=\"translate({{legendScale('median')}},{{layout.height - 20}})\"\n" +
     "    >\n" +
     "      <rect class=\"median\" width=\"10\" height=\"10\"/>\n" +
     "      <text dx=\"20\" dy=\"10\" style=\"text-anchor: start; alignment-baseline: auto\">\n" +
@@ -44294,7 +44439,7 @@ angular.module("partials/groupedboxplot.html", []).run(["$templateCache", functi
     "      </text>\n" +
     "    </g>\n" +
     "    <g class=\"mean-legend\"\n" +
-    "      ng-attr-transform=\"translate({{chartData.svg.inWidth/3 * 2 - 30}},{{chartData.svg.height - 20}})\"\n" +
+    "      ng-attr-transform=\"translate({{legendScale('mean')}},{{layout.height - 20}})\"\n" +
     "    >\n" +
     "      <rect class=\"mean\" dy=\"4\" width=\"20\" height=\"5\"/>\n" +
     "      <text dx=\"30\" dy=\"10\" style=\"text-anchor: start; alignment-baseline: auto\">\n" +
@@ -44318,9 +44463,18 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "  </div>\n" +
     "  <!-- Keep all page content within the page-content inset div! -->\n" +
     "  <div class=\"page-content inset row\" style=\"max-height: 450px\">\n" +
-    "    <div class=\"col-md-12\">\n" +
+    "    <div class=\"col-md-12\" ng-switch on=\"data.type\">\n" +
+    "      \n" +
     "      <wave-spinner ng-show=\"loading\"></wave-spinner>\n" +
-    "      <sc-box-plot ng-if=\"data.type == 'boxPlot'\" sc-data=\"data\"/>\n" +
+    "      \n" +
+    "      <div class=\"chart\" ng-switch-when=\"boxPlot\">\n" +
+    "        <sc-box-plot sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBoxPlot\">\n" +
+    "        <sc-grouped-box-plot sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "      \n" +
     "    </div>\n" +
     "  </div>\n" +
     "</div>\n" +
@@ -44370,7 +44524,7 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
 ;(function () {
   'use strict';
 
-  angular.module('myApp.directives', ['myApp.config', 'templates-main']).
+  angular.module('myApp.directives', ['myApp.config', 'myApp.filters', 'templates-main']).
 
     /**
      * Directive to set the a `svga element `viewBox` attribute
@@ -44592,6 +44746,86 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
     }).
 
     /**
+     * scGroupedBoxPlot
+     *
+     * Like box plot except the data series are part of groups. The x axis
+     * has two level. One level names the serie; the other one names the group
+     * of the serie.
+     *
+     * usage:
+     *
+     *  <sc-grouped-box-plot sc-data="data"/>
+     */
+    directive('scGroupedBoxPlot', function(TPL_PATH, SVG, $window) {
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/groupedboxplot.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange,
+            leaf,
+            root,
+            yDomain = [];
+
+          scope.layout=SVG(
+            {top: 10, right: 30, bottom: 70, left: 50},
+            scope.width(),
+            scope.height()
+          );
+
+          onDataChange = function() {
+            
+            if (!scope.data || scope.data.type !== 'groupedBoxPlot') {
+              return;
+            }
+
+            scope.xScale = d3.scale.ordinal();
+            scope.yScale = d3.scale.linear();
+            scope.legendScale = d3.scale.ordinal().
+              domain(['median','mean']).
+              rangeBands([0, scope.layout.inWidth], 0.5, 0.5);
+            scope.xTree = [];
+            
+            // Calculate min, max, median of ranges and set the domains
+            for (var i = 0; i < scope.data.series.length; i++) {
+              root = scope.data.series[i];
+              leaf = {'root': root.name, 'children': []};
+              for (var j = 0; j < root.series.length; j++) {
+                root.series[j].data.sort(d3.ascending);
+                root.series[j].min = root.series[j].data[0];
+                root.series[j].max = root.series[j].data.slice(-1)[0];
+                root.series[j].median = d3.median(root.series[j].data);
+                root.series[j].mean = d3.mean(root.series[j].data);
+
+                yDomain.push(root.series[j].min);
+                yDomain.push(root.series[j].max);
+                scope.xScale(root.series[j].name);
+                leaf.children.push(root.series[j].name);
+              }
+              scope.xTree.push(leaf);
+            }
+
+            yDomain.sort(d3.ascending);
+            yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
+
+            // Set scales
+            scope.xScale = scope.xScale.rangeBands([0, scope.layout.inWidth], 0, 0);
+            scope.yScale = scope.yScale.domain(yDomain).
+              range([scope.layout.inHeight, 0]).
+              nice();
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
      * Draw a chart
      *
      * usage:
@@ -44601,58 +44835,12 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
      */
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
-        'groupedBoxPlot': TPL_PATH + '/groupedboxplot.html',
         'combined': TPL_PATH + '/combined.html',
         'bar': TPL_PATH + '/bar.html',
         'groupedBar': TPL_PATH + '/groupedbar.html',
         'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'groupedBoxPlot': function(chart, width, height) {
-          var d3 = $window.d3,
-            leaf,
-            yDomain = [],
-            data = chart.series;
-          
-          chart.svg=SVG({
-            top: SVG_MARGIN.top,
-            right: SVG_MARGIN.right,
-            bottom: SVG_MARGIN.bottom + 40,
-            left: SVG_MARGIN.left
-          }, width, height);
-
-          chart.xScale = d3.scale.ordinal();
-          chart.yScale = d3.scale.linear();
-          chart.xTree = [];
-          
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            leaf = {'root': data[i].name, 'children': []};
-            for (var j = 0; j < data[i].series.length; j++) {
-              data[i].series[j].data.sort(d3.ascending);
-              data[i].series[j].min = data[i].series[j].data[0];
-              data[i].series[j].max = data[i].series[j].data.slice(-1)[0];
-              data[i].series[j].median = d3.median(data[i].series[j].data);
-              data[i].series[j].mean = d3.mean(data[i].series[j].data);
-
-              yDomain.push(data[i].series[j].min);
-              yDomain.push(data[i].series[j].max);
-              chart.xScale(data[i].series[j].name);
-              leaf.children.push(data[i].series[j].name);
-            }
-            chart.xTree.push(leaf);
-          }
-
-          yDomain.sort(d3.ascending);
-          yDomain = yDomain.slice(0,1).concat(yDomain.slice(-1));
-
-          // Set scales
-          chart.xScale = chart.xScale.rangeBands([0, chart.svg.inWidth], 0, 0);
-          chart.yScale = chart.yScale.domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'bar': function(chart, width, height) {
           var d3 = $window.d3,
