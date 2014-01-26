@@ -358,6 +358,85 @@
     }).
 
     /**
+     * Draw a pie chart
+     * 
+     */
+    directive('scPie', function(TPL_PATH, SVG_MARGIN, SVG, $window){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/pie.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange,
+            onSeriesLenghtChange;
+
+          onSeriesLenghtChange = function(){
+            scope.layout=SVG(
+              {
+                top: 10,
+                right: 10,
+                bottom: 30 + (20 * scope.data.series.length),
+                left: 10
+              },
+              scope.width(),
+              scope.height()
+            );
+          };
+
+          onDataChange = function(){
+            var percentage = d3.scale.linear().
+                domain([0, d3.sum(scope.data.series, function(d){ return d.data; })]).
+                range([0,1]),
+              formatter = d3.format(".01%");
+
+            // Make sure the pie fits into the inner svg document,
+            // and sure the legend aligns with the pie
+            if (scope.layout.inHeight > scope.layout.inWidth) {
+              scope.pieRadius = scope.layout.inWidth/2;
+              scope.legendXAnchor = 0;
+            } else {
+              scope.pieRadius = scope.layout.inHeight/2;
+              scope.legendXAnchor = (scope.layout.inWidth - scope.pieRadius*2)/2;
+            }
+
+            scope.pieData = d3.layout.pie().
+              value(function(d){return d.data;})(scope.data.series);
+
+            scope.colors = d3.scale.category20();
+
+            scope.percentage = function(d){
+              var p = percentage(d);
+              return formatter(p);
+            };
+
+            scope.labelAnchor = function(s) {
+              if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
+                return "start";
+              } else {
+                return "end";
+              }
+            };
+
+            scope.arc = d3.svg.arc()
+              .startAngle(function(d){ return d.startAngle; })
+              .endAngle(function(d){ return d.endAngle; })
+              .innerRadius(0)
+              .outerRadius(scope.pieRadius);
+          };
+
+          // TODO: the order matters... might break.
+          scope.$watch('data.series.lenght', onSeriesLenghtChange);
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
      * Draw a chart
      *
      * usage:
@@ -368,43 +447,9 @@
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
         'combined': TPL_PATH + '/combined.html',
-        'bar': TPL_PATH + '/bar.html',
         'groupedBar': TPL_PATH + '/groupedbar.html',
-        'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'bar': function(chart, width, height) {
-          var d3 = $window.d3,
-            xDomain = [],
-            yDomain = [],
-            data = chart.series;
-          
-          chart.svg=SVG(SVG_MARGIN, width, height);
-
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            yDomain.push(data[i].data);
-            xDomain.push(data[i].name);
-          }
-          yDomain.sort(d3.ascending);
-          // TODO: Fix  hardcoded Domain low
-          yDomain = [0].concat(yDomain.slice(-1));
-          yDomain[1] *= 1.1;
-
-          // Set scales
-          chart.xScale = d3.scale.ordinal().
-            domain(xDomain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
-            range([0, chart.svg.inHeight]).
-            nice();
-          chart.yScaleReversed = d3.scale.linear().
-            domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'groupedBar': function(chart, width, height) {
           var d3 = $window.d3,
@@ -459,56 +504,6 @@
             range([chart.svg.inHeight, 0]).
             nice();
         },
-
-        'pie': function(chart, width, height) {
-          // TODO: check number of item in serie (<20)
-          var d3 = $window.d3,
-            percentage = d3.scale.linear().
-              domain([0, d3.sum(chart.series, function(d){ return d.data; })]).
-              range([0,1]),
-            formatter = d3.format(".01%");
-
-          chart.svg=SVG(
-            {
-              top: 10,
-              right: 10,
-              bottom: 30 + (20 * chart.series.length),
-              left: 10
-            },
-            width,
-            height
-          );
-
-          // Make sure the pie fits into the inner svg document,
-          // and sure the legend aligns with the pie
-          if (chart.svg.inHeight > chart.svg.inWidth) {
-            chart.pieRadius = chart.svg.inWidth/2;
-            chart.legendXAnchor = chart.svg.margin.left;
-          } else {
-            chart.pieRadius = chart.svg.inHeight/2;
-            chart.legendXAnchor = (chart.svg.width - chart.pieRadius*2)/2;
-          }
-          chart.pieData = d3.layout.pie().
-            value(function(d){return d.data;})(chart.series);
-          chart.colors = d3.scale.category20();
-          chart.percentage = function(d){
-            var p = percentage(d);
-            return formatter(p);
-          };
-          chart.labelAnchor = function(s) {
-            if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
-              return "start";
-            } else {
-              return "end";
-            }
-          };
-          chart.arc = d3.svg.arc()
-            .startAngle(function(d){ return d.startAngle; })
-            .endAngle(function(d){ return d.endAngle; })
-            .innerRadius(0)
-            .outerRadius(chart.pieRadius);
-        },
-
 
         'combined': function(chart, width, height) {
           chart.svg=SVG(SVG_MARGIN, width, height);

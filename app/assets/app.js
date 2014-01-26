@@ -44472,6 +44472,10 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "      <div class=\"chart\" ng-switch-when=\"bar\">\n" +
     "        <sc-bar sc-data=\"data\"/>\n" +
     "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"pie\">\n" +
+    "        <sc-pie sc-data=\"data\"/>\n" +
+    "      </div>\n" +
     "      \n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -44487,33 +44491,31 @@ angular.module("partials/not-supported.html", []).run(["$templateCache", functio
 
 angular.module("partials/pie.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/pie.html",
-    "<h3 class=\"desc\">{{chartData.subtitle}}</h3>\n" +
-    "<svg sc-view-box=\"chartData.svg\">\n" +
-    "	<g ng-attr-transform=\"translate({{chartData.svg.inWidth / 2}},{{chartData.svg.inHeight / 2}})\">\n" +
-    "		<g class=\"arcs\" ng-repeat=\"a in chartData.pieData\">\n" +
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg sc-view-box=\"layout\">\n" +
+    "	<g class=\"pie\"ng-attr-transform=\"translate({{layout.inWidth / 2}},{{layout.inHeight / 2}})\">\n" +
+    "		<g class=\"slice\" ng-repeat=\"a in pieData\">\n" +
     "			<path\n" +
-    "				ng-attr-d={{chartData.arc(a)}}\n" +
-    "				ng-attr-style=\"fill: {{chartData.colors(a.data.name)}};\"\n" +
+    "				ng-attr-d={{arc(a)}}\n" +
+    "				ng-attr-style=\"fill: {{colors(a.data.name)}};\"\n" +
     "				/>\n" +
-    "		</g>\n" +
-    "		<g class=\"labels\" ng-repeat=\"a in chartData.pieData\">\n" +
-    "			<text class=\"percentage\"\n" +
-    "				ng-attr-transform=\"translate({{chartData.arc.centroid(a).join(',')}})\"\n" +
+    "			<text\n" +
+    "				ng-attr-transform=\"translate({{arc.centroid(a).join(',')}})\"\n" +
     "				dy=\".35em\"\n" +
     "				style=\"text-anchor: middle\"\n" +
     "				>\n" +
-    "				{{chartData.percentage(a.data.data)}}\n" +
+    "				{{percentage(a.data.data)}}\n" +
     "			</text>\n" +
     "		</g>\n" +
     "	</g>\n" +
     "\n" +
-    "	<g class=\"legend\" ng-repeat=\"a in chartData.pieData\"\n" +
-    "		ng-attr-transform=\"translate({{chartData.legendXAnchor}}, {{chartData.svg.height - (chartData.pieData.length - $index) * 20 - 15}})\"\n" +
+    "	<g class=\"legend\" ng-repeat=\"a in pieData\"\n" +
+    "		ng-attr-transform=\"translate({{legendXAnchor}}, {{layout.height - (pieData.length - $index) * 20 - 15}})\"\n" +
     "	>\n" +
     "		<rect\n" +
     "			width=\"12\"\n" +
     "			height=\"12\"\n" +
-    "			ng-attr-style=\"fill: {{chartData.colors(a.data.name)}}\"\n" +
+    "			ng-attr-style=\"fill: {{colors(a.data.name)}}\"\n" +
     "		/>\n" +
     "		<text dx=\"20\" dy=\"12\" style=\"alignment-baseline: auto\">{{a.data.name}}</text>\n" +
     "	</g>\n" +
@@ -44879,6 +44881,85 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
     }).
 
     /**
+     * Draw a pie chart
+     * 
+     */
+    directive('scPie', function(TPL_PATH, SVG_MARGIN, SVG, $window){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/pie.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange,
+            onSeriesLenghtChange;
+
+          onSeriesLenghtChange = function(){
+            scope.layout=SVG(
+              {
+                top: 10,
+                right: 10,
+                bottom: 30 + (20 * scope.data.series.length),
+                left: 10
+              },
+              scope.width(),
+              scope.height()
+            );
+          };
+
+          onDataChange = function(){
+            var percentage = d3.scale.linear().
+                domain([0, d3.sum(scope.data.series, function(d){ return d.data; })]).
+                range([0,1]),
+              formatter = d3.format(".01%");
+
+            // Make sure the pie fits into the inner svg document,
+            // and sure the legend aligns with the pie
+            if (scope.layout.inHeight > scope.layout.inWidth) {
+              scope.pieRadius = scope.layout.inWidth/2;
+              scope.legendXAnchor = 0;
+            } else {
+              scope.pieRadius = scope.layout.inHeight/2;
+              scope.legendXAnchor = (scope.layout.inWidth - scope.pieRadius*2)/2;
+            }
+
+            scope.pieData = d3.layout.pie().
+              value(function(d){return d.data;})(scope.data.series);
+
+            scope.colors = d3.scale.category20();
+
+            scope.percentage = function(d){
+              var p = percentage(d);
+              return formatter(p);
+            };
+
+            scope.labelAnchor = function(s) {
+              if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
+                return "start";
+              } else {
+                return "end";
+              }
+            };
+
+            scope.arc = d3.svg.arc()
+              .startAngle(function(d){ return d.startAngle; })
+              .endAngle(function(d){ return d.endAngle; })
+              .innerRadius(0)
+              .outerRadius(scope.pieRadius);
+          };
+
+          // TODO: the order matters... might break.
+          scope.$watch('data.series.lenght', onSeriesLenghtChange);
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
      * Draw a chart
      *
      * usage:
@@ -44889,43 +44970,9 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
     directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
       var templates = {
         'combined': TPL_PATH + '/combined.html',
-        'bar': TPL_PATH + '/bar.html',
         'groupedBar': TPL_PATH + '/groupedbar.html',
-        'pie': TPL_PATH + '/pie.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'bar': function(chart, width, height) {
-          var d3 = $window.d3,
-            xDomain = [],
-            yDomain = [],
-            data = chart.series;
-          
-          chart.svg=SVG(SVG_MARGIN, width, height);
-
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            yDomain.push(data[i].data);
-            xDomain.push(data[i].name);
-          }
-          yDomain.sort(d3.ascending);
-          // TODO: Fix  hardcoded Domain low
-          yDomain = [0].concat(yDomain.slice(-1));
-          yDomain[1] *= 1.1;
-
-          // Set scales
-          chart.xScale = d3.scale.ordinal().
-            domain(xDomain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
-            range([0, chart.svg.inHeight]).
-            nice();
-          chart.yScaleReversed = d3.scale.linear().
-            domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'groupedBar': function(chart, width, height) {
           var d3 = $window.d3,
@@ -44980,56 +45027,6 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
             range([chart.svg.inHeight, 0]).
             nice();
         },
-
-        'pie': function(chart, width, height) {
-          // TODO: check number of item in serie (<20)
-          var d3 = $window.d3,
-            percentage = d3.scale.linear().
-              domain([0, d3.sum(chart.series, function(d){ return d.data; })]).
-              range([0,1]),
-            formatter = d3.format(".01%");
-
-          chart.svg=SVG(
-            {
-              top: 10,
-              right: 10,
-              bottom: 30 + (20 * chart.series.length),
-              left: 10
-            },
-            width,
-            height
-          );
-
-          // Make sure the pie fits into the inner svg document,
-          // and sure the legend aligns with the pie
-          if (chart.svg.inHeight > chart.svg.inWidth) {
-            chart.pieRadius = chart.svg.inWidth/2;
-            chart.legendXAnchor = chart.svg.margin.left;
-          } else {
-            chart.pieRadius = chart.svg.inHeight/2;
-            chart.legendXAnchor = (chart.svg.width - chart.pieRadius*2)/2;
-          }
-          chart.pieData = d3.layout.pie().
-            value(function(d){return d.data;})(chart.series);
-          chart.colors = d3.scale.category20();
-          chart.percentage = function(d){
-            var p = percentage(d);
-            return formatter(p);
-          };
-          chart.labelAnchor = function(s) {
-            if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
-              return "start";
-            } else {
-              return "end";
-            }
-          };
-          chart.arc = d3.svg.arc()
-            .startAngle(function(d){ return d.startAngle; })
-            .endAngle(function(d){ return d.endAngle; })
-            .innerRadius(0)
-            .outerRadius(chart.pieRadius);
-        },
-
 
         'combined': function(chart, width, height) {
           chart.svg=SVG(SVG_MARGIN, width, height);
