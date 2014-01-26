@@ -8,9 +8,26 @@
   </div>
   <!-- Keep all page content within the page-content inset div! -->
   <div class="page-content inset row" style="max-height: 450px">
-    <div class="col-md-12">
+    <div class="col-md-12" ng-switch on="data.type">
+      
       <wave-spinner ng-show="loading"></wave-spinner>
-      <my-chart chart-data="data"></my-chart>
+      
+      <div class="chart" ng-switch-when="boxPlot">
+        <sc-box-plot sc-data="data"/>
+      </div>
+      
+      <div class="chart" ng-switch-when="groupedBoxPlot">
+        <sc-grouped-box-plot sc-data="data"/>
+      </div>
+
+      <div class="chart" ng-switch-when="bar">
+        <sc-bar sc-data="data"/>
+      </div>
+
+      <div class="chart" ng-switch-when="pie">
+        <sc-pie sc-data="data"/>
+      </div>
+      
     </div>
   </div>
 </div>

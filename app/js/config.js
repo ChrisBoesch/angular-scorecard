@@ -3,7 +3,7 @@
   
   angular.module('myApp.config', ['ngRoute']).
 
-    constant('TPL_PATH', '/partials').
+    constant('TPL_PATH', 'partials').
     constant('API_BASE', '/api/v1').
     constant('SVG_HEIGHT', 400).
     constant('SVG_WIDTH', 720).
