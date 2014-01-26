@@ -63,24 +63,7 @@ module.exports = function(grunt) {
         options: {
           base: 'coverage/',
           port: 5555,
-          keepalive: true,
-          middleware: function(connect, options) {
-            var middlewares = [];
-            var directory = options.directory || options.base[options.base.length - 1];
-            if (!Array.isArray(options.base)) {
-              options.base = [options.base];
-            }
-
-            options.base.forEach(function(base) {
-              // Serve static files.
-              middlewares.push(connect.static(base));
-            });
-
-            // Make directory browse-able.
-            middlewares.push(connect.directory(directory));
-
-            return middlewares;
-          }
+          keepalive: true
         }
       }
     },
