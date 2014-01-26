@@ -44941,6 +44941,10 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
             var yDomain = [],
               entries;
 
+            if (!scope.data || scope.data.type !== 'groupedBar') {
+              return;
+            }
+
             scope.xScale = d3.scale.ordinal();
             scope.xNestedScale = d3.scale.ordinal();
 
@@ -44999,14 +45003,19 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
         link: function(scope) {
           var d3 = $window.d3,
             onDataChange,
-            onSeriesLenghtChange;
+            onSeriesLenghtChange,
+            serieCount = 0;
+
+          if (scope.data && scope.data.series) {
+            serieCount = scope.data.series.length || 0;
+          }
 
           onSeriesLenghtChange = function(){
             scope.layout=SVG(
               {
                 top: 10,
                 right: 10,
-                bottom: 30 + (20 * scope.data.series.length),
+                bottom: 30 + (20 * serieCount),
                 left: 10
               },
               scope.width(),
@@ -45015,10 +45024,12 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
           };
 
           onDataChange = function(){
-            var percentage = d3.scale.linear().
-                domain([0, d3.sum(scope.data.series, function(d){ return d.data; })]).
-                range([0,1]),
+            var percentage,
               formatter = d3.format(".01%");
+
+            if (!scope.data || scope.data.type !== 'pie') {
+              return;
+            }
 
             // Make sure the pie fits into the inner svg document,
             // and sure the legend aligns with the pie
@@ -45035,17 +45046,13 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
 
             scope.colors = d3.scale.category20();
 
+            percentage = d3.scale.linear().
+              domain([0, d3.sum(scope.data.series, function(d){ return d.data; })]).
+              range([0,1]);
+
             scope.percentage = function(d){
               var p = percentage(d);
               return formatter(p);
-            };
-
-            scope.labelAnchor = function(s) {
-              if (((s.startAngle + s.endAngle) / 2) < Math.PI) {
-                return "start";
-              } else {
-                return "end";
-              }
             };
 
             scope.arc = d3.svg.arc()

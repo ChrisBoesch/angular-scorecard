@@ -1,4 +1,4 @@
-/*global describe, beforeEach, xit, it, inject, expect*/
+/*global describe, beforeEach, it, it, inject, expect*/
 
 (function () {
   'use strict';
@@ -241,6 +241,13 @@
 
       });
 
+      it('should not raise an error if wrong type', function() {
+        $rootScope.data = {};
+        $compile('<sc-box-plot sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+
+        expect(function(){$rootScope.$apply();}).not.toThrow();
+      });
+
       it('should set svg layout', function() {
         var element;
         element = $compile('<sc-box-plot sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
@@ -306,6 +313,13 @@
           ]
         };
 
+      });
+
+      it('should not raise an error if wrong type', function() {
+        $rootScope.data = {};
+        $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+
+        expect(function(){$rootScope.$apply();}).not.toThrow();
       });
 
       it('should set svg layout', function() {
@@ -441,6 +455,13 @@
 
       });
 
+      it('should not raise an error if wrong type', function() {
+        $rootScope.data = {};
+        $compile('<sc-bar sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+  
+        expect(function(){$rootScope.$apply();}).not.toThrow();
+      });
+
       it('should set svg layout', function() {
         var element;
         element = $compile('<sc-bar sc-data="data" sc-width="200" sc-height="180"/>')($rootScope);
@@ -532,6 +553,13 @@
           ]
         };
 
+      });
+
+      it('should not raise an error if wrong type', function() {
+        $rootScope.data = {};
+        $compile('<sc-pie sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+        $rootScope.$apply();
+        expect(function(){$rootScope.$apply();}).not.toThrow();
       });
 
       it('should set the layout', function() {
@@ -681,6 +709,13 @@
           ]
         };
 
+      });
+
+      it('should not raise an error if wrong type', function() {
+        $rootScope.data = {};
+        $compile('<sc-grouped-bar sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+
+        expect(function(){$rootScope.$apply();}).not.toThrow();
       });
 
       it('should set layout', function() {
@@ -845,6 +880,13 @@
           ]
         };
 
+      });
+
+      it('should not raise an error if wrong type', function() {
+        $rootScope.data = {};
+        $compile('<sc-combined sc-data="data" sc-width="180" sc-height="140"/>')($rootScope);
+
+        expect(function(){$rootScope.$apply();}).not.toThrow();
       });
 
       it('should set layout', function() {
