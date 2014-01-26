@@ -813,6 +813,68 @@
 
     });
 
+    describe('scCombined', function() {
+      beforeEach(function() {
+
+        $rootScope.data = {
+          title: 'Some Title',
+          type: 'combined',
+          series: [
+            {
+              type: 'bar',
+              subtitle: 'The Bar Chart Header',
+              axisY: {
+                name: 'Number',
+                min: 0,
+              },
+              series: [
+                {name: 'AAAAAA', data:  180},
+                {name: 'BBBBBBB', data:  110}
+              ]
+            },
+            {
+              type: 'pie',
+              subtitle: 'The Pie Chart Header',
+              series: [
+                {name: 'AAAAAA', data:  40},
+                {name: 'BBBBBB', data:  110},
+                {name: 'CCCCCCCCCC', data:  30},
+                {name: 'DDDDDDDDDDDD', data:  3}
+              ]
+            }
+          ]
+        };
+
+      });
+
+      it('should set layout', function() {
+        var element, layout;
+        element = $compile('<sc-combined sc-data="data" sc-width="100" sc-height="100"/>')($rootScope);
+
+        $rootScope.$apply();
+        layout = $rootScope.$$childHead.layout;
+
+        expect(layout.margin).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+        expect(layout.inHeight).toBe(100);
+        expect(layout.inWidth).toBe(100);
+        expect(layout.height).toBe(100);
+        expect(layout.width).toBe(100);
+      });
+
+      it('should draw a bar and a pie chart', function() {
+        var element;
+        element = $compile('<sc-combined sc-data="data" sc-width="100" sc-height="100"/>')($rootScope);
+
+        $rootScope.$apply();
+        expect(element.find('sc-bar').length).toBe(1);
+        expect(element.find('sc-pie').length).toBe(1);
+
+        expect(element.find('sc-bar svg').get(0).viewBox.baseVal.width).toBe(50);
+        expect(element.find('sc-pie svg').get(0).viewBox.baseVal.width).toBe(50);
+      });
+
+    });
+
   });
 
 })();

@@ -511,52 +511,30 @@
     }).
 
     /**
-     * Draw a chart
-     *
-     * usage:
-     *
-     *  <my-chart chart-data="data" [svg-width="100"] [svg-height="100"]/>
+     * Draw two or more charts side by side
      *  
      */
-    directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH) {
-      var templates = {
-        'combined': TPL_PATH + '/combined.html',
-        'default': TPL_PATH + '/not-supported.html'
-      }, factories = {
-
-        'combined': function(chart, width, height) {
-          chart.svg=SVG(SVG_MARGIN, width, height);
-        }
-
-      };
-
+    
+    directive('scCombined', function(TPL_PATH, SVG) {
       return {
         restrict: 'E',
+        templateUrl: TPL_PATH + '/combined.html',
         scope: {
-          'chartData': '=',
-          'svgWidth': '&',
-          'svgHeight': '&'
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
         },
-        template: '<div class="graph" ng-include="template"></div>',
-        link: function(scope){
-
-          scope.$watch('chartData', function(){
-            var gType,
-              height = scope.svgHeight() || SVG_HEIGHT,
-              width = scope.svgWidth() || SVG_WIDTH;
-
-            if (!scope.chartData) {
-              return;
-            }
-
-            gType = scope.chartData.type;
-            scope.template = templates[gType] ? templates[gType] : templates['default'];
-            
-            if (factories[gType]) {
-              factories[gType](scope.chartData, width, height);
-            }
-
-          });
+        link: function(scope) {
+          scope.layout=SVG(
+            {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 0
+            },
+            scope.width(),
+            scope.height()
+          );
         }
       };
     });

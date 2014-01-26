@@ -74,12 +74,34 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
 
 angular.module("partials/combined.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/combined.html",
-    "\n" +
     "<div class=\"row\">\n" +
-    "	<div class=\"col-md-{{12 / chartData.series.length}}\" ng-repeat=\"c in chartData.series\">\n" +
-    "		<my-chart chart-data=\"c\" svg-width=\"chartData.svg.width / chartData.series.length\"></my-graph>\n" +
+    "	<div class=\"col-md-{{12 / data.series.length}}\" ng-repeat=\"c in data.series\">\n" +
+    "    <div ng-switch on=\"c.type\">\n" +
+    "      \n" +
+    "      <div class=\"chart\" ng-switch-when=\"boxPlot\">\n" +
+    "        <sc-box-plot sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBoxPlot\">\n" +
+    "        <sc-grouped-box-plot sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"bar\">\n" +
+    "        <sc-bar sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBar\">\n" +
+    "        <sc-grouped-bar sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"pie\">\n" +
+    "        <sc-pie sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "    </div>\n" +
     "	</div>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("partials/groupedbar.html", []).run(["$templateCache", function($templateCache) {
@@ -229,6 +251,10 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "\n" +
     "      <div class=\"chart\" ng-switch-when=\"pie\">\n" +
     "        <sc-pie sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"combined\">\n" +
+    "        <sc-combined sc-data=\"data\"/>\n" +
     "      </div>\n" +
     "      \n" +
     "    </div>\n" +
