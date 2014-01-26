@@ -8828,7 +8828,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 
 })( window );
 ;/**
- * @license AngularJS v1.2.11-build.2182+sha.88a14b4
+ * @license AngularJS v1.2.11-build.2184+sha.319dd1a
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -8897,7 +8897,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.11-build.2182+sha.88a14b4/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.11-build.2184+sha.319dd1a/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -10663,7 +10663,7 @@ function setupModuleLoader(window) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.2.11-build.2182+sha.88a14b4',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.2.11-build.2184+sha.319dd1a',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 2,
   dot: 11,
@@ -38694,7 +38694,7 @@ var styleDirective = valueFn({
     this.d3 = d3;
   }
 }();;/**
- * @license AngularJS v1.2.11-build.2182+sha.88a14b4
+ * @license AngularJS v1.2.11-build.2184+sha.319dd1a
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -39614,7 +39614,7 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 })(window, window.angular);
 ;/**
- * @license AngularJS v1.2.11-build.2182+sha.88a14b4
+ * @license AngularJS v1.2.11-build.2184+sha.319dd1a
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -40208,7 +40208,7 @@ angular.module('ngResource', ['ng']).
 
 })(window, window.angular);
 ;/**
- * @license AngularJS v1.2.11-build.2182+sha.88a14b4
+ * @license AngularJS v1.2.11-build.2184+sha.319dd1a
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -44333,26 +44333,25 @@ angular.module("partials/combined.html", []).run(["$templateCache", function($te
 
 angular.module("partials/groupedbar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/groupedbar.html",
-    "<h3 class=\"desc\">{{chartData.subtitle}}</h3>\n" +
-    "<svg sc-view-box=\"chartData.svg\">\n" +
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"chartData.yScaleReversed\" sc-layout=\"chartData.svg\" title=\"chartData.axisY.name\"></g>\n" +
+    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
     "\n" +
-    "  <g class=\"serie\" ng-repeat=\"serie in chartData.series\"\n" +
-    "    ng-attr-transform=\"translate({{chartData.xScale(serie.name)}}, 0)\"\n" +
+    "  <g class=\"serie\" ng-repeat=\"serie in data.series\"\n" +
+    "    ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
     "  >\n" +
-    "    <g class=\"group\" ng-repeat=\"name in chartData.xNestedScale.domain()\"\n" +
-    "      ng-attr-transform=\"translate({{chartData.xNestedScale(name)}}, 0)\"\n" +
+    "    <g class=\"group\" ng-repeat=\"name in xNestedScale.domain()\"  ng-if=\"serie.data[name]\"\n" +
+    "      ng-attr-transform=\"translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})\"\n" +
     "    >\n" +
-    "      <rect class=\"bar\" ng-if=\"serie.data[name]\"\n" +
-    "        ng-attr-y=\"{{chartData.svg.inHeight - chartData.yScale(serie.data[name])}}\" \n" +
-    "        ng-attr-width=\"{{chartData.xNestedScale.rangeBand()}}\"\n" +
-    "        ng-attr-height=\"{{chartData.yScale(serie.data[name])}}\"\n" +
-    "        ng-attr-style=\"fill: {{chartData.colors(name)}}\"\n" +
+    "      <rect class=\"bar\"\n" +
+    "        ng-attr-width=\"{{xNestedScale.rangeBand()}}\"\n" +
+    "        ng-attr-height=\"{{yScale(serie.data[name])}}\"\n" +
+    "        ng-attr-style=\"fill: {{colors(name)}}\"\n" +
     "      />\n" +
-    "      <text class=\"bar-label\" ng-if=\"serie.data[name]\"\n" +
-    "        ng-attr-dx=\"{{chartData.xNestedScale.rangeBand()/2}}\"\n" +
-    "        ng-attr-y=\"{{chartData.svg.inHeight - chartData.yScale(serie.data[name]) - 10}}\" \n" +
+    "      <text class=\"bar-label\"\n" +
+    "        y=\"-10\"\n" +
+    "        ng-attr-dx=\"{{xNestedScale.rangeBand()/2}}\" \n" +
     "      >\n" +
     "        {{serie.data[name]}}\n" +
     "      </text>\n" +
@@ -44360,13 +44359,13 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "  </g>\n" +
     "\n" +
     "  <!-- Draw the x axis, ticks and the legend-->\n" +
-    "  <g sc-b-axis=\"chartData.xAxisScale\" sc-layout=\"chartData.svg\"></g>\n" +
+    "  <g sc-b-axis=\"xAxisScale\" sc-layout=\"layout\"></g>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
-    "    ng-repeat=\"name in chartData.legendScale.domain()\"\n" +
-    "    ng-attr-transform=\"translate({{chartData.legendScale(name)}}, {{chartData.svg.inHeight + 50}})\"\n" +
+    "    ng-repeat=\"name in legendScale.domain()\"\n" +
+    "    ng-attr-transform=\"translate({{legendScale(name)}}, {{layout.inHeight + 50}})\"\n" +
     "  >\n" +
-    "    <rect class=\"bar\" width=\"10\" height=\"10\" ng-attr-style=\"fill: {{chartData.colors(name)}}\"/>\n" +
+    "    <rect class=\"bar\" width=\"10\" height=\"10\" ng-attr-style=\"fill: {{colors(name)}}\"/>\n" +
     "    <text dx=\"20\" dy=\"10\" style=\"text-anchor: start; alignment-baseline: auto\">\n" +
     "      {{name}}\n" +
     "    </text>\n" +
@@ -44471,6 +44470,10 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "\n" +
     "      <div class=\"chart\" ng-switch-when=\"bar\">\n" +
     "        <sc-bar sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBar\">\n" +
+    "        <sc-grouped-bar sc-data=\"data\"/>\n" +
     "      </div>\n" +
     "\n" +
     "      <div class=\"chart\" ng-switch-when=\"pie\">\n" +
@@ -44881,6 +44884,80 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
     }).
 
     /**
+     * Draw a grouped bar chart
+     * 
+     */
+    directive('scGroupedBar', function(TPL_PATH, SVG, $window){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/groupedbar.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var d3 = $window.d3,
+            onDataChange;
+
+          scope.layout=SVG(
+            {
+              top: 30,
+              right: 30,
+              bottom: 60,
+              left: 70
+            },
+            scope.width(),
+            scope.height()
+          );
+
+          onDataChange = function(){
+            var yDomain = [],
+              entries;
+
+            scope.xScale = d3.scale.ordinal();
+            scope.xNestedScale = d3.scale.ordinal();
+
+            // calculate scales domains
+            // y scales will use a range domain from 0 (to fix) to max value
+            for (var i = 0; i < scope.data.series.length; i++) {
+              scope.xScale(scope.data.series[i].name);
+              entries = d3.entries(scope.data.series[i].data);
+              for (var j = 0; j < entries.length; j++) {
+                yDomain.push(entries[j].value);
+                scope.xNestedScale(entries[j].key);
+              }
+            }
+
+            yDomain.sort(d3.ascending);
+            // TODO: Fix  hardcoded Domain low
+            yDomain = [0].concat(yDomain.slice(-1));
+
+            // Set scales
+            scope.xScale = scope.xScale.rangeBands([0, scope.layout.inWidth], 0, 0);
+            scope.xAxisScale = scope.xScale.copy().rangePoints([0, scope.layout.inWidth], 1);
+            scope.xNestedScale = scope.xNestedScale.
+              rangeBands([0, scope.layout.inWidth/scope.xScale.domain().length], 0, 0.5);
+            scope.colors = d3.scale.category20();
+            scope.legendScale = scope.xNestedScale.copy().
+              rangeBands([0, scope.layout.inWidth], 0.5, 0.5);
+            scope.yScale = d3.scale.linear().
+              domain(yDomain).
+              range([0, scope.layout.inHeight]).
+              nice();
+            scope.yAxisScale = d3.scale.linear().
+              domain(yDomain).
+              range([scope.layout.inHeight, 0]).
+              nice();
+
+          };
+
+          scope.$watch('data', onDataChange);
+        }
+      };
+    }).
+
+    /**
      * Draw a pie chart
      * 
      */
@@ -44967,66 +45044,11 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
      *  <my-chart chart-data="data" [svg-width="100"] [svg-height="100"]/>
      *  
      */
-    directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH, $window) {
+    directive('myChart', function(TPL_PATH, SVG, SVG_MARGIN, SVG_HEIGHT, SVG_WIDTH) {
       var templates = {
         'combined': TPL_PATH + '/combined.html',
-        'groupedBar': TPL_PATH + '/groupedbar.html',
         'default': TPL_PATH + '/not-supported.html'
       }, factories = {
-
-        'groupedBar': function(chart, width, height) {
-          var d3 = $window.d3,
-            xNestedDomain = [],
-            xNestedDomainPseudoSet = {},
-            xDomain = [],
-            yDomain = [],
-            entries,
-            data = chart.series;
-          
-          chart.svg=SVG({
-            top: 30,
-            right: 30,
-            bottom: 60,
-            left: 70
-          }, width, height);
-
-          // Calculate min, max, median of ranges and set the domains
-          for (var i = 0; i < data.length; i++) {
-            xDomain.push(data[i].name);
-            entries = d3.entries(data[i].data);
-            for (var j = 0; j < entries.length; j++) {
-              yDomain.push(entries[j].value);
-              xNestedDomainPseudoSet[entries[j].key] = 1;
-            }
-          }
-          yDomain.sort(d3.ascending);
-          // TODO: Fix  hardcoded Domain low
-          yDomain = [0].concat(yDomain.slice(-1));
-          xNestedDomain = d3.keys(xNestedDomainPseudoSet);
-
-          // Set scales
-          chart.xScale = d3.scale.ordinal().
-            domain(xDomain).
-            rangeBands([0, chart.svg.inWidth], 0, 0);
-          chart.xAxisScale = d3.scale.ordinal().
-            domain(xDomain).
-            rangePoints([0, chart.svg.inWidth], 1);
-          chart.xNestedScale = d3.scale.ordinal().
-            domain(xNestedDomain).
-            rangeBands([0, chart.svg.inWidth/data.length], 0, 0.5);
-          chart.colors = d3.scale.category20();
-          chart.legendScale = d3.scale.ordinal().
-            domain(xNestedDomain).
-            rangeBands([0, chart.svg.inWidth], 0.5, 0.5);
-          chart.yScale = d3.scale.linear().
-            domain(yDomain).
-            range([0, chart.svg.inHeight]).
-            nice();
-          chart.yScaleReversed = d3.scale.linear().
-            domain(yDomain).
-            range([chart.svg.inHeight, 0]).
-            nice();
-        },
 
         'combined': function(chart, width, height) {
           chart.svg=SVG(SVG_MARGIN, width, height);

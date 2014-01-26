@@ -24,6 +24,10 @@
         <sc-bar sc-data="data"/>
       </div>
 
+      <div class="chart" ng-switch-when="groupedBar">
+        <sc-grouped-bar sc-data="data"/>
+      </div>
+
       <div class="chart" ng-switch-when="pie">
         <sc-pie sc-data="data"/>
       </div>

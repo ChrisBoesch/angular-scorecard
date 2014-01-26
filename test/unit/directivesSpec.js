@@ -664,6 +664,155 @@
       });
     });
 
+    describe('scGroupedBar', function(){
+      
+      beforeEach(function() {
+
+        $rootScope.data =   {
+          title: 'Some Title',
+          subtitle: 'some subtitle',
+          type: 'groupedBar',
+          axisY: {
+            name: 'Percentage (%)'
+          },
+          series: [
+            {name: 'AAAA', data: {'c1': 100, 'c2': 50}},
+            {name: 'BBBB', data: {'c1': 100}},
+          ]
+        };
+
+      });
+
+      it('should set layout', function() {
+        var element;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="250" sc-height="190"/>')($rootScope);
+
+        $rootScope.$apply();
+        expect($rootScope.$$childHead.layout.margin).toEqual(
+          { top: 30, right: 30, bottom: 60, left: 70 }
+        );
+        expect($rootScope.$$childHead.layout.inHeight).toBe(100);
+        expect($rootScope.$$childHead.layout.inWidth).toBe(150);
+        expect($rootScope.$$childHead.layout.height).toBe(190);
+        expect($rootScope.$$childHead.layout.width).toBe(250);
+      });
+
+      it('should set xScale', function() {
+        var element, xScale;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="200" sc-height="190"/>')($rootScope);
+
+        $rootScope.$apply();
+        xScale = $rootScope.$$childHead.xScale;
+        expect(xScale).toBeTruthy();
+        expect(xScale.domain()).toEqual(['AAAA', 'BBBB']);
+        expect(xScale('AAAA')).toBe(0);
+        expect(xScale('BBBB')).toBe(50);
+        expect(xScale.rangeBand()).toBe(50);
+      });
+
+      it('should set xAxisScale', function() {
+        var element, xAxisScale;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="200" sc-height="190"/>')($rootScope);
+
+        $rootScope.$apply();
+        xAxisScale = $rootScope.$$childHead.xAxisScale;
+        expect(xAxisScale).toBeTruthy();
+        expect(xAxisScale.domain()).toEqual(['AAAA', 'BBBB']);
+        expect(xAxisScale('AAAA')).toBe(25);
+        expect(xAxisScale('BBBB')).toBe(75);
+      });
+
+      it('should set xNestedScale', function() {
+        var element, xNestedScale;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="220" sc-height="190"/>')($rootScope);
+
+        $rootScope.$apply();
+        xNestedScale = $rootScope.$$childHead.xNestedScale;
+        expect(xNestedScale).toBeTruthy();
+        expect(xNestedScale.domain()).toEqual(['c1', 'c2']);
+        
+        // inWidth == 120, used by 2 groups; so 60px will be the extend of that scale
+        // we expect 1/2 rangeBand on each outer side of the scale
+        expect(xNestedScale.rangeBand()).toBe(20);
+        expect(xNestedScale('c1')).toBe(10);
+        expect(xNestedScale('c2')).toBe(30);
+      });
+
+      it('should set colors', function() {
+        var element, colors;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="220" sc-height="190"/>')($rootScope);
+
+        $rootScope.$apply();
+        colors = $rootScope.$$childHead.colors;
+        expect(colors).toBeTruthy();
+        expect(colors('foo')).toBe(colors('foo'));
+        expect(colors('foo')).not.toBe(colors('bar'));
+
+        // checks it returns an hexadecimal color.
+        expect(colors('foo')[0]).toBe('#');
+        expect(angular.isNumber(parseInt(colors('foo').slice(1), 16))).toBe(true);
+      });
+
+      it('should set legendScale', function() {
+        var element, legendScale;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="200" sc-height="190"/>')($rootScope);
+
+        $rootScope.$apply();
+        legendScale = $rootScope.$$childHead.legendScale;
+        expect(legendScale).toBeTruthy();
+        expect(legendScale.domain()).toEqual(['c1', 'c2']);
+        // we expect 1/2 band margin on the side of each band,
+        // and 1/2 band margin on each ends of the scale;
+        // so the range band is equal to inner width of the chart divided
+        // by 5 (domain.length * (1 + 2*0.5) + 2*0.5)
+        expect(legendScale.rangeBand()).toBe(20);
+        expect(legendScale('c1')).toBe(20);
+        expect(legendScale('c2')).toBe(60);
+      });
+
+      it('should set yScale', function() {
+        var element, yScale;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="200" sc-height="290"/>')($rootScope);
+
+        $rootScope.$apply();
+        yScale = $rootScope.$$childHead.yScale;
+        expect(yScale).toBeTruthy();
+        expect(yScale.domain()).toEqual([0,100]);
+        expect(yScale.range()).toEqual([0,200]);
+        expect(yScale(0)).toBe(0);
+        expect(yScale(50)).toBe(100);
+        expect(yScale(100)).toBe(200);
+      });
+
+      it('should set yAxisScale', function() {
+        var element, yAxisScale;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="200" sc-height="290"/>')($rootScope);
+
+        $rootScope.$apply();
+        yAxisScale = $rootScope.$$childHead.yAxisScale;
+        expect(yAxisScale).toBeTruthy();
+        expect(yAxisScale.domain()).toEqual([0,100]);
+        expect(yAxisScale.range()).toEqual([200,0]);
+        expect(yAxisScale(0)).toBe(200);
+        expect(yAxisScale(50)).toBe(100);
+        expect(yAxisScale(100)).toBe(0);
+      });
+
+      it('should draw the bars', function() {
+        var element;
+        element = $compile('<sc-grouped-bar sc-data="data" sc-width="200" sc-height="290"/>')($rootScope);
+
+        $rootScope.$apply();
+        expect(element.find('.serie').length).toBe(2);
+        expect(element.find('.serie:first .group').length).toBe(2);
+        // the 2nd serie is missing a 'c2' serie.
+        expect(element.find('.serie:last .group').length).toBe(1);
+        expect(element.find('.serie .group rect').length).toBe(3);
+        expect(element.find('.serie .group text').length).toBe(3);
+      });
+
+    });
+
   });
 
 })();
