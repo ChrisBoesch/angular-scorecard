@@ -74,36 +74,57 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
 
 angular.module("partials/combined.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/combined.html",
-    "\n" +
     "<div class=\"row\">\n" +
-    "	<div class=\"col-md-{{12 / chartData.series.length}}\" ng-repeat=\"c in chartData.series\">\n" +
-    "		<my-chart chart-data=\"c\" svg-width=\"chartData.svg.width / chartData.series.length\"></my-graph>\n" +
+    "	<div class=\"col-md-{{12 / data.series.length}}\" ng-repeat=\"c in data.series\">\n" +
+    "    <div ng-switch on=\"c.type\">\n" +
+    "      \n" +
+    "      <div class=\"chart\" ng-switch-when=\"boxPlot\">\n" +
+    "        <sc-box-plot sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBoxPlot\">\n" +
+    "        <sc-grouped-box-plot sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"bar\">\n" +
+    "        <sc-bar sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBar\">\n" +
+    "        <sc-grouped-bar sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"pie\">\n" +
+    "        <sc-pie sc-data=\"c\" sc-width=\"layout.width / data.series.length\"/>\n" +
+    "      </div>\n" +
+    "      \n" +
+    "    </div>\n" +
     "	</div>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("partials/groupedbar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/groupedbar.html",
-    "<h3 class=\"desc\">{{chartData.subtitle}}</h3>\n" +
-    "<svg sc-view-box=\"chartData.svg\">\n" +
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"chartData.yScaleReversed\" sc-layout=\"chartData.svg\" title=\"chartData.axisY.name\"></g>\n" +
+    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
     "\n" +
-    "  <g class=\"serie\" ng-repeat=\"serie in chartData.series\"\n" +
-    "    ng-attr-transform=\"translate({{chartData.xScale(serie.name)}}, 0)\"\n" +
+    "  <g class=\"serie\" ng-repeat=\"serie in data.series\"\n" +
+    "    ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
     "  >\n" +
-    "    <g class=\"group\" ng-repeat=\"name in chartData.xNestedScale.domain()\"\n" +
-    "      ng-attr-transform=\"translate({{chartData.xNestedScale(name)}}, 0)\"\n" +
+    "    <g class=\"group\" ng-repeat=\"name in xNestedScale.domain()\"  ng-if=\"serie.data[name]\"\n" +
+    "      ng-attr-transform=\"translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})\"\n" +
     "    >\n" +
-    "      <rect class=\"bar\" ng-if=\"serie.data[name]\"\n" +
-    "        ng-attr-y=\"{{chartData.svg.inHeight - chartData.yScale(serie.data[name])}}\" \n" +
-    "        ng-attr-width=\"{{chartData.xNestedScale.rangeBand()}}\"\n" +
-    "        ng-attr-height=\"{{chartData.yScale(serie.data[name])}}\"\n" +
-    "        ng-attr-style=\"fill: {{chartData.colors(name)}}\"\n" +
+    "      <rect class=\"bar\"\n" +
+    "        ng-attr-width=\"{{xNestedScale.rangeBand()}}\"\n" +
+    "        ng-attr-height=\"{{yScale(serie.data[name])}}\"\n" +
+    "        ng-attr-style=\"fill: {{colors(name)}}\"\n" +
     "      />\n" +
-    "      <text class=\"bar-label\" ng-if=\"serie.data[name]\"\n" +
-    "        ng-attr-dx=\"{{chartData.xNestedScale.rangeBand()/2}}\"\n" +
-    "        ng-attr-y=\"{{chartData.svg.inHeight - chartData.yScale(serie.data[name]) - 10}}\" \n" +
+    "      <text class=\"bar-label\"\n" +
+    "        y=\"-10\"\n" +
+    "        ng-attr-dx=\"{{xNestedScale.rangeBand()/2}}\" \n" +
     "      >\n" +
     "        {{serie.data[name]}}\n" +
     "      </text>\n" +
@@ -111,13 +132,13 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "  </g>\n" +
     "\n" +
     "  <!-- Draw the x axis, ticks and the legend-->\n" +
-    "  <g sc-b-axis=\"chartData.xAxisScale\" sc-layout=\"chartData.svg\"></g>\n" +
+    "  <g sc-b-axis=\"xAxisScale\" sc-layout=\"layout\"></g>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
-    "    ng-repeat=\"name in chartData.legendScale.domain()\"\n" +
-    "    ng-attr-transform=\"translate({{chartData.legendScale(name)}}, {{chartData.svg.inHeight + 50}})\"\n" +
+    "    ng-repeat=\"name in legendScale.domain()\"\n" +
+    "    ng-attr-transform=\"translate({{legendScale(name)}}, {{layout.inHeight + 50}})\"\n" +
     "  >\n" +
-    "    <rect class=\"bar\" width=\"10\" height=\"10\" ng-attr-style=\"fill: {{chartData.colors(name)}}\"/>\n" +
+    "    <rect class=\"bar\" width=\"10\" height=\"10\" ng-attr-style=\"fill: {{colors(name)}}\"/>\n" +
     "    <text dx=\"20\" dy=\"10\" style=\"text-anchor: start; alignment-baseline: auto\">\n" +
     "      {{name}}\n" +
     "    </text>\n" +
@@ -224,8 +245,16 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "        <sc-bar sc-data=\"data\"/>\n" +
     "      </div>\n" +
     "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"groupedBar\">\n" +
+    "        <sc-grouped-bar sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "\n" +
     "      <div class=\"chart\" ng-switch-when=\"pie\">\n" +
     "        <sc-pie sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"combined\">\n" +
+    "        <sc-combined sc-data=\"data\"/>\n" +
     "      </div>\n" +
     "      \n" +
     "    </div>\n" +

@@ -1,23 +1,22 @@
-<h3 class="desc">{{chartData.subtitle}}</h3>
-<svg sc-view-box="chartData.svg">
+<h3 class="desc">{{data.subtitle}}</h3>
+<svg sc-view-box="layout">
   <!-- Draw the y axis, ticks and rulers -->
-  <g sc-r-axis="chartData.yScaleReversed" sc-layout="chartData.svg" title="chartData.axisY.name"></g>
+  <g sc-r-axis="yAxisScale" sc-layout="layout" title="data.axisY.name"></g>
 
-  <g class="serie" ng-repeat="serie in chartData.series"
-    ng-attr-transform="translate({{chartData.xScale(serie.name)}}, 0)"
+  <g class="serie" ng-repeat="serie in data.series"
+    ng-attr-transform="translate({{xScale(serie.name)}},0)"
   >
-    <g class="group" ng-repeat="name in chartData.xNestedScale.domain()"
-      ng-attr-transform="translate({{chartData.xNestedScale(name)}}, 0)"
+    <g class="group" ng-repeat="name in xNestedScale.domain()"  ng-if="serie.data[name]"
+      ng-attr-transform="translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})"
     >
-      <rect class="bar" ng-if="serie.data[name]"
-        ng-attr-y="{{chartData.svg.inHeight - chartData.yScale(serie.data[name])}}" 
-        ng-attr-width="{{chartData.xNestedScale.rangeBand()}}"
-        ng-attr-height="{{chartData.yScale(serie.data[name])}}"
-        ng-attr-style="fill: {{chartData.colors(name)}}"
+      <rect class="bar"
+        ng-attr-width="{{xNestedScale.rangeBand()}}"
+        ng-attr-height="{{yScale(serie.data[name])}}"
+        ng-attr-style="fill: {{colors(name)}}"
       />
-      <text class="bar-label" ng-if="serie.data[name]"
-        ng-attr-dx="{{chartData.xNestedScale.rangeBand()/2}}"
-        ng-attr-y="{{chartData.svg.inHeight - chartData.yScale(serie.data[name]) - 10}}" 
+      <text class="bar-label"
+        y="-10"
+        ng-attr-dx="{{xNestedScale.rangeBand()/2}}" 
       >
         {{serie.data[name]}}
       </text>
@@ -25,13 +24,13 @@
   </g>
 
   <!-- Draw the x axis, ticks and the legend-->
-  <g sc-b-axis="chartData.xAxisScale" sc-layout="chartData.svg"></g>
+  <g sc-b-axis="xAxisScale" sc-layout="layout"></g>
 
   <g class"legend"
-    ng-repeat="name in chartData.legendScale.domain()"
-    ng-attr-transform="translate({{chartData.legendScale(name)}}, {{chartData.svg.inHeight + 50}})"
+    ng-repeat="name in legendScale.domain()"
+    ng-attr-transform="translate({{legendScale(name)}}, {{layout.inHeight + 50}})"
   >
-    <rect class="bar" width="10" height="10" ng-attr-style="fill: {{chartData.colors(name)}}"/>
+    <rect class="bar" width="10" height="10" ng-attr-style="fill: {{colors(name)}}"/>
     <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
       {{name}}
     </text>

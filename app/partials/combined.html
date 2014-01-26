@@ -1,6 +1,27 @@
-
 <div class="row">
-	<div class="col-md-{{12 / chartData.series.length}}" ng-repeat="c in chartData.series">
-		<my-chart chart-data="c" svg-width="chartData.svg.width / chartData.series.length"></my-graph>
+	<div class="col-md-{{12 / data.series.length}}" ng-repeat="c in data.series">
+    <div ng-switch on="c.type">
+      
+      <div class="chart" ng-switch-when="boxPlot">
+        <sc-box-plot sc-data="c" sc-width="layout.width / data.series.length"/>
+      </div>
+      
+      <div class="chart" ng-switch-when="groupedBoxPlot">
+        <sc-grouped-box-plot sc-data="c" sc-width="layout.width / data.series.length"/>
+      </div>
+
+      <div class="chart" ng-switch-when="bar">
+        <sc-bar sc-data="c" sc-width="layout.width / data.series.length"/>
+      </div>
+
+      <div class="chart" ng-switch-when="groupedBar">
+        <sc-grouped-bar sc-data="c" sc-width="layout.width / data.series.length"/>
+      </div>
+
+      <div class="chart" ng-switch-when="pie">
+        <sc-pie sc-data="c" sc-width="layout.width / data.series.length"/>
+      </div>
+      
+    </div>
 	</div>
 </div>

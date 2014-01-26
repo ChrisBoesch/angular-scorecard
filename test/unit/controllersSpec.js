@@ -4,38 +4,80 @@
   'use strict';
 
   describe('controllers', function(){
-    var ctrl, scope, getDefer, lastKey;
+    var ctrl, scope, dataset, getDefer, lastKey;
 
     beforeEach(module('myApp.controllers'));
 
-    beforeEach(inject(function($controller, $rootScope, $q){
-      scope = $rootScope.$new();
-      getDefer = $q.defer();
+    describe('HomeCtrl', function() {
 
-      ctrl = $controller('HomeCtrl', {
-        $scope: scope,
-        dataset: {
+      beforeEach(inject(function($controller, $rootScope, $q){
+        scope = $rootScope.$new();
+        getDefer = $q.defer();
+        dataset = {
           get: function(key) {
             lastKey = key;
             return getDefer.promise;
           }
-        },
-        $routeParams: {
-          key: 1,
-          label: 2
-        }
+        };
+
+        ctrl = $controller('HomeCtrl', {
+          $scope: scope,
+          dataset: dataset,
+          $routeParams: {
+            key: 1,
+            label: 2
+          }
+        });
+      }));
+
+      it('should set the chart data', function() {
+        expect(lastKey).toBe(1);
+        expect(scope.loading).toBe(true);
+
+        getDefer.resolve({title: 'foo'});
+        scope.$apply();
+
+        expect(scope.data.title).toEqual('foo');
+        expect(scope.loading).toBe(false);
       });
-    }));
 
-    it('should set et scales helpers', function() {
-      expect(lastKey).toBe(1);
-      expect(scope.loading).toBe(true);
+    });
 
-      getDefer.resolve({title: 'foo'});
-      scope.$apply();
+    describe('SidebarCtrl', function() {
+      var allDefer;
 
-      expect(scope.data.title).toEqual('foo');
-      expect(scope.loading).toBe(false);
+      beforeEach(inject(function($controller, $rootScope, $q){
+        scope = $rootScope.$new();
+        allDefer = $q.defer();
+
+        ctrl = $controller('SidebarCtrl', {
+          $scope: scope,
+          dataset: {
+            all: function() {
+              return allDefer.promise;
+            }
+          }
+        });
+      }));
+
+      it('should set loading', function() {
+        expect(scope.loading).toBe(true);
+
+        allDefer.resolve([]);
+        scope.$apply();
+
+        expect(scope.loading).toBe(false);
+      });
+
+      it('should set the chart list', function() {
+        expect(scope.graphs).toEqual([]);
+
+        allDefer.resolve([{'title': 'Some title', 'key': 0}]);
+        scope.$apply();
+
+        expect(scope.graphs).toEqual([{'title': 'Some title', 'key': 0}]);
+      });
+
     });
 
   });
