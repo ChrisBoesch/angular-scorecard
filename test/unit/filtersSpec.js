@@ -22,6 +22,24 @@
       });
     });
 
+    describe('points', function(){
+      it('should calculate the point attribute of polyline', function() {
+        var xScale = function(v) {
+            return v + 2;
+          },
+          yScale = function(v) {
+            return v + 1;
+          },
+          points = filter('points');
+
+        xScale.domain = function(){
+          return [1,2,3];
+        };
+        
+        expect(points([1,2,3], xScale, yScale)).toBe('3,2 4,3 5,4');
+      });
+    });
+
   });
 
 })();

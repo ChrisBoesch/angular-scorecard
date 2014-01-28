@@ -916,6 +916,209 @@
       });
 
     });
+    
+    describe('scStackedBar', function(){
+
+      beforeEach(function() {
+
+        $rootScope.data = {
+          title: 'Some Stacked bars',
+          type: 'stackedBar',
+          subtitle: 'some subtitle',
+          axisY: {
+            name:'Percentage (%)',
+            min: 0,
+            max: 100,
+          },
+          axisX: {
+            categories: ['AAAA', 'BBBB']
+          },
+          series: [
+            {
+              'type': 'bar',
+              'name': 'color1',
+              'data': ['98', '95']
+            },
+            {
+              'type': 'bar',
+              'name': 'color2',
+              'data': ['2', '4']
+            },
+            {
+              'type': 'line',
+              'name': 'target',
+              'data': ['90', '90']
+            },
+          ]
+        };
+
+      });
+
+      it('should set layout', function() {
+        var element, layout;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        layout = $rootScope.$$childHead.layout;
+
+        expect(layout.margin).toEqual({ top: 10, right: 10, bottom: 70, left: 70});
+        expect(layout.inWidth).toBe(100);
+        expect(layout.inHeight).toBe(200);
+        expect(layout.width).toBe(180);
+        expect(layout.height).toBe(280);
+
+      });
+
+      it('should set stacks', function() {
+        var element, stacks;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        stacks = $rootScope.$$childHead.stacks;
+
+        expect(stacks.length).toBe(2);
+        expect(stacks[0].length).toBe(2);
+        // one stack (one bar) has each component in reverse order.
+        // SVG doesn't support layer, so elements in the background need
+        // to be created first, in that case the biggest rectangle
+        expect(stacks[0][0].name).toBe('color2');
+        expect(stacks[0][0].value).toBe(2);
+        expect(stacks[0][0].stackValue).toBe(100); // total size of that component, its value + the offset.
+        expect(stacks[0][1].name).toBe('color1');
+        expect(stacks[0][1].value).toBe(98);
+        expect(stacks[0][1].stackValue).toBe(98);
+
+        expect(stacks.componentNames).toEqual(['color1', 'color2']);
+      });
+
+      it('should set lines', function() {
+        var element, lines;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        lines = $rootScope.$$childHead.lines;
+
+        expect(lines.length).toBe(1);
+        expect(lines[0].name).toBe('target');
+        expect(lines[0].data).toEqual(['90', '90']);
+      });
+
+      it('should set xScale', function() {
+        var element, xScale;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        xScale = $rootScope.$$childHead.xScale;
+
+        expect(xScale.domain()).toEqual(['AAAA', 'BBBB']);
+        expect(xScale('AAAA')).toBe(25);
+        expect(xScale('BBBB')).toBe(75);
+      });
+
+      it('should set yScale', function() {
+        var element, yScale;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        yScale = $rootScope.$$childHead.yScale;
+
+        expect(yScale.domain()).toEqual([0,100]);
+        expect(yScale(0)).toEqual(0);
+        expect(yScale(100)).toEqual(200);
+        
+      });
+
+      it('should calculate yScale min/max', function() {
+        var element, yScale;
+
+        $rootScope.data.axisY = {};
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        yScale = $rootScope.$$childHead.yScale;
+
+        expect(yScale.domain()).toEqual([95,100]);
+      });
+
+      it('should set yAxisScale', function() {
+        var element, yAxisScale;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        yAxisScale = $rootScope.$$childHead.yAxisScale;
+
+        expect(yAxisScale.domain()).toEqual([0,100]);
+        expect(yAxisScale(0)).toEqual(200);
+        expect(yAxisScale(100)).toEqual(0);
+        
+      });
+
+      it('should set colors', function() {
+        var element, colors;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        colors = $rootScope.$$childHead.colors;
+
+        expect(colors).toBeTruthy();
+        expect(colors('foo')).toBe(colors('foo'));
+        expect(colors('foo')).not.toBe(colors('bar'));
+
+        // checks it returns an hexadecimal color.
+        expect(colors('foo')[0]).toBe('#');
+        expect(angular.isNumber(parseInt(colors('foo').slice(1), 16))).toBe(true);
+        
+      });
+
+      it('should set legendScale', function() {
+        var element, legendScale;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="220" sc-height="280"/>')($rootScope);
+        $rootScope.$apply();
+
+        legendScale = $rootScope.$$childHead.legendScale;
+
+        expect(legendScale.domain()).toEqual(['color1', 'color2', 'target']);
+        expect(legendScale('color1')).toBe(20);
+        expect(legendScale('color2')).toBe(60);
+        expect(legendScale('target')).toBe(100);
+      });
+
+      it('should draw the stacks', function() {
+        var element, stacks;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="220" sc-height="180"/>')($rootScope);
+        $rootScope.$apply();
+
+        stacks = element.find('.stack rect');
+        expect(stacks.length).toBe(4);
+
+        // check position of the rects (first 2 rect) forming the 1st column
+        expect(stacks.get(0).getAttribute('height')).toBe('100');
+        expect(stacks.get(0).getAttribute('y')).toBe('0');
+        expect(stacks.get(1).getAttribute('height')).toBe('98');
+        expect(stacks.get(1).getAttribute('y')).toBe('2');
+      });
+
+      it('should draw the lines', function() {
+        var element, lines;
+
+        element = $compile('<sc-stacked-bar sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
+        $rootScope.$apply();
+
+        lines = element.find('polyline.line');
+        expect(lines.length).toBe(1);
+        expect(lines.get(0).getAttribute('points')).toBe('25,10 75,10');
+      });
+
+    });
 
   });
 
