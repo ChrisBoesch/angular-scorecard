@@ -544,6 +544,106 @@
           );
         }
       };
+    }).
+
+    /**
+     * Draw a stacked bar chart
+     * 
+     */
+    directive('scStackedBar', function(TPL_PATH, SVG, $window){
+      var d3 = $window.d3;
+
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/stackedbar.html',
+        scope: {
+          data: '=scData',
+          width: '&scWidth',
+          height: '&scHeight'
+        },
+        link: function(scope) {
+          var onDataChange;
+
+          scope.layout=SVG(
+            { top: 10, right: 10, bottom: 70, left: 70},
+            scope.width(),
+            scope.height()
+          );
+
+          onDataChange = function(){
+            var stacks, stackData, componentNames, yDomain = [], nameAccessor;
+
+            if (!scope.data || scope.data.type !== 'stackedBar') {
+              return false;
+            }
+
+            // extract stacked and assemble them
+            stacks = scope.data.series.filter(function(x){return x.type === 'bar';});
+            stackData = d3.transpose(stacks.map(function(x){return x.data;}));
+            componentNames = stacks.map(function(x){return x.name;});
+
+            scope.stacks = stackData.map(function(rawStack){
+              return rawStack.reduce(function(stack, curr, i){
+                var prev = stack.slice(-1)[0] || {'stackValue': 0},
+                  value = parseInt(curr, 10),
+                  component = {
+                    name: componentNames[i],
+                    value: value,
+                    stackValue: prev.stackValue + value
+                  };
+
+                stack.push(component);
+                return stack;
+              }, []).reverse();
+            });
+            scope.stacks.componentNames = componentNames;
+
+            // extract lines
+            scope.lines = scope.data.series.filter(function(x){return x.type === 'line';});
+
+            // get min and max value
+            scope.stacks.reduce(function(domain, stack){
+              domain.push(stack[0].stackValue);
+              domain.push(stack[stack.length -1].stackValue);
+              return domain;
+            }, yDomain);
+
+            yDomain = d3.extent(yDomain);
+
+            // They can be overwritten
+            if (angular.isDefined(scope.data.axisY.min)) {
+              yDomain[0] = scope.data.axisY.min;
+            }
+
+            if (angular.isDefined(scope.data.axisY.max)) {
+              yDomain[1] = scope.data.axisY.max;
+            }
+
+            // build scales
+            scope.xScale = d3.scale.ordinal().
+              domain(scope.data.axisX.categories).
+              rangePoints([0, scope.layout.inWidth], 1);
+            scope.yScale = d3.scale.linear().
+              domain(yDomain).
+              range([0, scope.layout.inHeight]);
+            scope.yAxisScale = scope.yScale.copy().
+              range([scope.layout.inHeight, 0]);
+            scope.colors = d3.scale.category20();
+            
+            scope.legendScale = d3.scale.ordinal();
+            nameAccessor = function(scale, serie){
+              scale(serie.name);
+              return scale;
+            };
+            stacks.reduce(nameAccessor, scope.legendScale);
+            scope.lines.reduce(nameAccessor, scope.legendScale);
+            scope.legendScale = scope.legendScale.rangeBands([0, scope.layout.inWidth], 0.5, 0.5);
+          };
+
+          scope.$watch('data', onDataChange);
+
+        }
+      };
     });
 
 })();

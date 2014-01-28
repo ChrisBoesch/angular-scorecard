@@ -122,6 +122,36 @@ var DATA = [
       }
     ]
   },
+  {
+    title: 'Title 7',
+    type: 'stackedBar',
+    subtitle: 'This graph has a stacked bar chart of two items and also has a green target line that runs across the top based on numbers passed in like 90 or 95',
+    axisY: {
+      name:'Percentage (%)',
+      min: 0,
+      max: 100,
+    },
+    axisX: {
+      categories: ['AAAA', 'BBBB', 'CCCC', 'DDDD', 'EEEE']
+    },
+    series: [
+      {
+        'type': 'bar',
+        'name': 'color1',
+        'data': ['98', '98', '98', '98', '96']
+      },
+      {
+        'type': 'bar',
+        'name': 'color2',
+        'data': ['2', '5', '2', '2', '4']
+      },
+      {
+        'type': 'line',
+        'name': 'target',
+        'data': ['90', '90', '90', '90', '96']
+      },
+    ]
+  }
 ];
 
 app.use(express.bodyParser());

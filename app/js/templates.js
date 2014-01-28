@@ -1,4 +1,4 @@
-angular.module('templates-main', ['partials/bar.html', 'partials/boxplot.html', 'partials/combined.html', 'partials/groupedbar.html', 'partials/groupedboxplot.html', 'partials/home.html', 'partials/not-supported.html', 'partials/pie.html']);
+angular.module('templates-main', ['partials/bar.html', 'partials/boxplot.html', 'partials/combined.html', 'partials/groupedbar.html', 'partials/groupedboxplot.html', 'partials/home.html', 'partials/not-supported.html', 'partials/pie.html', 'partials/stackedbar.html']);
 
 angular.module("partials/bar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/bar.html",
@@ -253,6 +253,10 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "        <sc-pie sc-data=\"data\"/>\n" +
     "      </div>\n" +
     "\n" +
+    "      <div class=\"chart\" ng-switch-when=\"stackedBar\">\n" +
+    "        <sc-stacked-bar sc-data=\"data\"/>\n" +
+    "      </div>\n" +
+    "\n" +
     "      <div class=\"chart\" ng-switch-when=\"combined\">\n" +
     "        <sc-combined sc-data=\"data\"/>\n" +
     "      </div>\n" +
@@ -299,5 +303,64 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
     "		/>\n" +
     "		<text dx=\"20\" dy=\"12\" style=\"alignment-baseline: auto\">{{a.data.name}}</text>\n" +
     "	</g>\n" +
+    "</svg>");
+}]);
+
+angular.module("partials/stackedbar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("partials/stackedbar.html",
+    "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
+    "<svg sc-view-box=\"layout\">\n" +
+    "\n" +
+    "  <clipPath id=\"cut-off-top\">\n" +
+    "    <rect x=\"-20\" y=\"0\" width=\"40\" ng-attr-height=\"{{layout.inHeight}}\"/>\n" +
+    "  </clipPath>\n" +
+    "\n" +
+    "  <!-- Draw the y axis, its ticks and rulers -->\n" +
+    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "\n" +
+    "  <g class=\"stack\" \n" +
+    "    ng-repeat=\"name in xScale.domain()\"\n" +
+    "    ng-attr-transform=\"translate({{xScale(name)}},0)\"\n" +
+    "  >\n" +
+    "    <rect ng-repeat=\"component in stacks[$index]\"\n" +
+    "      width=\"40\" ng-attr-height=\"{{yScale(component.stackValue)}}\"\n" +
+    "      x=\"-20\" ng-attr-y=\"{{layout.inHeight - yScale(component.stackValue)}}\"\n" +
+    "      ng-attr-style=\"fill: {{colors(component.name)}}\"\n" +
+    "      clip-path=\"url(#cut-off-top)\"/>\n" +
+    "    <text ng-repeat=\"component in stacks[$index]\"\n" +
+    "      ng-attr-y=\"{{layout.inHeight - yScale(component.stackValue - component.value/2)}}\"\n" +
+    "      style=\"dominant-baseline: middle; text-anchor: middle;\"\n" +
+    "    >\n" +
+    "      {{component.value}}\n" +
+    "    </text>\n" +
+    "  </g>\n" +
+    "\n" +
+    "  <polyline class=\"line\" ng-repeat=\"line in lines\"\n" +
+    "    ng-attr-points=\"{{line.data|points:xScale:yAxisScale}}\"\n" +
+    "    ng-attr-style=\"stroke: {{colors(line.name)}};stroke-width: 3;fill: none;\"\n" +
+    "  />\n" +
+    "\n" +
+    "  <!-- Draw x axis and the ticks -->\n" +
+    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "\n" +
+    "  <g class\"legend\"\n" +
+    "    ng-repeat=\"name in stacks.componentNames\"\n" +
+    "    ng-attr-transform=\"translate({{legendScale(name)}}, {{layout.height - 30}})\"\n" +
+    "  >\n" +
+    "    <rect class=\"bar\" width=\"10\" height=\"10\" ng-attr-style=\"fill: {{colors(name)}}\"/>\n" +
+    "    <text dx=\"20\" dy=\"10\" style=\"text-anchor: start; alignment-baseline: auto\">\n" +
+    "      {{name}}\n" +
+    "    </text>\n" +
+    "  </g>\n" +
+    "  <g class\"legend\"\n" +
+    "    ng-repeat=\"line in lines\"\n" +
+    "    ng-attr-transform=\"translate({{legendScale(line.name)}}, {{layout.height - 30}})\"\n" +
+    "  >\n" +
+    "    <line class=\"line\" x1=\"0\" x2=\"20\" y1=\"5\" y2=\"5\" ng-attr-style=\"stroke: {{colors(line.name)}}; stroke-width: 3;\"/>\n" +
+    "    <text dx=\"30\" dy=\"10\" style=\"text-anchor: start; alignment-baseline: auto\">\n" +
+    "      {{line.name}}\n" +
+    "    </text>\n" +
+    "  </g>\n" +
+    "\n" +
     "</svg>");
 }]);
