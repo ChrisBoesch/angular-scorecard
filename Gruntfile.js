@@ -196,10 +196,17 @@ module.exports = function(grunt) {
         preprocessors: {
           'app/js/*.js': ['coverage']
         },
-        coverageReporter: {
-          type: 'html',
-          dir: 'coverage/'
-        }
+        coverageReporter: {type: 'html', dir : 'coverage/'}
+      },
+      unit_coverage_shell: {
+        configFile: './config/karma.conf.js',
+        autoWatch: false,
+        singleRun: true,
+        reporters: ['progress', 'coverage'],
+        preprocessors: {
+          'app/js/*.js': ['coverage']
+        },
+        coverageReporter: {type: 'text'}
       }
     }
   });

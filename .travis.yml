@@ -7,4 +7,4 @@ before_script:
   - npm install
 
 script:
-  - grunt test:unit
+  - grunt karma:unit_coverage_shell
