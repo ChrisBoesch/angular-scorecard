@@ -1,10 +1,10 @@
 <h3 class="desc">{{data.subtitle}}</h3>
 <svg class="box-plot" sc-view-box="layout">
   <!-- Draw the y axis, the ticks and rulers -->
-  <g sc-r-axis="yScale" sc-layout="layout" title="data.axisY.name"></g>
+  <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
   <!-- Draw x axis and its ticks -->
-  <g sc-b-axis="xScale" sc-layout="layout"></g>
+  <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
 
 
   <!-- Draw the representation of the series distribution -->

@@ -50,31 +50,37 @@
      *
      * ex:
      * 
-     *  <g sc-r-axis="yScale" sc-layout="svg" title="chartName"></g>
+     *  <sc-r-axis sc-scale="yScale" sc-layout="svg" title="chartName"></sc-r-axis>
      *
      * Where yScale would be a quantity d3 quantitative scale.
      * 
      */
-    directive('scRAxis', function($window) {
-      return {
-        template: '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
+    directive('scRAxis', function($compile) {
+      var template = '<svg><g class="axis y-axis">'+
+          '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
           '<g class="tick" ng-repeat="tick in scale.ticks(6)" ng-attr-transform="translate(0,{{scale(tick)}})">\n'+
           ' <line x1="-5" x2="0" y1="0" y2="0"/>\n'+
           ' <text dx="-6">{{tick}}</text>\n'+
           '</g>\n'+
           '<g class="title" ng-attr-transform="translate({{-layout.margin.left}},{{layout.inHeight/2}})">\n'+
-          ' <text transform="rotate(-90)" ng-attr-textLength="{{layout.inHeight}}" lengthAdjust="spacingAndGlyphs">{{title()}}</text>\n'+
+          ' <text transform="rotate(-90)" dy="1.2em">{{title()}}</text>\n'+
           '</g>'+
-          '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>\n',
+          '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>'+
+        '</g></svg>\n';
+      return {
+        restrict: 'E',
         scope: {
-          scale: '=scRAxis',
+          scale: '=scScale',
           layout: '=scLayout',
           title: '&?'
         },
-        link: function(_, el) {
-          var svgEl = $window.d3.select(el.get(0));
-          svgEl.classed('axis', true);
-          svgEl.classed('y-axis', true);
+        compile: function() {
+          return {
+            pre: function(scope, el) {
+              var newEl = $compile(template)(scope);
+              el.replaceWith(newEl.children().first());
+            }
+          };
         }
       };
     }).
@@ -84,33 +90,39 @@
      *
      * ex:
      * 
-     *  <g sc-b-axis="xScale" sc-layout="svg"></g>
+     *  <sc-b-axis sc-scale="xScale" sc-layout="svg"></sc-b-axis>
      *
      * Where xScale would be a quantity d3 ordinal scale.
      * 
      */
-    directive('scBAxis', function($window) {
-      return {
-        template: ' <g class="tick" ng-repeat="name in scale.domain()" transform="translate({{scale(name)}}, {{layout.inHeight}})">'+
+    directive('scBAxis', function($compile) {
+      var template = '<svg><g class="axis x-axis">'+
+          ' <g class="tick" ng-repeat="name in scale.domain()" transform="translate({{scale(name)}}, {{layout.inHeight}})">'+
           '  <line x1="0" x2="0" y1="0" y2="5"/>\n'+
           '  <text dy=".5em">{{name}}</text>\n'+
           ' </g>'+
-          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+          ' <line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n'+
+          '</svg></g>';
+      return {
+        restrict: 'E',
         scope: {
-          scale: '=scBAxis',
+          scale: '=scScale',
           layout: '=scLayout'
         },
-        link: function(s, el){
-          var svgEl = $window.d3.select(el.get(0));
-          svgEl.classed('axis', true);
-          svgEl.classed('x-axis', true);
+        compile: function() {
+          return {
+            pre: function(scope, el) {
+              var newEl = $compile(template)(scope);
+              el.replaceWith(newEl.children().first());
+            }
+          };
         }
       };
     }).
 
-    directive('scBNestedAxis', function($window){
-      return {
-        template: '<g class="axis-0" ng-repeat="name in scale.domain()" ng-attr-transform="translate({{scale(name)}},{{layout.inHeight}})">\n'+
+    directive('scBNestedAxis', function($compile){
+      var template = '<svg><g class="axis x-axis nested-axis">'+
+          '<g class="axis-0" ng-repeat="name in scale.domain()" ng-attr-transform="translate({{scale(name)}},{{layout.inHeight}})">\n'+
           '  <g class="tick" ng-attr-transform="translate({{scale.rangeBand()/2}},0)">\n'+
           '    <line x1="0" x2="0" y1="0" y2="5"/>\n'+
           '    <text x="0" y="0" dy=".5em">{{name}}</text>\n'+
@@ -122,34 +134,54 @@
           '  <text class="tick" ng-attr-x="{{treeScale.rangeBand($index)/2}}" y="0" dy="1.8em">{{leaf.root}}</text>\n'+
           '</g>'+
           '<line class="sep" x1="0" y1="0" x2="0" y2="3.3em" ng-attr-transform="translate({{layout.inWidth}},{{layout.inHeight}})"/>\n'+
-          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n'+
+          '</svg></g>';
+
+      /**
+       * Build an axis at the bottom of the chart, with 2 level.
+       *
+       * usage:
+       *
+       *  <sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="layout"></sc-b-nested-axis>
+       * 
+       */
+      return {
+        restrict: 'E',
         scope: {
-          scale: '=scBNestedAxis',
+          scale: '=scScale',
           tree: '=scTree',
           layout: '=scLayout'
         },
-        link: function(s, el){
-          var svgEl = $window.d3.select(el.get(0));
-          svgEl.classed('axis', true);
-          svgEl.classed('x-axis', true);
-          svgEl.classed('nested-axis', true);
+        compile: function() {
+          return {
+            pre: function(scope, el) {
+              var newEl, onScaleChange;
 
-          s.treeScale = function(index) {
-            var c = 0;
-            
-            if (index === 0) {
-              return 0;
+              newEl = $compile(template)(scope);
+              el.replaceWith(newEl.children().first());
+
+              onScaleChange = function(){
+                scope.treeScale = function(index) {
+                  var c = 0;
+                  
+                  if (index === 0) {
+                    return 0;
+                  }
+
+                  for (var i = 1; i <= index; i++) {
+                    c += scope.tree[index - i].children.length;
+                  }
+                  
+                  return scope.scale.rangeBand() * c;
+                };
+
+                scope.treeScale.rangeBand = function(index) {
+                  return scope.scale.rangeBand() * scope.tree[index].children.length;
+                };
+              };
+
+              scope.$watch('scale', onScaleChange);
             }
-
-            for (var i = 1; i <= index; i++) {
-              c += s.tree[index - i].children.length;
-            }
-            
-            return s.scale.rangeBand() * c;
-          };
-
-          s.treeScale.rangeBand = function(index) {
-            return s.scale.rangeBand() * s.tree[index].children.length;
           };
         }
       };

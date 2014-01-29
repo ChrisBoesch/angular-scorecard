@@ -1,12 +1,13 @@
 <h3 class="desc">{{data.subtitle}}</h3>
 <svg sc-view-box="layout">
-
-  <clipPath id="cut-off-top">
-    <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
-  </clipPath>
+  <defs>
+    <clipPath id="cut-off-top">
+      <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
+    </clipPath>
+  </defs>
 
   <!-- Draw the y axis, its ticks and rulers -->
-  <g sc-r-axis="yAxisScale" sc-layout="layout" title="data.axisY.name"></g>
+  <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
   <g class="stack" 
     ng-repeat="name in xScale.domain()"
@@ -31,7 +32,7 @@
   />
 
   <!-- Draw x axis and the ticks -->
-  <g sc-b-axis="xScale" sc-layout="layout"></g>
+  <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
 
   <g class"legend"
     ng-repeat="name in stacks.componentNames"

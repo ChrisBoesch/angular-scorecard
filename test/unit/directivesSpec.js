@@ -53,8 +53,18 @@
         $rootScope.title = "Something";
       }));
 
+      it('should append svg element', function() {
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
+
+        $rootScope.$apply();
+        var line = element.find('line.axis');
+        expect(line.length).toBe(1);
+        expect(line.get(0).namespaceURI).toBe("http://www.w3.org/2000/svg");
+        
+      });
+
       it('should set the axis line', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var axis = element.find('line.axis');
@@ -67,7 +77,7 @@
       });
 
       it('should set the axis ticks', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var ticks = element.find('g.tick');
@@ -85,7 +95,7 @@
       });
 
       it('should set the axis rulers', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var rulers = element.find('line.ruler');
@@ -103,7 +113,7 @@
       });
 
       it('should set the axis title', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg" title="title"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg" title="title"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
 
@@ -125,11 +135,12 @@
       }));
 
       it('should set the axis line', function() {
-        var element = $compile('<g sc-b-axis="xScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-b-axis sc-scale="xScale" sc-layout="svg"></sc-b-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var axis = element.find('line.axis');
         expect(axis.length).toBe(1);
+        expect(axis.get(0).namespaceURI).toBe("http://www.w3.org/2000/svg");
         expect(axis.attr('x1')).toBe('-5');
         expect(axis.attr('x2')).toBe('100');
         expect(axis.attr('y1')).toBe('0');
@@ -138,7 +149,7 @@
       });
 
       it('should set the axis ticks', function() {
-        var element = $compile('<g sc-b-axis="xScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-b-axis sc-scale="xScale" sc-layout="svg"></sc-b-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var ticks = element.find('g.tick');
@@ -172,11 +183,12 @@
       }));
 
       it('should set the axis line', function() {
-        var element = $compile('<g sc-b-nested-axis="xScale" sc-tree="xTree" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="svg"></sc-b-nested-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var axis = element.find('line.axis');
         expect(axis.length).toBe(1);
+        expect(axis.get(0).namespaceURI).toBe("http://www.w3.org/2000/svg");
         expect(axis.attr('x1')).toBe('-5');
         expect(axis.attr('x2')).toBe('100');
         expect(axis.attr('y1')).toBe('0');
@@ -184,7 +196,7 @@
       });
 
       it('should set the axis ticks', function() {
-        var element = $compile('<g sc-b-nested-axis="xScale" sc-tree="xTree" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="svg"></sc-b-nested-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var firstAxis = element.find('.axis-0');
@@ -386,15 +398,16 @@
 
 
       it('should set xTree', function() {
-        var element;
+        var element, xTree;
         element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
 
         $rootScope.$apply();
 
-        expect($rootScope.$$childHead.xTree).toEqual([
-          {root: 'AA', children:['A1', 'A2']},
-          {root: 'BBB', children:['B1', 'B2']},
-        ]);
+        xTree = $rootScope.$$childHead.xTree;
+        expect(xTree[0].root).toEqual('AA');
+        expect(xTree[0].children).toEqual(['A1', 'A2']);
+        expect(xTree[1].root).toEqual('BBB');
+        expect(xTree[1].children).toEqual(['B1', 'B2']);
       });
 
       it('should draw each serie', function() {

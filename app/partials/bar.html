@@ -2,7 +2,7 @@
 <svg sc-view-box="layout">
 
   <!-- Draw the y axis, its ticks and rulers -->
-  <g sc-r-axis="yAxisScale" sc-layout="layout" title="data.axisY.name"></g>
+  <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
   <!-- Draw bars and labels-->
   <g class="serie" ng-repeat="serie in data.series" 
@@ -15,6 +15,6 @@
   </g>
 
   <!-- Draw x axis and the ticks -->
-  <g sc-b-axis="xScale" sc-layout="layout"></g>
+  <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
 
 </svg>

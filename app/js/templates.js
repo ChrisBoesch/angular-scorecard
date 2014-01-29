@@ -6,7 +6,7 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
     "<svg sc-view-box=\"layout\">\n" +
     "\n" +
     "  <!-- Draw the y axis, its ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw bars and labels-->\n" +
     "  <g class=\"serie\" ng-repeat=\"serie in data.series\" \n" +
@@ -19,7 +19,7 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
     "  </g>\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "</svg>\n" +
     "");
@@ -30,10 +30,10 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "<svg class=\"box-plot\" sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, the ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw x axis and its ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
@@ -109,7 +109,7 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "<svg sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <g class=\"serie\" ng-repeat=\"serie in data.series\"\n" +
     "    ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
@@ -132,7 +132,7 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "  </g>\n" +
     "\n" +
     "  <!-- Draw the x axis, ticks and the legend-->\n" +
-    "  <g sc-b-axis=\"xAxisScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xAxisScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
     "    ng-repeat=\"name in legendScale.domain()\"\n" +
@@ -154,7 +154,7 @@ angular.module("partials/groupedboxplot.html", []).run(["$templateCache", functi
     "<svg sc-view-box=\"layout\">\n" +
     "  \n" +
     "  <!-- Draw the y axis and the ticks -->\n" +
-    "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
     "  <g class=\"grouped-serie\" ng-repeat=\"gserie in data.series\">\n" +
@@ -193,7 +193,7 @@ angular.module("partials/groupedboxplot.html", []).run(["$templateCache", functi
     "  </g>\n" +
     "\n" +
     "    <!-- Draw x axis, its ticks and rulers -->\n" +
-    "  <g sc-b-nested-axis=\"xScale\" sc-tree=\"xTree\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-nested-axis sc-scale=\"xScale\" sc-tree=\"xTree\" sc-layout=\"layout\"></sc-b-nested-axis>\n" +
     "\n" +
     "  <g class=\"legend\">\n" +
     "    <g class=\"median-legend\"\n" +
@@ -310,13 +310,14 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
   $templateCache.put("partials/stackedbar.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "<svg sc-view-box=\"layout\">\n" +
-    "\n" +
-    "  <clipPath id=\"cut-off-top\">\n" +
-    "    <rect x=\"-20\" y=\"0\" width=\"40\" ng-attr-height=\"{{layout.inHeight}}\"/>\n" +
-    "  </clipPath>\n" +
+    "  <defs>\n" +
+    "    <clipPath id=\"cut-off-top\">\n" +
+    "      <rect x=\"-20\" y=\"0\" width=\"40\" ng-attr-height=\"{{layout.inHeight}}\"/>\n" +
+    "    </clipPath>\n" +
+    "  </defs>\n" +
     "\n" +
     "  <!-- Draw the y axis, its ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <g class=\"stack\" \n" +
     "    ng-repeat=\"name in xScale.domain()\"\n" +
@@ -341,7 +342,7 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
     "  />\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
     "    ng-repeat=\"name in stacks.componentNames\"\n" +

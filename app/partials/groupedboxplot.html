@@ -2,7 +2,7 @@
 <svg sc-view-box="layout">
   
   <!-- Draw the y axis and the ticks -->
-  <g sc-r-axis="yScale" sc-layout="layout" title="data.axisY.name"></g>
+  <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
   <!-- Draw the representation of the series distribution -->
   <g class="grouped-serie" ng-repeat="gserie in data.series">
@@ -41,7 +41,7 @@
   </g>
 
     <!-- Draw x axis, its ticks and rulers -->
-  <g sc-b-nested-axis="xScale" sc-tree="xTree" sc-layout="layout"></g>
+  <sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="layout"></sc-b-nested-axis>
 
   <g class="legend">
     <g class="median-legend"
