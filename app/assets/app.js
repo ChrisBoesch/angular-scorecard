@@ -44679,7 +44679,7 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
           ' <text dx="-6">{{tick}}</text>\n'+
           '</g>\n'+
           '<g class="title" ng-attr-transform="translate({{-layout.margin.left}},{{layout.inHeight/2}})">\n'+
-          ' <text transform="rotate(-90)" ng-attr-textLength="{{layout.inHeight}}" lengthAdjust="spacingAndGlyphs">{{title()}}</text>\n'+
+          ' <text transform="rotate(-90)" dy="1.2em">{{title()}}</text>\n'+
           '</g>'+
           '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>'+
         '</g></svg>\n';
