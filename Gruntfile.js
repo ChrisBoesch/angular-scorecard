@@ -199,7 +199,7 @@ module.exports = function(grunt) {
         coverageReporter: {type: 'html', dir : 'coverage/'}
       },
       unit_coverage_shell: {
-        configFile: './config/karma.conf.js',
+        configFile: './config/karma.phantomjs.conf.js',
         autoWatch: false,
         singleRun: true,
         reporters: ['progress', 'coverage'],

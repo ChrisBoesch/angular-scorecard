@@ -386,15 +386,16 @@
 
 
       it('should set xTree', function() {
-        var element;
+        var element, xTree;
         element = $compile('<sc-grouped-box-plot sc-data="data" sc-width="180" sc-height="180"/>')($rootScope);
 
         $rootScope.$apply();
 
-        expect($rootScope.$$childHead.xTree).toEqual([
-          {root: 'AA', children:['A1', 'A2']},
-          {root: 'BBB', children:['B1', 'B2']},
-        ]);
+        xTree = $rootScope.$$childHead.xTree;
+        expect(xTree[0].root).toEqual('AA');
+        expect(xTree[0].children).toEqual(['A1', 'A2']);
+        expect(xTree[1].root).toEqual('BBB');
+        expect(xTree[1].children).toEqual(['B1', 'B2']);
       });
 
       it('should draw each serie', function() {
