@@ -193,7 +193,7 @@ angular.module("partials/groupedboxplot.html", []).run(["$templateCache", functi
     "  </g>\n" +
     "\n" +
     "    <!-- Draw x axis, its ticks and rulers -->\n" +
-    "  <g sc-b-nested-axis=\"xScale\" sc-tree=\"xTree\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-nested-axis sc-scale=\"xScale\" sc-tree=\"xTree\" sc-layout=\"layout\"></sc-b-nested-axis>\n" +
     "\n" +
     "  <g class=\"legend\">\n" +
     "    <g class=\"median-legend\"\n" +
