@@ -1,9 +1,10 @@
 <h3 class="desc">{{data.subtitle}}</h3>
 <svg sc-view-box="layout">
-
-  <clipPath id="cut-off-top">
-    <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
-  </clipPath>
+  <defs>
+    <clipPath id="cut-off-top">
+      <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
+    </clipPath>
+  </defs>
 
   <!-- Draw the y axis, its ticks and rulers -->
   <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>

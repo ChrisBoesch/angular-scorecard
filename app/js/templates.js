@@ -310,10 +310,11 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
   $templateCache.put("partials/stackedbar.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "<svg sc-view-box=\"layout\">\n" +
-    "\n" +
-    "  <clipPath id=\"cut-off-top\">\n" +
-    "    <rect x=\"-20\" y=\"0\" width=\"40\" ng-attr-height=\"{{layout.inHeight}}\"/>\n" +
-    "  </clipPath>\n" +
+    "  <defs>\n" +
+    "    <clipPath id=\"cut-off-top\">\n" +
+    "      <rect x=\"-20\" y=\"0\" width=\"40\" ng-attr-height=\"{{layout.inHeight}}\"/>\n" +
+    "    </clipPath>\n" +
+    "  </defs>\n" +
     "\n" +
     "  <!-- Draw the y axis, its ticks and rulers -->\n" +
     "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
