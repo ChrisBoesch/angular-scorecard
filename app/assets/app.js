@@ -44255,7 +44255,7 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
     "<svg sc-view-box=\"layout\">\n" +
     "\n" +
     "  <!-- Draw the y axis, its ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw bars and labels-->\n" +
     "  <g class=\"serie\" ng-repeat=\"serie in data.series\" \n" +
@@ -44279,7 +44279,7 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "<svg class=\"box-plot\" sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, the ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw x axis and its ticks -->\n" +
     "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
@@ -44358,7 +44358,7 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "<svg sc-view-box=\"layout\">\n" +
     "  <!-- Draw the y axis, ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <g class=\"serie\" ng-repeat=\"serie in data.series\"\n" +
     "    ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
@@ -44403,7 +44403,7 @@ angular.module("partials/groupedboxplot.html", []).run(["$templateCache", functi
     "<svg sc-view-box=\"layout\">\n" +
     "  \n" +
     "  <!-- Draw the y axis and the ticks -->\n" +
-    "  <g sc-r-axis=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
     "  <g class=\"grouped-serie\" ng-repeat=\"gserie in data.series\">\n" +
@@ -44565,7 +44565,7 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
     "  </clipPath>\n" +
     "\n" +
     "  <!-- Draw the y axis, its ticks and rulers -->\n" +
-    "  <g sc-r-axis=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></g>\n" +
+    "  <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <g class=\"stack\" \n" +
     "    ng-repeat=\"name in xScale.domain()\"\n" +
@@ -44670,9 +44670,9 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
      * Where yScale would be a quantity d3 quantitative scale.
      * 
      */
-    directive('scRAxis', function($window) {
-      return {
-        template: '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
+    directive('scRAxis', function($compile) {
+      var template = '<svg><g class="axis y-axis">'+
+          '<line class="ruler" ng-repeat="tick in scale.ticks(6)" x1="0" ng-attr-x2="{{layout.inWidth}}" y1="0" y2="0" ng-attr-transform="translate(0,{{scale(tick)}})"/>\n'+
           '<g class="tick" ng-repeat="tick in scale.ticks(6)" ng-attr-transform="translate(0,{{scale(tick)}})">\n'+
           ' <line x1="-5" x2="0" y1="0" y2="0"/>\n'+
           ' <text dx="-6">{{tick}}</text>\n'+
@@ -44680,16 +44680,22 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
           '<g class="title" ng-attr-transform="translate({{-layout.margin.left}},{{layout.inHeight/2}})">\n'+
           ' <text transform="rotate(-90)" ng-attr-textLength="{{layout.inHeight}}" lengthAdjust="spacingAndGlyphs">{{title()}}</text>\n'+
           '</g>'+
-          '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>\n',
+          '<line class="axis" x1="0" x2="0" y1="-5" ng-attr-y2={{layout.inHeight+5}}/>'+
+        '</g></svg>\n';
+      return {
+        restrict: 'E',
         scope: {
-          scale: '=scRAxis',
+          scale: '=scScale',
           layout: '=scLayout',
           title: '&?'
         },
-        link: function(_, el) {
-          var svgEl = $window.d3.select(el.get(0));
-          svgEl.classed('axis', true);
-          svgEl.classed('y-axis', true);
+        compile: function() {
+          return {
+            pre: function(scope, el) {
+              var newEl = $compile(template)(scope);
+              el.replaceWith(newEl.children().first());
+            }
+          };
         }
       };
     }).

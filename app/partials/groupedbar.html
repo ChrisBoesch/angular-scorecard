@@ -1,7 +1,7 @@
 <h3 class="desc">{{data.subtitle}}</h3>
 <svg sc-view-box="layout">
   <!-- Draw the y axis, ticks and rulers -->
-  <g sc-r-axis="yAxisScale" sc-layout="layout" title="data.axisY.name"></g>
+  <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
   <g class="serie" ng-repeat="serie in data.series"
     ng-attr-transform="translate({{xScale(serie.name)}},0)"

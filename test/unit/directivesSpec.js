@@ -53,8 +53,18 @@
         $rootScope.title = "Something";
       }));
 
+      it('should append svg element', function() {
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
+
+        $rootScope.$apply();
+        var line = element.find('line.axis');
+        expect(line.length).toBe(1);
+        expect(line.get(0).namespaceURI).toBe("http://www.w3.org/2000/svg");
+        
+      });
+
       it('should set the axis line', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var axis = element.find('line.axis');
@@ -67,7 +77,7 @@
       });
 
       it('should set the axis ticks', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var ticks = element.find('g.tick');
@@ -85,7 +95,7 @@
       });
 
       it('should set the axis rulers', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var rulers = element.find('line.ruler');
@@ -103,7 +113,7 @@
       });
 
       it('should set the axis title', function() {
-        var element = $compile('<g sc-r-axis="yScale" sc-layout="svg" title="title"></g>')($rootScope);
+        var element = $compile('<svg><sc-r-axis sc-scale="yScale" sc-layout="svg" title="title"></sc-r-axis></svg>')($rootScope);
 
         $rootScope.$apply();
 

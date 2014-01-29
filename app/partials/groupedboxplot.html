@@ -2,7 +2,7 @@
 <svg sc-view-box="layout">
   
   <!-- Draw the y axis and the ticks -->
-  <g sc-r-axis="yScale" sc-layout="layout" title="data.axisY.name"></g>
+  <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
   <!-- Draw the representation of the series distribution -->
   <g class="grouped-serie" ng-repeat="gserie in data.series">
