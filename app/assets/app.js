@@ -44268,7 +44268,7 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
     "  </g>\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "</svg>\n" +
     "");
@@ -44282,7 +44282,7 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
     "  <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw x axis and its ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
@@ -44381,7 +44381,7 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "  </g>\n" +
     "\n" +
     "  <!-- Draw the x axis, ticks and the legend-->\n" +
-    "  <g sc-b-axis=\"xAxisScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xAxisScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
     "    ng-repeat=\"name in legendScale.domain()\"\n" +
@@ -44590,7 +44590,7 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
     "  />\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
     "    ng-repeat=\"name in stacks.componentNames\"\n" +
@@ -44665,7 +44665,7 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
      *
      * ex:
      * 
-     *  <g sc-r-axis="yScale" sc-layout="svg" title="chartName"></g>
+     *  <sc-r-axis sc-scale="yScale" sc-layout="svg" title="chartName"></sc-r-axis>
      *
      * Where yScale would be a quantity d3 quantitative scale.
      * 
@@ -44705,26 +44705,32 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
      *
      * ex:
      * 
-     *  <g sc-b-axis="xScale" sc-layout="svg"></g>
+     *  <sc-b-axis sc-scale="xScale" sc-layout="svg"></sc-b-axis>
      *
      * Where xScale would be a quantity d3 ordinal scale.
      * 
      */
-    directive('scBAxis', function($window) {
-      return {
-        template: ' <g class="tick" ng-repeat="name in scale.domain()" transform="translate({{scale(name)}}, {{layout.inHeight}})">'+
+    directive('scBAxis', function($compile) {
+      var template = '<svg><g class="axis x-axis">'+
+          ' <g class="tick" ng-repeat="name in scale.domain()" transform="translate({{scale(name)}}, {{layout.inHeight}})">'+
           '  <line x1="0" x2="0" y1="0" y2="5"/>\n'+
           '  <text dy=".5em">{{name}}</text>\n'+
           ' </g>'+
-          '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n',
+          ' <line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n'+
+          '</svg></g>';
+      return {
+        restrict: 'E',
         scope: {
-          scale: '=scBAxis',
+          scale: '=scScale',
           layout: '=scLayout'
         },
-        link: function(s, el){
-          var svgEl = $window.d3.select(el.get(0));
-          svgEl.classed('axis', true);
-          svgEl.classed('x-axis', true);
+        compile: function() {
+          return {
+            pre: function(scope, el) {
+              var newEl = $compile(template)(scope);
+              el.replaceWith(newEl.children().first());
+            }
+          };
         }
       };
     }).

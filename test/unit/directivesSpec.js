@@ -135,11 +135,12 @@
       }));
 
       it('should set the axis line', function() {
-        var element = $compile('<g sc-b-axis="xScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-b-axis sc-scale="xScale" sc-layout="svg"></sc-b-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var axis = element.find('line.axis');
         expect(axis.length).toBe(1);
+        expect(axis.get(0).namespaceURI).toBe("http://www.w3.org/2000/svg");
         expect(axis.attr('x1')).toBe('-5');
         expect(axis.attr('x2')).toBe('100');
         expect(axis.attr('y1')).toBe('0');
@@ -148,7 +149,7 @@
       });
 
       it('should set the axis ticks', function() {
-        var element = $compile('<g sc-b-axis="xScale" sc-layout="svg"></g>')($rootScope);
+        var element = $compile('<svg><sc-b-axis sc-scale="xScale" sc-layout="svg"></sc-b-axis></svg>')($rootScope);
 
         $rootScope.$apply();
         var ticks = element.find('g.tick');

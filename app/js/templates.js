@@ -19,7 +19,7 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
     "  </g>\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "</svg>\n" +
     "");
@@ -33,7 +33,7 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
     "  <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
     "  <!-- Draw x axis and its ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "\n" +
     "  <!-- Draw the representation of the series distribution -->\n" +
@@ -132,7 +132,7 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "  </g>\n" +
     "\n" +
     "  <!-- Draw the x axis, ticks and the legend-->\n" +
-    "  <g sc-b-axis=\"xAxisScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xAxisScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
     "    ng-repeat=\"name in legendScale.domain()\"\n" +
@@ -341,7 +341,7 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
     "  />\n" +
     "\n" +
     "  <!-- Draw x axis and the ticks -->\n" +
-    "  <g sc-b-axis=\"xScale\" sc-layout=\"layout\"></g>\n" +
+    "  <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
     "\n" +
     "  <g class\"legend\"\n" +
     "    ng-repeat=\"name in stacks.componentNames\"\n" +
