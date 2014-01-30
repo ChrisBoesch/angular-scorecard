@@ -105,7 +105,8 @@ module.exports = function(grunt) {
         src: [
           'bower_components/bootstrap/dist/css/bootstrap.css',
           'bower_components/bootstrap/dist/css/bootstrap-theme.css',
-          'app/css/app.css'
+          'app/css/app.css',
+          'app/css/chart.css'
           //place your Stylesheet files here
         ]
       },
@@ -121,8 +122,9 @@ module.exports = function(grunt) {
           'bower_components/angular-route/angular-route.js',
           'bower_components/angular-resource/angular-resource.js',
           'bower_components/angular-animate/angular-animate.js',
-          'bower_components/bootstrap/dist/js/bootstrap.js',
           'bower_components/angular-spinkit/build/angular-spinkit.js',
+          'bower_components/angular-bootstrap/ui-bootstrap.js',
+          'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
           'app/js/config.js',
           'app/js/templates.js',
           'app/js/directives.js',
