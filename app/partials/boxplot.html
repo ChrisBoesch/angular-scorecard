@@ -1,42 +1,44 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<svg class="box-plot" sc-view-box="layout">
-  <!-- Draw the y axis, the ticks and rulers -->
-  <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
+<div class="svg-container" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
+  <svg sc-view-box="layout" class="svg-content">
+    <!-- Draw the y axis, the ticks and rulers -->
+    <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
-  <!-- Draw x axis and its ticks -->
-  <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
+    <!-- Draw x axis and its ticks -->
+    <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
 
 
-  <!-- Draw the representation of the series distribution -->
-  <g class="serie"
-    ng-repeat="serie in data.series"
-    ng-attr-transform="translate({{xScale(serie.name)}},0)"
-  >
-    <!-- The line between min and max point-->
-    <line  class="distribution"
-      ng-attr-y1="{{yScale(serie.min)}}" 
-      ng-attr-y2="{{yScale(serie.max)}}"
-    />
-    <!-- the min point -->
-    <line class="min"
-      x1="-5" x2="5"
-      ng-attr-y1="{{yScale(serie.min)}}" 
-      ng-attr-y2="{{yScale(serie.min)}}"
-    />
-    <!-- the max point -->
-    <line class="max"
-      x1="-5" x2="5"
-      ng-attr-y1="{{yScale(serie.max)}}" 
-      ng-attr-y2="{{yScale(serie.max)}}"
-    />
-    <!-- add a rectangle for the median -->
-    <rect class="median"
-      width="10" height="10" x="-5"
-      ng-attr-y="{{yScale(serie.median) - 5}}"
-    />
-    <text class="median-label" x="10" ng-attr-y="{{yScale(serie.median)}}">
-      {{serie.median}}
-    </text>
-  </g>
+    <!-- Draw the representation of the series distribution -->
+    <g class="serie"
+      ng-repeat="serie in data.series"
+      ng-attr-transform="translate({{xScale(serie.name)}},0)"
+    >
+      <!-- The line between min and max point-->
+      <line  class="distribution"
+        ng-attr-y1="{{yScale(serie.min)}}" 
+        ng-attr-y2="{{yScale(serie.max)}}"
+      />
+      <!-- the min point -->
+      <line class="min"
+        x1="-5" x2="5"
+        ng-attr-y1="{{yScale(serie.min)}}" 
+        ng-attr-y2="{{yScale(serie.min)}}"
+      />
+      <!-- the max point -->
+      <line class="max"
+        x1="-5" x2="5"
+        ng-attr-y1="{{yScale(serie.max)}}" 
+        ng-attr-y2="{{yScale(serie.max)}}"
+      />
+      <!-- add a rectangle for the median -->
+      <rect class="median"
+        width="10" height="10" x="-5"
+        ng-attr-y="{{yScale(serie.median) - 5}}"
+      />
+      <text class="median-label" x="10" ng-attr-y="{{yScale(serie.median)}}">
+        {{serie.median}}
+      </text>
+    </g>
 
-</svg>
+  </svg>
+</div>

@@ -3,34 +3,20 @@
 <html lang="en" data-ng-app="myApp">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Angular Scorecard</title>
+  <title>Angular Scorecard</title>
 
-    <link rel="stylesheet" href="assets/app.css"/>
+  <link rel="stylesheet" href="assets/app.css"/>
 </head>
 
 <body>
+  
+  <div ng-view class="container"></div>
 
-    <div id="wrapper">
-
-        <!-- Sidebar -->
-        <div id="sidebar-wrapper">
-            <ul class="sidebar-nav" ng-controller="SidebarCtrl">
-                <li class="sidebar-brand"><a href="#">Angular Scorecard</a></li>
-                <li><a ng-href="#/{{$index + 1}}/{{g.key}}" class="active" ng-repeat="g in graphs">Chart #{{$index + 1}}</a></li>
-            </ul>
-        </div>
-
-        <div ng-view></div>
-
-    </div>
-
-    <!-- JavaScript -->
-    <script src="assets/app.js"></script>
+  <!-- JavaScript -->
+  <script src="assets/app.js"></script>
 </body>
 
 </html>

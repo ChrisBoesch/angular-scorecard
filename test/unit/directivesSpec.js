@@ -25,7 +25,7 @@
         $rootScope.$digest();
 
         expect(element.get(0).getAttribute('viewBox')).toEqual('-70 -10 720 400');
-        expect(element.get(0).getAttribute('preserveAspectRatio')).toEqual('xMidYMid meet');
+        expect(element.get(0).getAttribute('preserveAspectRatio')).toEqual('xMinYMin meet');
         expect(element.find('text').text()).toBe('bar');
 
       });
@@ -38,7 +38,7 @@
         $rootScope.$digest();
 
         expect(element.get(0).getAttribute('viewBox')).toEqual('-20 -10 200 150');
-        expect(element.get(0).getAttribute('preserveAspectRatio')).toEqual('xMidYMid meet');
+        expect(element.get(0).getAttribute('preserveAspectRatio')).toEqual('xMinYMin meet');
         expect(element.find('text').text()).toBe('bar');
 
       });

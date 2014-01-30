@@ -78,6 +78,32 @@
         expect(scope.graphs).toEqual([{'title': 'Some title', 'key': 0}]);
       });
 
+      it('should calculate next chart url', function() {
+        expect(scope.next()).toBe('#');
+
+        allDefer.resolve([
+          {'title': 'Some title', 'key': 0},
+          {'title': 'Some title', 'key': 1},
+          {'title': 'Some title', 'key': 2},
+        ]);
+
+        scope.$apply();
+        expect(scope.next()).toBe('#/2/1');
+      });
+
+      it('should calculate previous chart url', function() {
+        expect(scope.prev()).toBe('#');
+
+        allDefer.resolve([
+          {'title': 'Some title', 'key': 0},
+          {'title': 'Some title', 'key': 1},
+          {'title': 'Some title', 'key': 2},
+        ]);
+
+        scope.$apply();
+        expect(scope.prev()).toBe('#/3/2');
+      });
+
     });
 
   });

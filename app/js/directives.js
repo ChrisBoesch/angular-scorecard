@@ -28,7 +28,7 @@
         },
         link: function(scope, element) {
           
-          element.get(0).setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          element.get(0).setAttribute('preserveAspectRatio', 'xMinYMin meet');
 
           scope.$watch('viewBox', function(){
             var vb = scope.viewBox || SVG();
@@ -120,6 +120,14 @@
       };
     }).
 
+    /**
+     * Build an axis at the bottom of the chart, with 2 level.
+     *
+     * usage:
+     *
+     *  <sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="layout"></sc-b-nested-axis>
+     * 
+     */
     directive('scBNestedAxis', function($compile){
       var template = '<svg><g class="axis x-axis nested-axis">'+
           '<g class="axis-0" ng-repeat="name in scale.domain()" ng-attr-transform="translate({{scale(name)}},{{layout.inHeight}})">\n'+
@@ -137,14 +145,6 @@
           '<line class="axis" ng-attr-transform="translate(0, {{layout.inHeight}})" x1="-5" y1="0" y2="0" ng-attr-x2={{layout.inWidth}}/>\n'+
           '</svg></g>';
 
-      /**
-       * Build an axis at the bottom of the chart, with 2 level.
-       *
-       * usage:
-       *
-       *  <sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="layout"></sc-b-nested-axis>
-       * 
-       */
       return {
         restrict: 'E',
         scope: {
@@ -676,6 +676,20 @@
 
         }
       };
-    });
+    }).
+
+    directive('scChart', function(TPL_PATH){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/chart.html',
+        scope: {
+          data: '=scData'
+        }
+      };
+    })
+    
+    ;
+
+
 
 })();

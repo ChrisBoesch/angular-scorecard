@@ -1,64 +1,66 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<svg sc-view-box="layout">
-  
-  <!-- Draw the y axis and the ticks -->
-  <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
+<div class="svg-container">
+  <svg sc-view-box="layout" class="svg-content" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
+    
+    <!-- Draw the y axis and the ticks -->
+    <sc-r-axis sc-scale="yScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
-  <!-- Draw the representation of the series distribution -->
-  <g class="grouped-serie" ng-repeat="gserie in data.series">
-    <g class="serie" ng-repeat="serie in gserie.series" ng-attr-transform="translate({{xScale(serie.name) + xScale.rangeBand()/2}},0)">
-      <line  class="distribution"
-        x1="0" x2="0"
-        ng-attr-y1="{{yScale(serie.min)}}" 
-        ng-attr-y2="{{yScale(serie.max)}}"
-      />
-      <line class="min"
-        x1="-5" x2="5"
-        ng-attr-y1="{{yScale(serie.min)}}" 
-        ng-attr-y2="{{yScale(serie.min)}}"
-      />
-      <line class="max"
-        x1="-5" x2="5"
-        ng-attr-y1="{{yScale(serie.max)}}" 
-        ng-attr-y2="{{yScale(serie.max)}}"
-      />
-      <rect class="mean"
-        x="-10"
-        ng-attr-y="{{yScale(serie.mean) - 10}}" 
-        width="20" height="5"
-      />
-      <text class="mean-label" x="20" ng-attr-y="{{yScale(serie.mean)}}">
-        {{serie.mean|round:1}}
-      </text>
-      <rect class="median"
-        x="-5" ng-attr-y="{{yScale(serie.median) - 5}}" 
-        width="10" height="10"
-      />
-      <text class="median-label" x="10" ng-attr-y="{{yScale(serie.median)}}" >
-        {{serie.median|round:1}}
-      </text>
+    <!-- Draw the representation of the series distribution -->
+    <g class="grouped-serie" ng-repeat="gserie in data.series">
+      <g class="serie" ng-repeat="serie in gserie.series" ng-attr-transform="translate({{xScale(serie.name) + xScale.rangeBand()/2}},0)">
+        <line  class="distribution"
+          x1="0" x2="0"
+          ng-attr-y1="{{yScale(serie.min)}}" 
+          ng-attr-y2="{{yScale(serie.max)}}"
+        />
+        <line class="min"
+          x1="-5" x2="5"
+          ng-attr-y1="{{yScale(serie.min)}}" 
+          ng-attr-y2="{{yScale(serie.min)}}"
+        />
+        <line class="max"
+          x1="-5" x2="5"
+          ng-attr-y1="{{yScale(serie.max)}}" 
+          ng-attr-y2="{{yScale(serie.max)}}"
+        />
+        <rect class="mean"
+          x="-10"
+          ng-attr-y="{{yScale(serie.mean) - 10}}" 
+          width="20" height="5"
+        />
+        <text class="mean-label" x="20" ng-attr-y="{{yScale(serie.mean)}}">
+          {{serie.mean|round:1}}
+        </text>
+        <rect class="median"
+          x="-5" ng-attr-y="{{yScale(serie.median) - 5}}" 
+          width="10" height="10"
+        />
+        <text class="median-label" x="10" ng-attr-y="{{yScale(serie.median)}}" >
+          {{serie.median|round:1}}
+        </text>
+      </g>
     </g>
-  </g>
 
-    <!-- Draw x axis, its ticks and rulers -->
-  <sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="layout"></sc-b-nested-axis>
+      <!-- Draw x axis, its ticks and rulers -->
+    <sc-b-nested-axis sc-scale="xScale" sc-tree="xTree" sc-layout="layout"></sc-b-nested-axis>
 
-  <g class="legend">
-    <g class="median-legend"
-      ng-attr-transform="translate({{legendScale('median')}},{{layout.height - 20}})"
-    >
-      <rect class="median" width="10" height="10"/>
-      <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
-        median
-      </text>
+    <g class="legend">
+      <g class="median-legend"
+        ng-attr-transform="translate({{legendScale('median')}},{{layout.height - 20}})"
+      >
+        <rect class="median" width="10" height="10"/>
+        <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
+          median
+        </text>
+      </g>
+      <g class="mean-legend"
+        ng-attr-transform="translate({{legendScale('mean')}},{{layout.height - 20}})"
+      >
+        <rect class="mean" dy="4" width="20" height="5"/>
+        <text dx="30" dy="10" style="text-anchor: start; alignment-baseline: auto">
+          mean
+        </text>
+      </g>
     </g>
-    <g class="mean-legend"
-      ng-attr-transform="translate({{legendScale('mean')}},{{layout.height - 20}})"
-    >
-      <rect class="mean" dy="4" width="20" height="5"/>
-      <text dx="30" dy="10" style="text-anchor: start; alignment-baseline: auto">
-        mean
-      </text>
-    </g>
-  </g>
-</svg>
+  </svg>
+</div>

@@ -9,8 +9,9 @@ module.exports = function(config){
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-resource/angular-resource.js',
       'bower_components/angular-animate/angular-animate.js',
-      'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular-spinkit/build/angular-spinkit.js',
+      'bower_components/angular-bootstrap/ui-bootstrap.js',
+      'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'app/js/*.js',
       'test/unit/*.js'
@@ -26,8 +27,6 @@ module.exports = function(config){
 
     plugins : [
       'karma-junit-reporter',
-      'karma-chrome-launcher',
-      'karma-firefox-launcher',
       'karma-phantomjs-launcher',
       'karma-jasmine',
       'karma-coverage'

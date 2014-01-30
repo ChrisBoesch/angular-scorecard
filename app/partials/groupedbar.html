@@ -1,39 +1,41 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<svg sc-view-box="layout">
-  <!-- Draw the y axis, ticks and rulers -->
-  <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
+<div class="svg-container">
+  <svg sc-view-box="layout" class="svg-content" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
+    <!-- Draw the y axis, ticks and rulers -->
+    <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
-  <g class="serie" ng-repeat="serie in data.series"
-    ng-attr-transform="translate({{xScale(serie.name)}},0)"
-  >
-    <g class="group" ng-repeat="name in xNestedScale.domain()"  ng-if="serie.data[name]"
-      ng-attr-transform="translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})"
+    <g class="serie" ng-repeat="serie in data.series"
+      ng-attr-transform="translate({{xScale(serie.name)}},0)"
     >
-      <rect class="bar"
-        ng-attr-width="{{xNestedScale.rangeBand()}}"
-        ng-attr-height="{{yScale(serie.data[name])}}"
-        ng-attr-style="fill: {{colors(name)}}"
-      />
-      <text class="bar-label"
-        y="-10"
-        ng-attr-dx="{{xNestedScale.rangeBand()/2}}" 
+      <g class="group" ng-repeat="name in xNestedScale.domain()"  ng-if="serie.data[name]"
+        ng-attr-transform="translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})"
       >
-        {{serie.data[name]}}
+        <rect class="bar"
+          ng-attr-width="{{xNestedScale.rangeBand()}}"
+          ng-attr-height="{{yScale(serie.data[name])}}"
+          ng-attr-style="fill: {{colors(name)}}"
+        />
+        <text class="bar-label"
+          y="-10"
+          ng-attr-dx="{{xNestedScale.rangeBand()/2}}" 
+        >
+          {{serie.data[name]}}
+        </text>
+      </g>
+    </g>
+
+    <!-- Draw the x axis, ticks and the legend-->
+    <sc-b-axis sc-scale="xAxisScale" sc-layout="layout"></sc-b-axis>
+
+    <g class"legend"
+      ng-repeat="name in legendScale.domain()"
+      ng-attr-transform="translate({{legendScale(name)}}, {{layout.inHeight + 50}})"
+    >
+      <rect class="bar" width="10" height="10" ng-attr-style="fill: {{colors(name)}}"/>
+      <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
+        {{name}}
       </text>
     </g>
-  </g>
 
-  <!-- Draw the x axis, ticks and the legend-->
-  <sc-b-axis sc-scale="xAxisScale" sc-layout="layout"></sc-b-axis>
-
-  <g class"legend"
-    ng-repeat="name in legendScale.domain()"
-    ng-attr-transform="translate({{legendScale(name)}}, {{layout.inHeight + 50}})"
-  >
-    <rect class="bar" width="10" height="10" ng-attr-style="fill: {{colors(name)}}"/>
-    <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
-      {{name}}
-    </text>
-  </g>
-
-</svg>
+  </svg>
+</div>
