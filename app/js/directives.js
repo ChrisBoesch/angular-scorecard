@@ -28,7 +28,7 @@
         },
         link: function(scope, element) {
           
-          element.get(0).setAttribute('preserveAspectRatio', 'xMidYMid meet');
+          element.get(0).setAttribute('preserveAspectRatio', 'xMinYMin meet');
 
           scope.$watch('viewBox', function(){
             var vb = scope.viewBox || SVG();
@@ -676,6 +676,20 @@
 
         }
       };
-    });
+    }).
+
+    directive('scChart', function(TPL_PATH){
+      return {
+        restrict: 'E',
+        templateUrl: TPL_PATH + '/chart.html',
+        scope: {
+          data: '=scData'
+        }
+      };
+    })
+    
+    ;
+
+
 
 })();

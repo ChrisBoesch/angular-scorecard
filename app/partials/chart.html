@@ -1,0 +1,31 @@
+<div ng-switch on="data.type">
+  
+  <div class="chart" ng-switch-when="boxPlot">
+    <sc-box-plot sc-data="data"/>
+  </div>
+  
+  <div class="chart" ng-switch-when="groupedBoxPlot">
+    <sc-grouped-box-plot sc-data="data"/>
+  </div>
+
+  <div class="chart" ng-switch-when="bar">
+    <sc-bar sc-data="data"/>
+  </div>
+
+  <div class="chart" ng-switch-when="groupedBar">
+    <sc-grouped-bar sc-data="data"/>
+  </div>
+
+  <div class="chart" ng-switch-when="pie">
+    <sc-pie sc-data="data"/>
+  </div>
+
+  <div class="chart" ng-switch-when="stackedBar">
+    <sc-stacked-bar sc-data="data"/>
+  </div>
+
+  <div class="chart" ng-switch-when="combined">
+    <sc-combined sc-data="data"/>
+  </div>
+  
+</div>

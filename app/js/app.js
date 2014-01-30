@@ -11,6 +11,7 @@
     'myApp.directives',
     'myApp.controllers',
     'templates-main',
+    'ui.bootstrap'
   ]).
 
   config(['$routeProvider', 'TPL_PATH', function($routeProvider, TPL_PATH) {

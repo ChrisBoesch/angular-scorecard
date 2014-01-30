@@ -1,56 +1,58 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<svg sc-view-box="layout">
-  <defs>
-    <clipPath id="cut-off-top">
-      <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
-    </clipPath>
-  </defs>
+<div class="svg-container" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
+  <svg sc-view-box="layout" class="svg-content">
+    <defs>
+      <clipPath id="cut-off-top">
+        <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
+      </clipPath>
+    </defs>
 
-  <!-- Draw the y axis, its ticks and rulers -->
-  <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
+    <!-- Draw the y axis, its ticks and rulers -->
+    <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
-  <g class="stack" 
-    ng-repeat="name in xScale.domain()"
-    ng-attr-transform="translate({{xScale(name)}},0)"
-  >
-    <rect ng-repeat="component in stacks[$index]"
-      width="40" ng-attr-height="{{yScale(component.stackValue)}}"
-      x="-20" ng-attr-y="{{layout.inHeight - yScale(component.stackValue)}}"
-      ng-attr-style="fill: {{colors(component.name)}}"
-      clip-path="url(#cut-off-top)"/>
-    <text ng-repeat="component in stacks[$index]"
-      ng-attr-y="{{layout.inHeight - yScale(component.stackValue - component.value/2)}}"
-      style="dominant-baseline: middle; text-anchor: middle;"
+    <g class="stack" 
+      ng-repeat="name in xScale.domain()"
+      ng-attr-transform="translate({{xScale(name)}},0)"
     >
-      {{component.value}}
-    </text>
-  </g>
+      <rect ng-repeat="component in stacks[$index]"
+        width="40" ng-attr-height="{{yScale(component.stackValue)}}"
+        x="-20" ng-attr-y="{{layout.inHeight - yScale(component.stackValue)}}"
+        ng-attr-style="fill: {{colors(component.name)}}"
+        clip-path="url(#cut-off-top)"/>
+      <text ng-repeat="component in stacks[$index]"
+        ng-attr-y="{{layout.inHeight - yScale(component.stackValue - component.value/2)}}"
+        style="dominant-baseline: middle; text-anchor: middle;"
+      >
+        {{component.value}}
+      </text>
+    </g>
 
-  <polyline class="line" ng-repeat="line in lines"
-    ng-attr-points="{{line.data|points:xScale:yAxisScale}}"
-    ng-attr-style="stroke: {{colors(line.name)}};stroke-width: 3;fill: none;"
-  />
+    <polyline class="line" ng-repeat="line in lines"
+      ng-attr-points="{{line.data|points:xScale:yAxisScale}}"
+      ng-attr-style="stroke: {{colors(line.name)}};stroke-width: 3;fill: none;"
+    />
 
-  <!-- Draw x axis and the ticks -->
-  <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
+    <!-- Draw x axis and the ticks -->
+    <sc-b-axis sc-scale="xScale" sc-layout="layout"></sc-b-axis>
 
-  <g class"legend"
-    ng-repeat="name in stacks.componentNames"
-    ng-attr-transform="translate({{legendScale(name)}}, {{layout.height - 30}})"
-  >
-    <rect class="bar" width="10" height="10" ng-attr-style="fill: {{colors(name)}}"/>
-    <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
-      {{name}}
-    </text>
-  </g>
-  <g class"legend"
-    ng-repeat="line in lines"
-    ng-attr-transform="translate({{legendScale(line.name)}}, {{layout.height - 30}})"
-  >
-    <line class="line" x1="0" x2="20" y1="5" y2="5" ng-attr-style="stroke: {{colors(line.name)}}; stroke-width: 3;"/>
-    <text dx="30" dy="10" style="text-anchor: start; alignment-baseline: auto">
-      {{line.name}}
-    </text>
-  </g>
+    <g class"legend"
+      ng-repeat="name in stacks.componentNames"
+      ng-attr-transform="translate({{legendScale(name)}}, {{layout.height - 30}})"
+    >
+      <rect class="bar" width="10" height="10" ng-attr-style="fill: {{colors(name)}}"/>
+      <text dx="20" dy="10" style="text-anchor: start; alignment-baseline: auto">
+        {{name}}
+      </text>
+    </g>
+    <g class"legend"
+      ng-repeat="line in lines"
+      ng-attr-transform="translate({{legendScale(line.name)}}, {{layout.height - 30}})"
+    >
+      <line class="line" x1="0" x2="20" y1="5" y2="5" ng-attr-style="stroke: {{colors(line.name)}}; stroke-width: 3;"/>
+      <text dx="30" dy="10" style="text-anchor: start; alignment-baseline: auto">
+        {{line.name}}
+      </text>
+    </g>
 
-</svg>
+  </svg>
+</div>

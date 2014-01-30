@@ -1,45 +1,34 @@
-<div id="page-content-wrapper" class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h2>
-        #{{label}}. {{data.title}}
-      </h2>
+
+<div id="header" class="row" ng-controller="SidebarCtrl">
+
+  <div class="nav">
+     <a ng-href="{{prev()}}" class="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+     <a ng-href="{{next()}}" class="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+  </div>
+
+  <div class="col-sm-3 col-sm-push-9">
+    <div class="dropdown">
+      <p class="dropdown-toggle">
+        <button type="button" class="btn btn-default btn-lg btn-block">Charts</button>
+      </p>
+      <ul class="dropdown-menu">
+        <li><a ng-href="#/{{$index + 1}}/{{g.key}}" class="active" ng-repeat="g in graphs">Chart #{{$index + 1}}</a></li>
+      </ul>
     </div>
   </div>
-  <!-- Keep all page content within the page-content inset div! -->
-  <div class="page-content inset row" style="max-height: 450px">
-    <div class="col-md-12" ng-switch on="data.type">
-      
-      <wave-spinner ng-show="loading"></wave-spinner>
-      
-      <div class="chart" ng-switch-when="boxPlot">
-        <sc-box-plot sc-data="data"/>
-      </div>
-      
-      <div class="chart" ng-switch-when="groupedBoxPlot">
-        <sc-grouped-box-plot sc-data="data"/>
-      </div>
 
-      <div class="chart" ng-switch-when="bar">
-        <sc-bar sc-data="data"/>
-      </div>
-
-      <div class="chart" ng-switch-when="groupedBar">
-        <sc-grouped-bar sc-data="data"/>
-      </div>
-
-      <div class="chart" ng-switch-when="pie">
-        <sc-pie sc-data="data"/>
-      </div>
-
-      <div class="chart" ng-switch-when="stackedBar">
-        <sc-stacked-bar sc-data="data"/>
-      </div>
-
-      <div class="chart" ng-switch-when="combined">
-        <sc-combined sc-data="data"/>
-      </div>
-      
-    </div>
+  <div class="col-sm-9 col-sm-pull-3">
+      <h2>
+        <span class="key">#{{label}}. </span>
+        <span class="title">{{data.title}}</span>
+      </h2>
   </div>
 </div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <wave-spinner ng-show="loading"></wave-spinner>
+    <sc-chart sc-data="data"></sc-data>
+  </div>
+</div>
+
