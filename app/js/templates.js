@@ -153,19 +153,19 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "    <g class=\"serie\" ng-repeat=\"serie in data.series\"\n" +
     "      ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
     "    >\n" +
-    "      <g class=\"group\" ng-repeat=\"name in xNestedScale.domain()\"  ng-if=\"serie.data[name]\"\n" +
-    "        ng-attr-transform=\"translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})\"\n" +
+    "      <g class=\"group\" ng-repeat=\"name in xNestedScale.domain()\"  ng-if=\"serie.data[$index]\"\n" +
+    "        ng-attr-transform=\"translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[$index])}})\"\n" +
     "      >\n" +
     "        <rect class=\"bar\"\n" +
     "          ng-attr-width=\"{{xNestedScale.rangeBand()}}\"\n" +
-    "          ng-attr-height=\"{{yScale(serie.data[name])}}\"\n" +
+    "          ng-attr-height=\"{{yScale(serie.data[$index])}}\"\n" +
     "          ng-attr-style=\"fill: {{colors(name)}}\"\n" +
     "        />\n" +
     "        <text class=\"bar-label\"\n" +
     "          y=\"-10\"\n" +
     "          ng-attr-dx=\"{{xNestedScale.rangeBand()/2}}\" \n" +
     "        >\n" +
-    "          {{serie.data[name]}}\n" +
+    "          {{name}}\n" +
     "        </text>\n" +
     "      </g>\n" +
     "    </g>\n" +
