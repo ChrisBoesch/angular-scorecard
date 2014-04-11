@@ -274,7 +274,7 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "        <button type=\"button\" class=\"btn btn-default btn-lg btn-block\">Charts</button>\n" +
     "      </p>\n" +
     "      <ul class=\"dropdown-menu\">\n" +
-    "        <li><a ng-href=\"#/{{$index + 1}}/{{g.key}}\" class=\"active\" ng-repeat=\"g in graphs\">Chart #{{$index + 1}}</a></li>\n" +
+    "        <li ng-repeat=\"g in dataset.chartList\"><a ng-href=\"#/{{$index + 1}}/{{g.key}}\">Chart #{{$index + 1}}</a></li>\n" +
     "      </ul>\n" +
     "    </div>\n" +
     "  </div>\n" +
