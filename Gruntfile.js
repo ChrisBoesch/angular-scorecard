@@ -45,11 +45,11 @@ module.exports = function(grunt) {
         },
         proxies: [
           {
-            context: '/api/v1',
+            context: '/api/v1/scoreboard/charts',
             host: '0.0.0.0',
             port: 9090,
             rewrite: {
-              '^/api/v1': ''
+              '^/api/v1/scoreboard/charts': ''
             }
           }
         ]

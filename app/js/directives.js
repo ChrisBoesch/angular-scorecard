@@ -426,16 +426,16 @@
             }
 
             scope.xScale = d3.scale.ordinal();
-            scope.xNestedScale = d3.scale.ordinal();
+            scope.xNestedScale = d3.scale.ordinal().
+              domain(scope.data.axisY.categories);
 
             // calculate scales domains
             // y scales will use a range domain from 0 (to fix) to max value
             for (var i = 0; i < scope.data.series.length; i++) {
               scope.xScale(scope.data.series[i].name);
-              entries = d3.entries(scope.data.series[i].data);
+              entries = scope.data.series[i].data;
               for (var j = 0; j < entries.length; j++) {
-                yDomain.push(entries[j].value);
-                scope.xNestedScale(entries[j].key);
+                yDomain.push(entries[j]);
               }
             }
 
@@ -459,6 +459,8 @@
               domain(yDomain).
               range([scope.layout.inHeight, 0]).
               nice();
+
+            console.dir(scope.xNestedScale.domain());
 
           };
 

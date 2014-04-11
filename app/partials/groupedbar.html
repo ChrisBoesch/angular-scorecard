@@ -7,19 +7,19 @@
     <g class="serie" ng-repeat="serie in data.series"
       ng-attr-transform="translate({{xScale(serie.name)}},0)"
     >
-      <g class="group" ng-repeat="name in xNestedScale.domain()"  ng-if="serie.data[name]"
-        ng-attr-transform="translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})"
+      <g class="group" ng-repeat="name in xNestedScale.domain()"  ng-if="serie.data[$index]"
+        ng-attr-transform="translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[$index])}})"
       >
         <rect class="bar"
           ng-attr-width="{{xNestedScale.rangeBand()}}"
-          ng-attr-height="{{yScale(serie.data[name])}}"
+          ng-attr-height="{{yScale(serie.data[$index])}}"
           ng-attr-style="fill: {{colors(name)}}"
         />
         <text class="bar-label"
           y="-10"
           ng-attr-dx="{{xNestedScale.rangeBand()/2}}" 
         >
-          {{serie.data[name]}}
+          {{name}}
         </text>
       </g>
     </g>

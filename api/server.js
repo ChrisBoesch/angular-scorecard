@@ -82,13 +82,14 @@ var DATA = [
     subtitle: 'Here We Have the Title of the Slide',
     type: 'groupedBar',
     axisY: {
-      name: 'Percentage (%)'
+      name: 'Percentage (%)',
+      categories: ['c1', 'c2', 'c3', 'c4', ]
     },
     series: [
-      {name: 'AAAA', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-      {name: 'BBBB', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
-      {name: 'CCCC', data: {'c1': 98, 'c2': 29, 'c4': 95}},
-      {name: 'DDDD', data: {'c1': 100, 'c2': 100, 'c3': 100, 'c4': 95}},
+      {name: 'AAAA', data: [100, 100, 100, 95]},
+      {name: 'BBBB', data: [100, 100, 100, 95]},
+      {name: 'CCCC', data: [98, 29, null, 95]},
+      {name: 'DDDD', data: [100, 100, 100, 95]},
     ]
   },
   {

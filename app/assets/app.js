@@ -49322,7 +49322,7 @@ angular.module("template/typeahead/typeahead-popup.html", []).run(["$templateCac
   angular.module('myApp.config', ['ngRoute']).
 
     constant('TPL_PATH', 'partials').
-    constant('API_BASE', '/api/v1').
+    constant('API_BASE', '/api/v1/scoreboard/charts').
     constant('SVG_HEIGHT', 400).
     constant('SVG_WIDTH', 720).
     constant('SVG_MARGIN', {top: 10, right: 30, bottom: 30, left: 70}).
@@ -49499,19 +49499,19 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "    <g class=\"serie\" ng-repeat=\"serie in data.series\"\n" +
     "      ng-attr-transform=\"translate({{xScale(serie.name)}},0)\"\n" +
     "    >\n" +
-    "      <g class=\"group\" ng-repeat=\"name in xNestedScale.domain()\"  ng-if=\"serie.data[name]\"\n" +
-    "        ng-attr-transform=\"translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[name])}})\"\n" +
+    "      <g class=\"group\" ng-repeat=\"name in xNestedScale.domain()\"  ng-if=\"serie.data[$index]\"\n" +
+    "        ng-attr-transform=\"translate({{xNestedScale(name)}}, {{layout.inHeight - yScale(serie.data[$index])}})\"\n" +
     "      >\n" +
     "        <rect class=\"bar\"\n" +
     "          ng-attr-width=\"{{xNestedScale.rangeBand()}}\"\n" +
-    "          ng-attr-height=\"{{yScale(serie.data[name])}}\"\n" +
+    "          ng-attr-height=\"{{yScale(serie.data[$index])}}\"\n" +
     "          ng-attr-style=\"fill: {{colors(name)}}\"\n" +
     "        />\n" +
     "        <text class=\"bar-label\"\n" +
     "          y=\"-10\"\n" +
     "          ng-attr-dx=\"{{xNestedScale.rangeBand()/2}}\" \n" +
     "        >\n" +
-    "          {{serie.data[name]}}\n" +
+    "          {{name}}\n" +
     "        </text>\n" +
     "      </g>\n" +
     "    </g>\n" +
@@ -50167,16 +50167,16 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
             }
 
             scope.xScale = d3.scale.ordinal();
-            scope.xNestedScale = d3.scale.ordinal();
+            scope.xNestedScale = d3.scale.ordinal().
+              domain(scope.data.axisY.categories);
 
             // calculate scales domains
             // y scales will use a range domain from 0 (to fix) to max value
             for (var i = 0; i < scope.data.series.length; i++) {
               scope.xScale(scope.data.series[i].name);
-              entries = d3.entries(scope.data.series[i].data);
+              entries = scope.data.series[i].data;
               for (var j = 0; j < entries.length; j++) {
-                yDomain.push(entries[j].value);
-                scope.xNestedScale(entries[j].key);
+                yDomain.push(entries[j]);
               }
             }
 
@@ -50200,6 +50200,8 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
               domain(yDomain).
               range([scope.layout.inHeight, 0]).
               nice();
+
+            console.dir(scope.xNestedScale.domain());
 
           };
 
