@@ -49322,7 +49322,7 @@ angular.module("template/typeahead/typeahead-popup.html", []).run(["$templateCac
   angular.module('myApp.config', ['ngRoute']).
 
     constant('TPL_PATH', 'partials').
-    constant('API_BASE', '/api/v1').
+    constant('API_BASE', '/api/v1/scoreboard/charts').
     constant('SVG_HEIGHT', 400).
     constant('SVG_WIDTH', 720).
     constant('SVG_MARGIN', {top: 10, right: 30, bottom: 30, left: 70}).

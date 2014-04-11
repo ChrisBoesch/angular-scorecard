@@ -18,14 +18,14 @@
       describe('all', function(){
 
         it('should return a promise', inject(function(dataset) {
-          $httpBackend.whenGET('/api/v1').respond([]);
+          $httpBackend.whenGET('/api/v1/scoreboard/charts').respond([]);
           expect(dataset.all().then).toBeDefined();
         }));
 
         it('should send a XHR requerest', inject(function(dataset) {
           var data;
           
-          $httpBackend.expectGET('/api/v1').respond([{key:0}]);
+          $httpBackend.expectGET('/api/v1/scoreboard/charts').respond([{key:0}]);
           
           dataset.all().then(function(resp){
             data = resp;
@@ -41,14 +41,14 @@
       describe('get', function(){
 
         it('should return a promise', inject(function(dataset) {
-          $httpBackend.whenGET('/api/v1/0').respond({});
+          $httpBackend.whenGET('/api/v1/scoreboard/charts/0').respond({});
           expect(dataset.get().then).toBeDefined();
         }));
 
         it('should send a XHR requerest', inject(function(dataset) {
           var data;
           
-          $httpBackend.expectGET('/api/v1/0').respond(
+          $httpBackend.expectGET('/api/v1/scoreboard/charts/0').respond(
             { title: 'Distribution of some Data'}
           );
           
