@@ -49620,7 +49620,7 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
     "        <button type=\"button\" class=\"btn btn-default btn-lg btn-block\">Charts</button>\n" +
     "      </p>\n" +
     "      <ul class=\"dropdown-menu\">\n" +
-    "        <li><a ng-href=\"#/{{$index + 1}}/{{g.key}}\" class=\"active\" ng-repeat=\"g in graphs\">Chart #{{$index + 1}}</a></li>\n" +
+    "        <li ng-repeat=\"g in dataset.chartList\"><a ng-href=\"#/{{$index + 1}}/{{g.key}}\">Chart #{{$index + 1}}</a></li>\n" +
     "      </ul>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -50441,17 +50441,41 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
 
   angular.module('myApp.services', ['myApp.config', 'ngResource']).
 
-    factory('dataset', function($resource, API_BASE){
+    factory('dataset', function($resource, $q, API_BASE){
+      // TODO: add support for cursor
       var res = $resource(API_BASE + '/:key', {key:'@key'});
+      var api = {
+        // TODO: just use $http cache and only merge concurent request
+        chartList: null,
+        loading: null,
+        charts: {},
 
-      return {
         all: function() {
-          return res.query().$promise;
+          if (api.chartList) {
+            return $q.when(api.chartList);
+          }
+
+          if (api.loading) {
+            return api.loading;
+          }
+
+          api.loading = res.query().$promise.then(function (list) {
+            api.chartList = list;
+            return list;
+          })['finally'](function(){
+            api.loading = null;
+          });
+
+          return api.loading;
         },
+
         get: function(key) {
           return res.get({key: key}).$promise;
         }
+
       };
+
+      return api;
     })
     
     ;
@@ -50485,68 +50509,88 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
     ;
 
 })();
-;(function () {
+;(function() {
   'use strict';
 
   angular.module('myApp.controllers', ['myApp.services', 'myApp.directives', 'angularSpinkit', 'myApp.config', 'ui.bootstrap']).
 
-    controller('SidebarCtrl', function($scope, $routeParams, dataset) {
-      var label = parseInt($routeParams.label, 10) || 1;
+  controller('SidebarCtrl', function($scope, $routeParams, dataset) {
+    var label = parseInt($routeParams.label, 10) || 1;
 
-      $scope.loading = true;
-      $scope.graphs = [];
+    $scope.dataset = dataset;
 
-      dataset.all().then(function(resp) {
-        $scope.loading = false;
-        $scope.graphs = resp;
+    dataset.all();
+
+    $scope.prev = function() {
+      var prevlabel = label - 1;
+
+      if (!dataset.chartList || dataset.chartList.length === 0) {
+        return '#';
+      }
+
+      if (prevlabel === 0) {
+        prevlabel = dataset.chartList.length;
+      }
+
+      return '#/' + prevlabel + '/' + $scope.dataset.chartList[prevlabel - 1].key;
+    };
+
+    $scope.next = function() {
+      var prevlabel = label + 1;
+
+      if (!dataset.chartList || dataset.chartList.length === 0) {
+        return '#';
+      }
+
+      if (prevlabel > $scope.dataset.chartList.length) {
+        prevlabel = 1;
+      }
+
+      return '#/' + prevlabel + '/' + $scope.dataset.chartList[prevlabel - 1].key;
+    };
+  }).
+
+  controller('HomeCtrl', function($scope, $routeParams, $q, dataset) {
+    var label = parseInt($routeParams.label, 10) || 1,
+      keyPromise;
+
+    $scope.label = label;
+    $scope.loading = true;
+    $scope.data = null;
+
+    function getKey(index) {
+      return dataset.all().then(function(list) {
+        if (list.length > index) {
+          return list[index].key;
+        } else {
+          return $q.reject(new Error("No key found"));
+        }
       });
+    }
 
-      $scope.prev = function() {
-        var prevlabel = label - 1;
-
-        if ($scope.graphs.length === 0) {
-          return '#';
-        }
-
-        if (prevlabel === 0) {
-          prevlabel = $scope.graphs.length;
-        }
-
-        return '#/'+ prevlabel +'/' + $scope.graphs[prevlabel -1].key;
-      };
-
-      $scope.next = function() {
-        var prevlabel = label + 1;
-
-        if ($scope.graphs.length === 0) {
-          return '#';
-        }
-
-        if (prevlabel > $scope.graphs.length) {
-          prevlabel = 1;
-        }
-
-        return '#/'+ prevlabel +'/' + $scope.graphs[prevlabel -1].key;
-      };
-    }).
-
-    controller('HomeCtrl', function ($scope, $routeParams, dataset) {
-      var label = parseInt($routeParams.label, 10) || 1,
-        key = $routeParams.key || "0";
-
-      $scope.label = label;
-      $scope.loading = true;
-      dataset.get(key).then(function(resp){
+    function getData(key) {
+      return dataset.get(key).then(function(resp) {
         $scope.data = resp;
-        $scope.loading = false;
+        return resp;
       });
+    }
 
-    })
+    if ($routeParams.key) {
+      keyPromise = $q.when(parseInt($routeParams.key, 10));
+    } else {
+      keyPromise = getKey(label - 1);
+    }
+
+    keyPromise.then(
+      getData
+    )['finally'](function() {
+      $scope.loading = false;
+    });
+  })
 
   ;
 
-})();
-;(function(){
+})();;(function(){
   'use strict';
 
 

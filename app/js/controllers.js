@@ -1,60 +1,81 @@
-(function () {
+(function() {
   'use strict';
 
   angular.module('myApp.controllers', ['myApp.services', 'myApp.directives', 'angularSpinkit', 'myApp.config', 'ui.bootstrap']).
 
-    controller('SidebarCtrl', function($scope, $routeParams, dataset) {
-      var label = parseInt($routeParams.label, 10) || 1;
+  controller('SidebarCtrl', function($scope, $routeParams, dataset) {
+    var label = parseInt($routeParams.label, 10) || 1;
 
-      $scope.loading = true;
-      $scope.graphs = [];
+    $scope.dataset = dataset;
 
-      dataset.all().then(function(resp) {
-        $scope.loading = false;
-        $scope.graphs = resp;
+    dataset.all();
+
+    $scope.prev = function() {
+      var prevlabel = label - 1;
+
+      if (!dataset.chartList || dataset.chartList.length === 0) {
+        return '#';
+      }
+
+      if (prevlabel === 0) {
+        prevlabel = dataset.chartList.length;
+      }
+
+      return '#/' + prevlabel + '/' + $scope.dataset.chartList[prevlabel - 1].key;
+    };
+
+    $scope.next = function() {
+      var prevlabel = label + 1;
+
+      if (!dataset.chartList || dataset.chartList.length === 0) {
+        return '#';
+      }
+
+      if (prevlabel > $scope.dataset.chartList.length) {
+        prevlabel = 1;
+      }
+
+      return '#/' + prevlabel + '/' + $scope.dataset.chartList[prevlabel - 1].key;
+    };
+  }).
+
+  controller('HomeCtrl', function($scope, $routeParams, $q, dataset) {
+    var label = parseInt($routeParams.label, 10) || 1,
+      keyPromise;
+
+    $scope.label = label;
+    $scope.loading = true;
+    $scope.data = null;
+
+    function getKey(index) {
+      return dataset.all().then(function(list) {
+        if (list.length > index) {
+          return list[index].key;
+        } else {
+          return $q.reject(new Error("No key found"));
+        }
       });
+    }
 
-      $scope.prev = function() {
-        var prevlabel = label - 1;
-
-        if ($scope.graphs.length === 0) {
-          return '#';
-        }
-
-        if (prevlabel === 0) {
-          prevlabel = $scope.graphs.length;
-        }
-
-        return '#/'+ prevlabel +'/' + $scope.graphs[prevlabel -1].key;
-      };
-
-      $scope.next = function() {
-        var prevlabel = label + 1;
-
-        if ($scope.graphs.length === 0) {
-          return '#';
-        }
-
-        if (prevlabel > $scope.graphs.length) {
-          prevlabel = 1;
-        }
-
-        return '#/'+ prevlabel +'/' + $scope.graphs[prevlabel -1].key;
-      };
-    }).
-
-    controller('HomeCtrl', function ($scope, $routeParams, dataset) {
-      var label = parseInt($routeParams.label, 10) || 1,
-        key = $routeParams.key || "0";
-
-      $scope.label = label;
-      $scope.loading = true;
-      dataset.get(key).then(function(resp){
+    function getData(key) {
+      return dataset.get(key).then(function(resp) {
         $scope.data = resp;
-        $scope.loading = false;
+        return resp;
       });
+    }
 
-    })
+    if ($routeParams.key) {
+      keyPromise = $q.when(parseInt($routeParams.key, 10));
+    } else {
+      keyPromise = getKey(label - 1);
+    }
+
+    keyPromise.then(
+      getData
+    )['finally'](function() {
+      $scope.loading = false;
+    });
+  })
 
   ;
 
