@@ -714,11 +714,12 @@
           subtitle: 'some subtitle',
           type: 'groupedBar',
           axisY: {
-            name: 'Percentage (%)'
+            name: 'Percentage (%)',
+            categories: ['c1', 'c2']
           },
           series: [
-            {name: 'AAAA', data: {'c1': 100, 'c2': 50}},
-            {name: 'BBBB', data: {'c1': 100}},
+            {name: 'AAAA', data: [100, 50]},
+            {name: 'BBBB', data: [100, null]},
           ]
         };
 
