@@ -1,6 +1,8 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<div class="svg-container">
-  <svg sc-view-box="layout" class="svg-content" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
+
+<scce-svg-container scce-viewbox="layout">
+
+  <svg>
     <!-- Draw the y axis, ticks and rulers -->
     <sc-r-axis sc-scale="yAxisScale" sc-layout="layout" title="data.axisY.name"></sc-r-axis>
 
@@ -38,4 +40,4 @@
     </g>
 
   </svg>
-</div>
+</scce-svg-container>

@@ -116,7 +116,7 @@ module.exports = function(grunt) {
         },
         dest: './app/assets/app.js',
         src: [
-          'bower_components/jquery/jquery.js',
+          'bower_components/jquery/dist/jquery.js',
           'bower_components/angular/angular.js',
           'bower_components/d3/d3.js',
           'bower_components/angular-route/angular-route.js',
@@ -125,6 +125,7 @@ module.exports = function(grunt) {
           'bower_components/angular-spinkit/build/angular-spinkit.js',
           'bower_components/angular-bootstrap/ui-bootstrap.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+          'bower_components/core-education/app/components/svg/svg-directives.js',
           'app/js/config.js',
           'app/js/templates.js',
           'app/js/directives.js',

@@ -4,8 +4,8 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
   $templateCache.put("partials/bar.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
     "\n" +
-    "<div class=\"svg-container\" ng-attr-style=\"padding-bottom: {{layout.height/layout.width*90}}%;\">\n" +
-    "  <svg sc-view-box=\"layout\" class=\"svg-content\">\n" +
+    "<scce-svg-container scce-viewbox=\"layout\">\n" +
+    "  <svg>\n" +
     "\n" +
     "    <!-- Draw the y axis, its ticks and rulers -->\n" +
     "    <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
@@ -22,16 +22,15 @@ angular.module("partials/bar.html", []).run(["$templateCache", function($templat
     "\n" +
     "    <!-- Draw x axis and the ticks -->\n" +
     "    <sc-b-axis sc-scale=\"xScale\" sc-layout=\"layout\"></sc-b-axis>\n" +
-    "\n" +
     "  </svg>\n" +
-    "</div>");
+    "</scce-svg-container>");
 }]);
 
 angular.module("partials/boxplot.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/boxplot.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
-    "<div class=\"svg-container\" ng-attr-style=\"padding-bottom: {{layout.height/layout.width*90}}%;\">\n" +
-    "  <svg sc-view-box=\"layout\" class=\"svg-content\">\n" +
+    "<scce-svg-container scce-viewbox=\"layout\">\n" +
+    "  <svg>\n" +
     "    <!-- Draw the y axis, the ticks and rulers -->\n" +
     "    <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
@@ -72,7 +71,7 @@ angular.module("partials/boxplot.html", []).run(["$templateCache", function($tem
     "    </g>\n" +
     "\n" +
     "  </svg>\n" +
-    "</div>");
+    "</scce-svg-container>");
 }]);
 
 angular.module("partials/chart.html", []).run(["$templateCache", function($templateCache) {
@@ -145,8 +144,10 @@ angular.module("partials/combined.html", []).run(["$templateCache", function($te
 angular.module("partials/groupedbar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/groupedbar.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
-    "<div class=\"svg-container\">\n" +
-    "  <svg sc-view-box=\"layout\" class=\"svg-content\" ng-attr-style=\"padding-bottom: {{layout.height/layout.width*90}}%;\">\n" +
+    "\n" +
+    "<scce-svg-container scce-viewbox=\"layout\">\n" +
+    "\n" +
+    "  <svg>\n" +
     "    <!-- Draw the y axis, ticks and rulers -->\n" +
     "    <sc-r-axis sc-scale=\"yAxisScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
@@ -184,15 +185,14 @@ angular.module("partials/groupedbar.html", []).run(["$templateCache", function($
     "    </g>\n" +
     "\n" +
     "  </svg>\n" +
-    "</div>");
+    "</scce-svg-container>");
 }]);
 
 angular.module("partials/groupedboxplot.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/groupedboxplot.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
-    "<div class=\"svg-container\">\n" +
-    "  <svg sc-view-box=\"layout\" class=\"svg-content\" ng-attr-style=\"padding-bottom: {{layout.height/layout.width*90}}%;\">\n" +
-    "    \n" +
+    "<scce-svg-container scce-viewbox=\"layout\">\n" +
+    "  <svg>    \n" +
     "    <!-- Draw the y axis and the ticks -->\n" +
     "    <sc-r-axis sc-scale=\"yScale\" sc-layout=\"layout\" title=\"data.axisY.name\"></sc-r-axis>\n" +
     "\n" +
@@ -254,7 +254,7 @@ angular.module("partials/groupedboxplot.html", []).run(["$templateCache", functi
     "      </g>\n" +
     "    </g>\n" +
     "  </svg>\n" +
-    "</div>\n" +
+    "</scce-svg-container>\n" +
     "");
 }]);
 
@@ -300,8 +300,8 @@ angular.module("partials/home.html", []).run(["$templateCache", function($templa
 angular.module("partials/pie.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/pie.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
-    "<div class=\"svg-container\" ng-attr-style=\"padding-bottom: {{layout.height/layout.width*90}}%;\">\n" +
-    "	<svg sc-view-box=\"layout\" class=\"svg-content\">\n" +
+    "<scce-svg-container scce-viewbox=\"layout\">\n" +
+    "  <svg>\n" +
     "		<g class=\"pie\"ng-attr-transform=\"translate({{layout.inWidth / 2}},{{layout.inHeight / 2}})\">\n" +
     "			<g class=\"slice\" ng-repeat=\"a in pieData\">\n" +
     "				<path\n" +
@@ -329,14 +329,14 @@ angular.module("partials/pie.html", []).run(["$templateCache", function($templat
     "			<text dx=\"20\" dy=\"12\" style=\"alignment-baseline: auto\">{{a.data.name}}</text>\n" +
     "		</g>\n" +
     "	</svg>\n" +
-    "</div>");
+    "</scce-svg-container>");
 }]);
 
 angular.module("partials/stackedbar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/stackedbar.html",
     "<h3 class=\"desc\">{{data.subtitle}}</h3>\n" +
-    "<div class=\"svg-container\" ng-attr-style=\"padding-bottom: {{layout.height/layout.width*90}}%;\">\n" +
-    "  <svg sc-view-box=\"layout\" class=\"svg-content\">\n" +
+    "<scce-svg-container scce-viewbox=\"layout\">\n" +
+    "  <svg>\n" +
     "    <defs>\n" +
     "      <clipPath id=\"cut-off-top\">\n" +
     "        <rect x=\"-20\" y=\"0\" width=\"40\" ng-attr-height=\"{{layout.inHeight}}\"/>\n" +
@@ -391,5 +391,5 @@ angular.module("partials/stackedbar.html", []).run(["$templateCache", function($
     "    </g>\n" +
     "\n" +
     "  </svg>\n" +
-    "</div>");
+    "</scce-svg-container>");
 }]);

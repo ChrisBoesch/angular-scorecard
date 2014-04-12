@@ -1,6 +1,6 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<div class="svg-container" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
-  <svg sc-view-box="layout" class="svg-content">
+<scce-svg-container scce-viewbox="layout">
+  <svg>
     <defs>
       <clipPath id="cut-off-top">
         <rect x="-20" y="0" width="40" ng-attr-height="{{layout.inHeight}}"/>
@@ -55,4 +55,4 @@
     </g>
 
   </svg>
-</div>
+</scce-svg-container>
