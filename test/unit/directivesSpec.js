@@ -16,35 +16,6 @@
       $rootScope.svg = svg = SVG();
     }));
 
-    describe('scViewBox', function(){
-
-      it('should create a svg element with default SVG settings', function() {
-
-        var element = $compile('<svg sc-view-box><text>{{foo}}</text></svg>')($rootScope);
-        $rootScope.foo = 'bar';
-        $rootScope.$digest();
-
-        expect(element.get(0).getAttribute('viewBox')).toEqual('-70 -10 720 400');
-        expect(element.get(0).getAttribute('preserveAspectRatio')).toEqual('xMinYMin meet');
-        expect(element.find('text').text()).toBe('bar');
-
-      });
-
-      it('should create a svg element with default SVG settings', function() {
-
-        var element = $compile('<svg sc-view-box="svg"><text>{{foo}}</text></svg>')($rootScope);
-        $rootScope.foo = 'bar';
-        $rootScope.svg = {margin: {top: 10, left: 20}, width: 200, height: 150};
-        $rootScope.$digest();
-
-        expect(element.get(0).getAttribute('viewBox')).toEqual('-20 -10 200 150');
-        expect(element.get(0).getAttribute('preserveAspectRatio')).toEqual('xMinYMin meet');
-        expect(element.find('text').text()).toBe('bar');
-
-      });
-
-    });
-
     describe('scRAxis', function() {
       
       beforeEach(inject(function(SVG) {

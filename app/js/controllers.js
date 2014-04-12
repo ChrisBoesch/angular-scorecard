@@ -1,7 +1,13 @@
 (function() {
   'use strict';
 
-  angular.module('myApp.controllers', ['myApp.services', 'myApp.directives', 'angularSpinkit', 'myApp.config', 'ui.bootstrap']).
+  angular.module('myApp.controllers', [
+    'myApp.services',
+    'myApp.directives',
+    'angularSpinkit',
+    'myApp.config',
+    'ui.bootstrap'
+  ]).
 
   controller('SidebarCtrl', function($scope, $routeParams, dataset) {
     var label = parseInt($routeParams.label, 10) || 1;

@@ -3,7 +3,7 @@ module.exports = function(config){
     basePath : '../',
 
     files : [
-      'bower_components/jquery/jquery.js',
+      'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
       'bower_components/d3/d3.js',
       'bower_components/angular-route/angular-route.js',
@@ -13,6 +13,7 @@ module.exports = function(config){
       'bower_components/angular-bootstrap/ui-bootstrap.js',
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/core-education/app/components/svg/svg-directives.js',,
       'app/js/*.js',
       'test/unit/*.js'
     ],

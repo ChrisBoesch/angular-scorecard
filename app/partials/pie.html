@@ -1,6 +1,6 @@
 <h3 class="desc">{{data.subtitle}}</h3>
-<div class="svg-container" ng-attr-style="padding-bottom: {{layout.height/layout.width*90}}%;">
-	<svg sc-view-box="layout" class="svg-content">
+<scce-svg-container scce-viewbox="layout">
+  <svg>
 		<g class="pie"ng-attr-transform="translate({{layout.inWidth / 2}},{{layout.inHeight / 2}})">
 			<g class="slice" ng-repeat="a in pieData">
 				<path
@@ -28,4 +28,4 @@
 			<text dx="20" dy="12" style="alignment-baseline: auto">{{a.data.name}}</text>
 		</g>
 	</svg>
-</div>
+</scce-svg-container>
